@@ -73,3 +73,6 @@ crashlytics-build.properties
 
 # ETC
 .DS_Store
+
+
+.vscode/*

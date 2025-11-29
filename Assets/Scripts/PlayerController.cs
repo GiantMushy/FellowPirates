@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
-    
+
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
@@ -23,11 +23,11 @@ public class PlayerController : MonoBehaviour
         damageTypeController = GetComponent<DamageTypeController>();
         if (damageTypeController == null)
             Debug.LogError("PlayerController requires a DamageTypeController component!");
-        
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
             Debug.LogError("PlayerController requires a SpriteRenderer component!");
-        
+
         UpdateSprite();
     }
 
@@ -49,7 +49,9 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Land"))
+        string tag = other.tag;
+
+        if (tag == "Land")
         {
             TakeDamage();
             if (health < maxHealth)
@@ -57,24 +59,38 @@ public class PlayerController : MonoBehaviour
             else
                 StartCoroutine(damageTypeController.HandleRespawn());
         }
-        if (other.CompareTag("Finish"))
+        else if (tag == "Finish")
         {
             int currScene = SceneManager.GetActiveScene().buildIndex + 1;
             if (currScene >= SceneManager.sceneCountInBuildSettings)
                 currScene = 0; // Loop back to main menu or first scene
             SceneManager.LoadScene(currScene);
         }
-        if (other.CompareTag("HealthPickup"))
+        else if (tag == "HealthPickup")
         {
             GainHealth();
             other.gameObject.SetActive(false);
         }
+
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Pirate") || collision.gameObject.CompareTag("Monster"))
+        string tag = collision.gameObject.tag;
+        if (tag == "Pirate" || tag == "Monster") // TODO: have seperate logic for the monsters
+        {
+            Debug.Log("hit enemy");
             TakeDamage();
+
+
+            // Enable chase 
+            EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+            if (enemy)
+            {
+                enemy.StartChasing(transform);
+            }
+
+        }
         StartCoroutine(damageTypeController.HandleLandCollision());
     }
 
