@@ -11,6 +11,8 @@ public class PickupController : MonoBehaviour
         {
             Invoke(nameof(Respawn), respawnTime);
         }
+
+        // if (other.tag == "HealthIt")
     }
 
     void Respawn()
