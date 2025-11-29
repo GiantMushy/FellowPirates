@@ -61861,7 +61861,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   grid: {fileID: 1397815541}
   target: {fileID: 696252220}
-  replan_interval: 0.5
+  replan_interval: 0.7
+  chase_delay: 3
+  turn_deadzone: 5
+  turn_release_zone: 2
 --- !u!114 &7560258830155139610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61997,6 +62000,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 696252220}
+    - target: {fileID: 4829158714554468859, guid: c1a4ab72adbd9478c8f92f55f95c08ff, type: 3}
+      propertyPath: replan_interval
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 8696383449690856193, guid: c1a4ab72adbd9478c8f92f55f95c08ff, type: 3}
       propertyPath: maxSpeed
       value: 3

@@ -2,44 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using System.Collections;
 
-public struct State
-{
-
-    public int x, y;
-    public List<State> neighbours;
-    public State(int in_x, int in_y)
-    {
-        x = in_x;
-        y = in_y;
-        neighbours = new List<State>();
-    }
-
-    public static bool operator ==(State a, State b)
-    {
-        return a.x == b.x && a.y == b.y;
-    }
-    public static bool operator !=(State a, State b)
-    {
-        return !(a == b);
-    }
-    public override bool Equals(object obj)
-    {
-        if (!(obj is State))
-        {
-            return false;
-        }
-
-        State other = (State)obj;
-        return x == other.x && y == other.y;
-    }
-
-    public override int GetHashCode()
-    {
-        return (x, y).GetHashCode();
-    }
-
-}
 
 public class Heuristic
 {
@@ -59,17 +23,22 @@ public class EnemyController : MonoBehaviour
     private List<State> path;
     private bool chasing;
     public Transform target;
-    public float replan_interval = 0.5f;
+    public float replan_interval = 0.3f;
     private float replan_timer;
+
+    public float chase_delay = 3f;
+    private bool waiting_to_chase = false;
+
+
+    private float last_turn_dir = 0f;
+    public float turn_deadzone = 5f; 
+    public float turn_release_zone = 2f;
 
     void Start()
     {
         shipController = GetComponent<ShipController>();
         if (shipController == null)
             Debug.LogError("EnemyController requires a ShipController component!");
-
-        // shipController.SetSpeed(0.8f);
-        // shipController.SetTurnStarboard(true);
     }
 
     void Update()
@@ -81,103 +50,49 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private List<State> ReconstructPath(Dictionary<State, State> cameFrom, State current)
-    {
-        List<State> total_path = new List<State>();
-        total_path.Add(current);
-
-        while (cameFrom.Keys.Contains(current))
-        {
-            current = cameFrom[current];
-            total_path.Insert(0, current);
-        }
-
-        return total_path;
-    }
-
-    private List<State> A_Star(State start, State goal)
-    {
-        // https://en.wikipedia.org/wiki/A*_search_algorithm
-
-        // HashSet<State> open_set = { start };
-        // PriorityQueue open_set = new PriorityQueue<string, int>();
-        // open_set.Enque(start);
-        List<State> open_set = new List<State> { start };
-        HashSet<State> closed_set = new HashSet<State>();
-
-
-        Dictionary<State, State> came_from = new Dictionary<State, State>();
-        Dictionary<State, int> g_score = new Dictionary<State, int>();
-        Dictionary<State, int> f_score = new Dictionary<State, int>();
-
-        g_score[start] = 0;
-        f_score[start] = Heuristic.h(start, goal);
-
-        while (open_set.Count > 0)
-        {
-            State current = open_set
-            .OrderBy(n => f_score.ContainsKey(n) ? f_score[n] : int.MaxValue)
-            .First();
-
-
-            if (current == goal)
-            {
-                return ReconstructPath(came_from, current);
-            }
-
-            open_set.Remove(current);
-            closed_set.Add(current);
-
-            foreach (State neighbour in current.neighbours)
-            {
-                if (closed_set.Contains(neighbour))
-                {
-                    continue;
-                }
-
-                int g = g_score.ContainsKey(current) ? g_score[current] : int.MaxValue;
-
-                int tentative_g_score = 0;
-                if (g == int.MaxValue)
-                {
-                    tentative_g_score = int.MaxValue;
-                }
-                else
-                {
-                    tentative_g_score = g + 1;
-                }
-
-                int neighbour_g = g_score.ContainsKey(neighbour) ? g_score[neighbour] : int.MaxValue;
-
-                if (tentative_g_score < neighbour_g)
-                {
-                    came_from[neighbour] = current;
-                    g_score[neighbour] = tentative_g_score;
-                    f_score[neighbour] = tentative_g_score + Heuristic.h(neighbour, goal);
-
-                    if (!open_set.Contains(neighbour))
-                    {
-                        open_set.Add(neighbour);
-                        // g_score[neighbour] = int.MaxValue;
-                        // f_score[neighbour] = int.MaxValue;
-                    }
-                }
-            }
-        }
-
-        return new List<State>();
-    }
 
     public void StartChasing(Transform target)
     {
-        Debug.Log("Chasing started");
+        if (chasing || waiting_to_chase)
+        {
+            return;
+        }
+
         this.target = target;
+        waiting_to_chase = true;
+        StartCoroutine(Chase());
+
+
+    }
+
+    public IEnumerator Chase()
+    {
+        yield return new WaitForSeconds(chase_delay);
+
+        waiting_to_chase = false;
+
+        Debug.Log("Chasing started");
 
         State start = grid.GetStateFromWorldPos(transform.position);
         State goal = grid.GetStateFromWorldPos(target.position);
 
-        path = A_Star(start, goal);
+        if (start == null || goal == null)
+        {
+            Debug.LogWarning("start or end outside of bounds");
+            chasing = false;
+            yield break;
+        }
+
+
+        Debug.Log($"start: {start.x},{start.y} (neigh: {start.neighbours?.Count})");
+        Debug.Log($"goal:  {goal.x},{goal.y} (neigh: {goal.neighbours?.Count})");
+
+        path = A_star.Search(start, goal);
         path_index = 0;
+
+
+        Debug.Log($"A* path count: {path.Count}");
+
 
         if (path != null && path.Count > 0)
         {
@@ -194,6 +109,7 @@ public class EnemyController : MonoBehaviour
 
     private void StopChase()
     {
+        Debug.Log("stopped chasing");
         chasing = false;
         shipController.SetAccelerate(false);
         shipController.SetDecelerate(true);
@@ -217,7 +133,7 @@ public class EnemyController : MonoBehaviour
 
         float dist = dist_to_player.magnitude;
 
-        if (dist < 0.1f)
+        if (dist < 1f)
         {
             path_index++;
             if (path_index >= path.Count)
@@ -231,27 +147,46 @@ public class EnemyController : MonoBehaviour
         UnityEngine.Vector3 dir = dist_to_player.normalized;
 
         float angle = UnityEngine.Vector3.SignedAngle(forward, dir, UnityEngine.Vector3.forward);
+        float angle_abs = Mathf.Abs(angle);
 
         shipController.SetTurnPort(false);
         shipController.SetTurnStarboard(false);
 
-        float turn = 2f;
-
-        if (Mathf.Abs(angle) > turn)
+        if (angle_abs > turn_deadzone)
         {
             if (angle > 0f)
             {
                 shipController.SetTurnPort(true);
+                last_turn_dir = 1f;
             }
-            else if (angle < -turn)
+            else
+            {
+                shipController.SetTurnStarboard(true);
+                last_turn_dir = -1f;
+            }
+        }
+        else if (angle_abs > turn_release_zone)
+        {
+            if (last_turn_dir > 0f)
+            {
+                shipController.SetTurnPort(true);
+            }
+            else if (last_turn_dir < 0f)
             {
                 shipController.SetTurnStarboard(true);
             }
-
-            shipController.SetAccelerate(true);
-            shipController.SetDecelerate(false);
         }
+        else
+        {
+            last_turn_dir = 0f;
+        }
+
+        shipController.SetAccelerate(true);
+        shipController.SetDecelerate(false);
+
+
     }
+
 
     private void ReplanIfNeeded()
     {
@@ -262,20 +197,36 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (path == null || path.Count == 0)
+        {
+            return;
+        }
+
         replan_timer = 0;
 
         State curr_goal = grid.GetStateFromWorldPos(target.position);
-
-        // State old
         State prev_goal = path[path.Count - 1];
 
         if (prev_goal != curr_goal)
         {
-            State start = grid.GetStateFromWorldPos(transform.position);
-            path = A_Star(start, curr_goal);
-            path_index = 0;
+            Debug.Log("replanning");
+
+            int clampedIndex = Mathf.Clamp(path_index, 0, path.Count - 1);
+            State start = path[clampedIndex];
+
+            List<State> newPath = A_star.Search(start, curr_goal);
+
+            if (newPath != null && newPath.Count > 0)
+            {
+                List<State> prefix = path.GetRange(0, clampedIndex);
+                prefix.AddRange(newPath);
+                path = prefix;
+
+                path_index = clampedIndex;
+            }
         }
     }
+
 
 
 }

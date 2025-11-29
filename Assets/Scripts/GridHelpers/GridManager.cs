@@ -11,7 +11,7 @@ public class GridManager : MonoBehaviour
     public Tilemap land_tilemap;
 
     public LayerMask island_layer;
-    public State?[,] grid;
+    public State[,] grid;
     int cell_size = 1;
 
 
@@ -23,6 +23,11 @@ public class GridManager : MonoBehaviour
 
     void Awake()
     {
+        if (land_tilemap == null)
+        {
+            Debug.LogError("GridManager: land_tilemap is NOT assigned!");
+            return;
+        }
         // makes a grid that doesn't include the islands
 
         var bounds = land_tilemap.cellBounds;
@@ -35,7 +40,7 @@ public class GridManager : MonoBehaviour
         offsetX = bounds.xMin;
         offsetY = bounds.yMin;
 
-        grid = new State?[width, height];
+        grid = new State[width, height];
 
         for (int x = 0; x < width; x++)
         {
@@ -43,9 +48,9 @@ public class GridManager : MonoBehaviour
             {
                 Vector3Int cell = new Vector3Int(x + offsetX, y + offsetY, 0);
 
-                Vector2 world_pos = land_tilemap.GetCellCenterWorld(cell);
+                bool blocked = land_tilemap.HasTile(cell);
 
-                bool blocked = Physics2D.OverlapCircle(world_pos, cell_size * 0.4f, island_layer); // 0.4 to check just a little less than half
+
                 if (!blocked)
                 {
                     grid[x, y] = new State(x, y);
@@ -60,14 +65,26 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                State? is_state = grid[x, y];
-                if (is_state == null)
+                State state = grid[x, y];
+                if (state == null)
                 {
+                    Debug.LogError($"Null state at {x},{y}");
+
                     continue; // island
                 }
 
-                State state = is_state.Value;
+                // state.neighbours.Clear();
+                // if (state.neighbours == null)
+                // {
+                //     state.neighbours = new List<State>();
+                // }
+                // else
+                // {
+                //     state.neighbours.Clear();
+                // }
+                Debug.Log("state: " + state);
                 state.neighbours = new List<State>();
+
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -79,10 +96,10 @@ public class GridManager : MonoBehaviour
                         continue;
                     }
 
-                    State? neighbour = grid[nx, ny];
+                    State neighbour = grid[nx, ny];
                     if (neighbour != null)
                     {
-                        state.neighbours.Add(neighbour.Value);
+                        state.neighbours.Add(neighbour);
                     }
                 }
                 grid[x, y] = state;
@@ -96,7 +113,11 @@ public class GridManager : MonoBehaviour
         int gx = cell.x - offsetX;
         int gy = cell.y - offsetY;
 
-        return grid[gx, gy].Value;
+        if (gx < 0 || gx >= width || gy < 0 || gy >= height)
+        {
+            return null;
+        }
+        return grid[gx, gy];
     }
 
     public UnityEngine.Vector3 GetWorldPosFromState(State s)
