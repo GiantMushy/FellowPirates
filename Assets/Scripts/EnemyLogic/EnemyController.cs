@@ -1,19 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using System.Collections;
-
-
-public class Heuristic
-{
-
-    public static int h(State a, State b)
-    {
-        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
-    }
-
-}
 
 public class EnemyController : MonoBehaviour
 {
@@ -21,18 +8,23 @@ public class EnemyController : MonoBehaviour
     public GridManager grid;
     private int path_index;
     private List<State> path;
-    private bool chasing;
-    public Transform target;
+    public Transform player;
     public float replan_interval = 0.3f;
-    private float replan_timer;
+    private float replan_timer = 0;
 
+    private bool chasing = false;
     public float chase_delay = 3f;
     private bool waiting_to_chase = false;
 
 
+    // next 3 are to get rid of jitter
+    // where turning last
+    // 1 = turning port
+    // -1 turning starboard 
+    // 0 = not turning
     private float last_turn_dir = 0f;
-    public float turn_deadzone = 5f; 
-    public float turn_release_zone = 2f;
+    public float turn_deadzone = 5f; // minimum angle off needed before changing angle
+    public float turn_release_zone = 2f; // stop turning 
 
     void Start()
     {
@@ -58,41 +50,31 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        this.target = target;
+        player = target;
         waiting_to_chase = true;
         StartCoroutine(Chase());
-
-
     }
 
-    public IEnumerator Chase()
+    private IEnumerator Chase()
     {
         yield return new WaitForSeconds(chase_delay);
 
         waiting_to_chase = false;
 
-        Debug.Log("Chasing started");
+        Debug.Log("Enemyt chasing started");
 
         State start = grid.GetStateFromWorldPos(transform.position);
-        State goal = grid.GetStateFromWorldPos(target.position);
+        State goal = grid.GetStateFromWorldPos(player.position);
 
         if (start == null || goal == null)
         {
-            Debug.LogWarning("start or end outside of bounds");
+            Debug.LogWarning("Start or end outside of bounds");
             chasing = false;
             yield break;
         }
 
-
-        Debug.Log($"start: {start.x},{start.y} (neigh: {start.neighbours?.Count})");
-        Debug.Log($"goal:  {goal.x},{goal.y} (neigh: {goal.neighbours?.Count})");
-
-        path = A_star.Search(start, goal);
+        path = AStar.Search(start, goal);
         path_index = 0;
-
-
-        Debug.Log($"A* path count: {path.Count}");
-
 
         if (path != null && path.Count > 0)
         {
@@ -103,7 +85,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             chasing = false;
-            Debug.Log("did not find a path");
+            Debug.Log("Enemy did not find a path to player");
         }
     }
 
@@ -115,7 +97,6 @@ public class EnemyController : MonoBehaviour
         shipController.SetDecelerate(true);
         shipController.SetTurnPort(false);
         shipController.SetTurnStarboard(false);
-        return;
     }
     private void FollowPath()
     {
@@ -204,30 +185,33 @@ public class EnemyController : MonoBehaviour
 
         replan_timer = 0;
 
-        State curr_goal = grid.GetStateFromWorldPos(target.position);
+        State curr_goal = grid.GetStateFromWorldPos(player.position);
         State prev_goal = path[path.Count - 1];
 
         if (prev_goal != curr_goal)
         {
-            Debug.Log("replanning");
+            Debug.Log("Enemy replanning path");
 
-            int clampedIndex = Mathf.Clamp(path_index, 0, path.Count - 1);
-            State start = path[clampedIndex];
+            if (path_index < 0 || path_index >= path.Count)
+            {
+                return;
+            }
 
-            List<State> newPath = A_star.Search(start, curr_goal);
 
+            State start = path[path_index];
+
+            List<State> newPath = AStar.Search(start, curr_goal);
+
+
+            // To smoothly move to the new path
             if (newPath != null && newPath.Count > 0)
             {
-                List<State> prefix = path.GetRange(0, clampedIndex);
+                List<State> prefix = path.GetRange(0, path_index);
                 prefix.AddRange(newPath);
                 path = prefix;
-
-                path_index = clampedIndex;
             }
         }
     }
-
-
 
 }
 

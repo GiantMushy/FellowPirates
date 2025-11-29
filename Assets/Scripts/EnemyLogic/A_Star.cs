@@ -1,29 +1,26 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using System.Collections;
 
-
-
-public static class A_star
+public static class Heuristic
 {
 
-    private static List<State> ReconstructPath(Dictionary<State, State> cameFrom, State current)
+    public static int ManhattanH(State a, State b)
     {
-        List<State> total_path = new List<State>();
-        total_path.Add(current);
-
-        while (cameFrom.Keys.Contains(current))
-        {
-            current = cameFrom[current];
-            total_path.Insert(0, current);
-        }
-
-        return total_path;
+        // manhattan 
+        return Mathf.Abs(a.grid_x - b.grid_x) + Mathf.Abs(a.grid_y - b.grid_y);
     }
 
+    public static int EuclideanH(State a, State b)
+    {
+        float dx = a.grid_x - b.grid_x;
+        float dy = a.grid_y - b.grid_y;
 
+        return Mathf.FloorToInt(Mathf.Sqrt(dx * dx + dy * dy));
+    }
+}
+public static class AStar
+{
 
     public static List<State> Search(State start, State goal)
     {
@@ -37,7 +34,7 @@ public static class A_star
         Dictionary<State, int> f_score = new Dictionary<State, int>();
 
         g_score[start] = 0;
-        f_score[start] = Heuristic.h(start, goal);
+        f_score[start] = Heuristic.EuclideanH(start, goal);
 
         while (open_set.Count > 0)
         {
@@ -76,7 +73,7 @@ public static class A_star
                 {
                     came_from[neighbour] = current;
                     g_score[neighbour] = tentative_g_score;
-                    f_score[neighbour] = tentative_g_score + Heuristic.h(neighbour, goal);
+                    f_score[neighbour] = tentative_g_score + Heuristic.EuclideanH(neighbour, goal);
 
                     if (!open_set.Contains(neighbour))
                     {
@@ -88,4 +85,19 @@ public static class A_star
 
         return new List<State>();
     }
+
+
+    private static List<State> ReconstructPath(Dictionary<State, State> cameFrom, State current)
+    {
+        List<State> total_path = new List<State> { current };
+
+        while (cameFrom.ContainsKey(current))
+        {
+            current = cameFrom[current];
+            total_path.Insert(0, current);
+        }
+
+        return total_path;
+    }
+
 }
