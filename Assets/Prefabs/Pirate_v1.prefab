@@ -106,8 +106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2a2cec07508541fba78f289cc12b9ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShipController
-  maxSpeed: 5
-  turnSpeed: 20
+  maxSpeed: 3
+  turnSpeed: 180
   acceleration: 1
   deceleration: 1
   health: 0
@@ -124,8 +124,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   grid: {fileID: 0}
-  target: {fileID: 0}
+  player: {fileID: 0}
   replan_interval: 0.5
+  chase_delay: 3
+  turn_deadzone: 5
+  turn_release_zone: 2
 --- !u!70 &1948129961894596220
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

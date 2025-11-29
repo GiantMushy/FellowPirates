@@ -171,6 +171,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1397815541}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 696252220}
+    - target: {fileID: 7560258831620736241, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: maxSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560258831620736241, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: turnSpeed
+      value: 180
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -703,6 +719,10 @@ PrefabInstance:
       propertyPath: grid
       value: 
       objectReference: {fileID: 1397815541}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 696252220}
     - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
       propertyPath: target
       value: 
@@ -16859,6 +16879,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1397815541}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 696252220}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16916,6 +16944,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1397815541}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 696252220}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16983,9 +17019,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
   land_tilemap: {fileID: 920368096}
-  island_layer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!1 &1615539321
 GameObject:
   m_ObjectHideFlags: 0
@@ -57545,6 +57578,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1397815541}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 696252220}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -59958,6 +59999,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1397815541}
+    - target: {fileID: 5998851561116866059, guid: 984502e61f0264e82879f83415cc0115, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 696252220}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -61762,7 +61811,7 @@ GameObject:
   - component: {fileID: 1948129960412446871}
   - component: {fileID: 2380871660716298662}
   m_Layer: 0
-  m_Name: Pirate_v2
+  m_Name: Pirate_v1
   m_TagString: Pirate
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61860,8 +61909,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   grid: {fileID: 1397815541}
-  target: {fileID: 696252220}
-  replan_interval: 0.7
+  player: {fileID: 696252220}
+  replan_interval: 0.3
   chase_delay: 3
   turn_deadzone: 5
   turn_release_zone: 2
@@ -61950,7 +61999,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1516182030265260431, guid: c1a4ab72adbd9478c8f92f55f95c08ff, type: 3}
       propertyPath: m_Name
-      value: Pirate_v2
+      value: Pirate_v1
       objectReference: {fileID: 0}
     - target: {fileID: 3057510542089925911, guid: c1a4ab72adbd9478c8f92f55f95c08ff, type: 3}
       propertyPath: m_LocalPosition.x
@@ -62002,7 +62051,7 @@ PrefabInstance:
       objectReference: {fileID: 696252220}
     - target: {fileID: 4829158714554468859, guid: c1a4ab72adbd9478c8f92f55f95c08ff, type: 3}
       propertyPath: replan_interval
-      value: 0.7
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8696383449690856193, guid: c1a4ab72adbd9478c8f92f55f95c08ff, type: 3}
       propertyPath: maxSpeed
