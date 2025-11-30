@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5969407983712523696}
   - component: {fileID: 5247008491239253526}
   - component: {fileID: 3150512725522101043}
+  - component: {fileID: -3457048819560309332}
   m_Layer: 0
   m_Name: PickupHealth
   m_TagString: HealthPickup
@@ -127,3 +128,15 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 3
+--- !u!114 &-3457048819560309332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3512108534550782939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a415edd71cea34902a8a8e404a435ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthPickup

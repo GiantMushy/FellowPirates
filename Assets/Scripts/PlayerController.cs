@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Diagnostics;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -9,7 +10,7 @@ public class PlayerController : MonoBehaviour
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
-    
+
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
@@ -23,11 +24,11 @@ public class PlayerController : MonoBehaviour
         damageTypeController = GetComponent<DamageTypeController>();
         if (damageTypeController == null)
             Debug.LogError("PlayerController requires a DamageTypeController component!");
-        
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
             Debug.LogError("PlayerController requires a SpriteRenderer component!");
-        
+
         UpdateSprite();
     }
 
@@ -67,6 +68,7 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("HealthPickup"))
         {
             GainHealth();
+            StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 3.5f));
             other.gameObject.SetActive(false);
         }
     }
