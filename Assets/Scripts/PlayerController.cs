@@ -70,7 +70,6 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("HealthPickup"))
         {
             GainHealth();
-            // AudioSource.PlayClipAtPoint(healthPickupSound, transform.position, 1f);
             SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
             StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
             other.gameObject.SetActive(false);

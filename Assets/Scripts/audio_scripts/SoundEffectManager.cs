@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SoundEffectManager : MonoBehaviour
 {
-    // https://www.youtube.com/watch?v=DU7cgVsU2rM
+    // based on: https://www.youtube.com/watch?v=DU7cgVsU2rM
 
     public static SoundEffectManager instance;
     [SerializeField] private AudioSource soundEffectObject;
