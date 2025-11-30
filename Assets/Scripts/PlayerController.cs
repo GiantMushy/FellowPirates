@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
 
+    [SerializeField] private AudioClip healthPickupSound;
+
     void Start()
     {
         shipController = GetComponent<ShipController>();
@@ -68,7 +70,9 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("HealthPickup"))
         {
             GainHealth();
-            StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 3.5f));
+            // AudioSource.PlayClipAtPoint(healthPickupSound, transform.position, 1f);
+            SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+            StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
             other.gameObject.SetActive(false);
         }
     }
@@ -77,7 +81,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Pirate") || collision.gameObject.CompareTag("Monster"))
             TakeDamage();
-        StartCoroutine(damageTypeController.HandleLandCollision());
+        StartCoroutine(damageTypeController.HandleLandCollision()); 
     }
 
     public void TakeDamage()
