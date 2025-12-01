@@ -1,10 +1,8 @@
-using System;
-using System.Net.Sockets;
-using System.Numerics;
-using System.Xml.Serialization;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class TimingBar : MonoBehaviour
 {
@@ -21,7 +19,6 @@ public class TimingBar : MonoBehaviour
 
     private float currPos;
 
-    private bool hasPressed = false;
 
     void Reset()
     {
@@ -30,20 +27,14 @@ public class TimingBar : MonoBehaviour
 
     void Update()
     {
-
-        if (hasPressed)
-        {
-            return;
-        }
-
         currPos += Time.deltaTime * speed;
         if (currPos >= 1f)
         {
             currPos = 1f;
             UpdatePointerPosition(currPos);
 
-            hasPressed = true;
             Debug.Log("Score: 0 --> miss");
+            LoadDefenceScene();
             return;
         }
 
@@ -51,9 +42,10 @@ public class TimingBar : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            hasPressed = true;
+
             int score = CalculateScore();
             Debug.Log($"Score: {score}");
+            LoadDefenceScene();
         }
     }
 
@@ -96,6 +88,12 @@ public class TimingBar : MonoBehaviour
         int score = Mathf.RoundToInt(normalized * maxScore);
         return score;
 
+    }
+
+
+    void LoadDefenceScene()
+    {
+        SceneManager.LoadScene("DefendScene", LoadSceneMode.Single);
     }
 
 }
