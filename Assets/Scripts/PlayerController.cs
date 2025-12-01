@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Diagnostics;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +14,8 @@ public class PlayerController : MonoBehaviour
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
+
+    [SerializeField] private AudioClip healthPickupSound;
 
     void Start()
     {
@@ -69,6 +72,8 @@ public class PlayerController : MonoBehaviour
         else if (tag == "HealthPickup")
         {
             GainHealth();
+            SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+            StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
             other.gameObject.SetActive(false);
         }
 
