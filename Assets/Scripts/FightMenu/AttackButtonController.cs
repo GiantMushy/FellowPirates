@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-// using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class AttackButtonController : MonoBehaviour
 {
@@ -24,7 +24,7 @@ public class AttackButtonController : MonoBehaviour
 
         // EventSystem.current.currentSelectedGameObject;
         EventSystem.current.SetSelectedGameObject(EventSystem.current.currentSelectedGameObject);
-
+        SceneManager.LoadScene("AttackScene", LoadSceneMode.Additive);
 
 
     }

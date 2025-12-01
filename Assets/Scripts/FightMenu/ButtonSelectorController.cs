@@ -7,7 +7,7 @@ public class ButtonSelectorController : MonoBehaviour
 {
     public int buttonCount = 4;
     private int currentIndex = 0;
-    float xStep = 250f;
+    float stepSize = 250f;
     private RectTransform selectorRect;
     private Vector2 startPos;
 
@@ -32,7 +32,7 @@ public class ButtonSelectorController : MonoBehaviour
     {
         currentIndex = (currentIndex + dir + buttonCount) % buttonCount;
         selectorRect.anchoredPosition =
-           startPos + new Vector2(currentIndex * xStep, 0);
+           startPos + new Vector2(currentIndex * stepSize, 0);
     }
 
 }
