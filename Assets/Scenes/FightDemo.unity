@@ -263,6 +263,7 @@ GameObject:
   - component: {fileID: 82171759}
   - component: {fileID: 82171761}
   - component: {fileID: 82171760}
+  - component: {fileID: 82171762}
   m_Layer: 5
   m_Name: ButtonSelectorSprite
   m_TagString: Untagged
@@ -277,16 +278,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82171758}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 420989323}
+  m_Father: {fileID: 1794675202}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -416, y: -469}
+  m_AnchoredPosition: {x: -416, y: -169}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &82171760
@@ -327,6 +328,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82171758}
   m_CullTransparentMesh: 1
+--- !u!114 &82171762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82171758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694247718807b4cc28c1622e8bcb6a97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSelectorController
+  buttonCount: 4
 --- !u!1 &227873291
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,7 +575,6 @@ RectTransform:
   - {fileID: 1780522197}
   - {fileID: 1814307325}
   - {fileID: 3940042891634212252}
-  - {fileID: 82171759}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1541,7 +1554,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0087b9c197fd543559cdd7c26e9f1ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackButtonController
-  attackButton: {fileID: 24634395}
 --- !u!1 &1297199038
 GameObject:
   m_ObjectHideFlags: 0
@@ -2011,6 +2023,7 @@ RectTransform:
   - {fileID: 1350859426}
   - {fileID: 1297199039}
   - {fileID: 959333646}
+  - {fileID: 82171759}
   m_Father: {fileID: 420989323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
