@@ -381,7 +381,7 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard&Mouse",
+                    "groups": "",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -840,7 +840,7 @@
                     "name": "",
                     "id": "7bb4f221-a95e-429a-b040-30d53eac378d",
                     "path": "<Keyboard>/space",
-                    "interactions": "Press",
+                    "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse;Gamepad;Touch;XR;Joystick",
                     "action": "Submit",
@@ -888,17 +888,6 @@
                     "processors": "",
                     "groups": "Touch",
                     "action": "Point",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a72f5c4f-4e6e-42f7-922e-77163b68865b",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse;Gamepad;Joystick;XR;Touch",
-                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
