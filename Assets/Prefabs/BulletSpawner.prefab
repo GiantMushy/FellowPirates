@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8047044365699664338}
   - component: {fileID: 8860146130749124157}
   - component: {fileID: 4143620898694812751}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BulletSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,12 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf2faa0fbbe140f19f69e459afb7f38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletSpawner
-  bullet: {fileID: 0}
-  firingRate: 1
-  speed: 1
-  bulletLife: 1
+  bullet: {fileID: 4788280500938896382, guid: d87047df9c5a24a91bc25c3a028a5ab8, type: 3}
+  firingRate: 0.6
+  speed: 3
+  bulletLife: 10
   spawnerType: 0
-  overlayCamera: {fileID: 0}
 --- !u!212 &4143620898694812751
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -98,14 +97,14 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -6507258221562037406, guid: bd531be2bb0544e5fb58c281060b234e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.2, y: 0.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0

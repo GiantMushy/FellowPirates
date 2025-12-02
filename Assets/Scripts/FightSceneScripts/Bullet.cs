@@ -18,7 +18,7 @@ public class Bullet : MonoBehaviour
     public float speed = 10f;
     private float timer = 0f;
 
-    public Camera overlayCamera;
+    // public Camera overlayCamera;
 
 
     void Start()
@@ -29,7 +29,7 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
-        UnityEngine.Vector3 vp = overlayCamera.WorldToViewportPoint(transform.position);
+        // UnityEngine.Vector3 vp = overlayCamera.WorldToViewportPoint(transform.position);
 
         // if (vp.x < 0f || vp.x > 1f || vp.y < 0f || vp.y > 1f || vp.z < 0f)
         // {

@@ -1,11 +1,5 @@
-
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System.Collections;
-using UnityEngine.EventSystems;
-
-
 
 public class TimingBar : MonoBehaviour
 {
@@ -13,16 +7,13 @@ public class TimingBar : MonoBehaviour
     public RectTransform pointer;
     public RectTransform redZone;
 
+    private AttackFlowController flow;
 
     public float speed = 1.5f;
-
     public int maxScore = 100;
-
-    private float t;
 
     private float currPos;
     bool hasPressed = false;
-
 
     void Reset()
     {
@@ -32,9 +23,7 @@ public class TimingBar : MonoBehaviour
     void Update()
     {
         if (hasPressed)
-        {
             return;
-        }
 
         currPos += Time.deltaTime * speed;
         if (currPos >= 1f)
@@ -46,7 +35,14 @@ public class TimingBar : MonoBehaviour
             UpdatePointerPosition(currPos);
 
             Debug.Log("Score: 0 --> miss");
-            StartCoroutine(LoadDefenceScene());
+
+            if (flow == null)
+            {
+                Debug.LogError("TimingBar: flow is null, StartTiming was never called!");
+                return;
+            }
+
+            flow.StartDefend();
             return;
         }
 
@@ -59,19 +55,24 @@ public class TimingBar : MonoBehaviour
 
             int score = CalculateScore();
             Debug.Log($"Score: {score}");
-            StartCoroutine(LoadDefenceScene());
+
+            if (flow == null)
+            {
+                Debug.LogError("TimingBar: flow is null, StartTiming was never called!");
+                return;
+            }
+
+            flow.StartDefend();
         }
     }
 
     private void UpdatePointerPosition(float t)
     {
         float width = bar.rect.width;
-
         float x = Mathf.Lerp(-width / 2f, width / 2f, t);
 
-        UnityEngine.Vector3 pos = pointer.localPosition;
+        Vector3 pos = pointer.localPosition;
         pos.x = x;
-
         pointer.localPosition = pos;
     }
 
@@ -79,7 +80,7 @@ public class TimingBar : MonoBehaviour
     {
         float pointer_x = pointer.position.x;
 
-        UnityEngine.Vector3[] corners = new UnityEngine.Vector3[4];
+        Vector3[] corners = new Vector3[4];
         redZone.GetWorldCorners(corners);
 
         float red_left_bounds = corners[0].x;
@@ -89,28 +90,21 @@ public class TimingBar : MonoBehaviour
         float half_width = (red_right_bounds - red_left_bounds) * 0.5f;
 
         float dist_to_red_center = Mathf.Abs(pointer_x - red_center);
-
         float t = dist_to_red_center / half_width;
 
         if (t >= 1f)
-        {
             return 0;
-        }
 
         float normalized = 1f - t;
-
         int score = Mathf.RoundToInt(normalized * maxScore);
         return score;
-
     }
 
-    IEnumerator LoadDefenceScene()
+    public void StartTiming(AttackFlowController f)
     {
-        yield return new WaitForSeconds(1f);
-        SceneManager.UnloadSceneAsync("AttackScene");
-
-        // EventSystem.current.SetSelectedGameObject(EventSystem.current.currentSelectedGameObject);
-        var load = SceneManager.LoadSceneAsync("DefendScene", LoadSceneMode.Additive);
-        yield return load;
+        flow = f;
+        currPos = 0f;
+        hasPressed = false;
+        speed = 1.5f;
     }
 }
