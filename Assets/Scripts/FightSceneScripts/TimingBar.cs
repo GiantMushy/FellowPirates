@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 
 public class TimingBar : MonoBehaviour
@@ -18,6 +19,7 @@ public class TimingBar : MonoBehaviour
     private float t;
 
     private float currPos;
+    bool hasPressed = false;
 
 
     void Reset()
@@ -27,14 +29,21 @@ public class TimingBar : MonoBehaviour
 
     void Update()
     {
+        if (hasPressed)
+        {
+            return;
+        }
+
         currPos += Time.deltaTime * speed;
         if (currPos >= 1f)
         {
+            hasPressed = true;
+
             currPos = 1f;
             UpdatePointerPosition(currPos);
 
             Debug.Log("Score: 0 --> miss");
-            LoadDefenceScene();
+            StartCoroutine(LoadDefenceScene());
             return;
         }
 
@@ -42,10 +51,11 @@ public class TimingBar : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            hasPressed = true;
 
             int score = CalculateScore();
             Debug.Log($"Score: {score}");
-            LoadDefenceScene();
+            StartCoroutine(LoadDefenceScene());
         }
     }
 
@@ -90,10 +100,9 @@ public class TimingBar : MonoBehaviour
 
     }
 
-
-    void LoadDefenceScene()
+    IEnumerator LoadDefenceScene()
     {
+        yield return new WaitForSeconds(1f);
         SceneManager.LoadScene("DefendScene", LoadSceneMode.Single);
     }
-
 }
