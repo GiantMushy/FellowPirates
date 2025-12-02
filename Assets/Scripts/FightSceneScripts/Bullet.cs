@@ -51,14 +51,14 @@ public class Bullet : MonoBehaviour
         // {
         //     Debug.LogWarning("no overlay camera");
         // }
-        float margin = 0.2f;
+        // float margin = 0.2f;
 
-        if (vp.x < margin || vp.x > 1f - margin ||
-            vp.y < margin || vp.y > 1f - margin ||
-            vp.z < 0f)
-        {
-            Destroy(gameObject);
-        }
+        // if (vp.x < margin || vp.x > 1f - margin ||
+        //     vp.y < margin || vp.y > 1f - margin ||
+        //     vp.z < 0f)
+        // {
+        //     Destroy(gameObject);
+        // }
     }
 
 }
