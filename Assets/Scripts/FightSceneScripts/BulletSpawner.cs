@@ -15,7 +15,7 @@ public class BulletSpawner : MonoBehaviour
     private GameObject spawnedBullet;
     private float timer = 0f;
 
-    // public Camera overlayCamera;
+    public Camera overlayCamera;
 
     void Start()
     {
@@ -46,7 +46,7 @@ public class BulletSpawner : MonoBehaviour
             spawnedBullet.layer = LayerMask.NameToLayer("OverlayLayer");
             spawnedBullet.GetComponent<Bullet>().speed = speed;
             spawnedBullet.GetComponent<Bullet>().bulletLife = bulletLife;
-            // spawnedBullet.GetComponent<Bullet>().overlayCamera = overlayCamera;
+            spawnedBullet.GetComponent<Bullet>().overlayCamera = overlayCamera;
             spawnedBullet.transform.rotation = transform.rotation;
 
 

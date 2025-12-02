@@ -1,11 +1,10 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TimingBar : MonoBehaviour
 {
-    public RectTransform bar;
-    public RectTransform pointer;
-    public RectTransform redZone;
+    public Transform bar;
+    public Transform pointer;
+    public Transform redZone;
 
     private AttackFlowController flow;
 
@@ -15,9 +14,13 @@ public class TimingBar : MonoBehaviour
     private float currPos;
     bool hasPressed = false;
 
-    void Reset()
+    private SpriteRenderer barSR;
+    private SpriteRenderer redSR;
+
+    void Awake()
     {
-        bar = GetComponent<RectTransform>();
+        barSR = bar.GetComponent<SpriteRenderer>();
+        redSR = redZone.GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -26,19 +29,19 @@ public class TimingBar : MonoBehaviour
             return;
 
         currPos += Time.deltaTime * speed;
+
         if (currPos >= 1f)
         {
             hasPressed = true;
             speed = 0;
-
             currPos = 1f;
-            UpdatePointerPosition(currPos);
 
+            UpdatePointerPosition(currPos);
             Debug.Log("Score: 0 --> miss");
 
             if (flow == null)
             {
-                Debug.LogError("TimingBar: flow is null, StartTiming was never called!");
+                Debug.LogError("TimingBar: flow is null!");
                 return;
             }
 
@@ -58,7 +61,7 @@ public class TimingBar : MonoBehaviour
 
             if (flow == null)
             {
-                Debug.LogError("TimingBar: flow is null, StartTiming was never called!");
+                Debug.LogError("TimingBar: flow is null!");
                 return;
             }
 
@@ -68,40 +71,43 @@ public class TimingBar : MonoBehaviour
 
     private void UpdatePointerPosition(float t)
     {
-        float width = bar.rect.width;
-        float x = Mathf.Lerp(-width / 2f, width / 2f, t);
+        if (barSR == null || pointer == null) return;
 
-        Vector3 pos = pointer.localPosition;
+        float left = barSR.bounds.min.x;
+        float right = barSR.bounds.max.x;
+
+        float x = Mathf.Lerp(left, right, t);
+
+        Vector3 pos = pointer.position;
         pos.x = x;
-        pointer.localPosition = pos;
+        pointer.position = pos;
     }
 
     int CalculateScore()
     {
+        if (redSR == null || pointer == null) return 0;
+
         float pointer_x = pointer.position.x;
 
-        Vector3[] corners = new Vector3[4];
-        redZone.GetWorldCorners(corners);
+        float redLeft = redSR.bounds.min.x;
+        float redRight = redSR.bounds.max.x;
 
-        float red_left_bounds = corners[0].x;
-        float red_right_bounds = corners[3].x;
+        float redCenter = (redLeft + redRight) * 0.5f;
+        float halfWidth = (redRight - redLeft) * 0.5f;
 
-        float red_center = (red_left_bounds + red_right_bounds) * 0.5f;
-        float half_width = (red_right_bounds - red_left_bounds) * 0.5f;
-
-        float dist_to_red_center = Mathf.Abs(pointer_x - red_center);
-        float t = dist_to_red_center / half_width;
+        float dist = Mathf.Abs(pointer_x - redCenter);
+        float t = dist / halfWidth;
 
         if (t >= 1f)
             return 0;
 
         float normalized = 1f - t;
-        int score = Mathf.RoundToInt(normalized * maxScore);
-        return score;
+        return Mathf.RoundToInt(normalized * maxScore);
     }
 
     public void StartTiming(AttackFlowController f)
     {
+        Debug.Log("started timing bar");
         flow = f;
         currPos = 0f;
         hasPressed = false;

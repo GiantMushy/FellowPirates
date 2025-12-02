@@ -18,7 +18,7 @@ public class Bullet : MonoBehaviour
     public float speed = 10f;
     private float timer = 0f;
 
-    // public Camera overlayCamera;
+    public Camera overlayCamera;
 
 
     void Start()
@@ -47,18 +47,20 @@ public class Bullet : MonoBehaviour
 
 
 
-        // if (overlayCamera == null)
-        // {
-        //     Debug.LogWarning("no overlay camera");
-        // }
-        // float margin = 0.2f;
+        if (overlayCamera == null)
+        {
+            Debug.LogWarning("no overlay camera");
+        }
+        float margin = 0.0f;
 
-        // if (vp.x < margin || vp.x > 1f - margin ||
-        //     vp.y < margin || vp.y > 1f - margin ||
-        //     vp.z < 0f)
-        // {
-        //     Destroy(gameObject);
-        // }
+        Vector3 vp = overlayCamera.WorldToViewportPoint(transform.position);
+
+        if (vp.x < margin || vp.x > 1f - margin ||
+            vp.y < margin || vp.y > 1f - margin ||
+            vp.z < 0f)
+        {
+            Destroy(gameObject);
+        }
     }
 
 }
