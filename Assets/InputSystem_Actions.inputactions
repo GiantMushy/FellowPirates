@@ -838,11 +838,11 @@
                 },
                 {
                     "name": "",
-                    "id": "7bb4f221-a95e-429a-b040-30d53eac378d",
-                    "path": "<Keyboard>/space",
+                    "id": "b92cf846-d087-4d57-bef8-6988b5960b8b",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse;Gamepad;Touch;XR;Joystick",
+                    "groups": ";Keyboard&Mouse;Gamepad;Joystick;Touch;XR",
                     "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -943,6 +943,17 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f02b2933-2ab8-4ea0-b5f0-39fad6b5ebd8",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
