@@ -31,13 +31,16 @@ public class TimingBar : MonoBehaviour
     {
         if (hasPressed)
         {
+            Debug.Log("stop updating");
             return;
         }
 
+        Debug.Log("still updating");
         currPos += Time.deltaTime * speed;
         if (currPos >= 1f)
         {
             hasPressed = true;
+            speed = 0;
 
             currPos = 1f;
             UpdatePointerPosition(currPos);
@@ -52,6 +55,7 @@ public class TimingBar : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             hasPressed = true;
+            speed = 0;
 
             int score = CalculateScore();
             Debug.Log($"Score: {score}");
