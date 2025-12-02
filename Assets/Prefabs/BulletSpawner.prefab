@@ -50,6 +50,7 @@ MonoBehaviour:
   speed: 1
   bulletLife: 1
   spawnerType: 0
+  overlayCamera: {fileID: 0}
 --- !u!212 &4143620898694812751
 SpriteRenderer:
   m_ObjectHideFlags: 0
