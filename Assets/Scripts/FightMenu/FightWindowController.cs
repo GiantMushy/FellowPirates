@@ -5,31 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class FightWindowController : MonoBehaviour
 {
-
-    //     private void Show()
-    //     {
-
-    //     }
-
-    //     public void ActivateAttackWindow()
-    //     {
-
-    //     }
-
-    //     public void ActivateItemsWindow()
-    //     {
-
-    //     }
-
-    //     public void ActivateBribeWindow()
-    //     {
-
-    //     }
-
-    //     public void ActivateFleekWindow()
-    //     {
-
-    //     }
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
