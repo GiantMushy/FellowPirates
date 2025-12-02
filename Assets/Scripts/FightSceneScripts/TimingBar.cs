@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.EventSystems;
+
 
 
 public class TimingBar : MonoBehaviour
@@ -31,11 +33,9 @@ public class TimingBar : MonoBehaviour
     {
         if (hasPressed)
         {
-            Debug.Log("stop updating");
             return;
         }
 
-        Debug.Log("still updating");
         currPos += Time.deltaTime * speed;
         if (currPos >= 1f)
         {
@@ -107,6 +107,10 @@ public class TimingBar : MonoBehaviour
     IEnumerator LoadDefenceScene()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene("DefendScene", LoadSceneMode.Single);
+        SceneManager.UnloadSceneAsync("AttackScene");
+
+        // EventSystem.current.SetSelectedGameObject(EventSystem.current.currentSelectedGameObject);
+        var load = SceneManager.LoadSceneAsync("DefendScene", LoadSceneMode.Additive);
+        yield return load;
     }
 }

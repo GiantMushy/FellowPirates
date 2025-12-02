@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class BulletSpawner : MonoBehaviour
 {
     // based on : https://www.youtube.com/watch?v=YNJM7rWbbxY 
@@ -14,9 +15,11 @@ public class BulletSpawner : MonoBehaviour
     private GameObject spawnedBullet;
     private float timer = 0f;
 
+    public Camera overlayCamera;
+
     void Start()
     {
-
+       
     }
 
     void Update()
@@ -41,6 +44,7 @@ public class BulletSpawner : MonoBehaviour
             spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
             spawnedBullet.GetComponent<Bullet>().speed = speed;
             spawnedBullet.GetComponent<Bullet>().bulletLife = bulletLife;
+            spawnedBullet.GetComponent<Bullet>().overlayCamera = overlayCamera;
             spawnedBullet.transform.rotation = transform.rotation;
         }
     }
