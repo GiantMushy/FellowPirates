@@ -39,8 +39,6 @@ public class PlayerFightController : MonoBehaviour
             StartCoroutine(FlashAnimation(damageSprite, wonHitColor, wonClearColor));
 
             Debug.Log("YOU WOOON!!");
-            // flow.OnDefendFinished();
-            // StopAllCoroutines();
             return;
         }
 

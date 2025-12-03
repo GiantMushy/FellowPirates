@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 
 
@@ -18,7 +19,7 @@ public class AttackFlowController : MonoBehaviour
     private TimingBar Attack;
     public BattleTimeBar timeBar;
 
-    // public BattleTimeBar timeBar;
+    public int enemyHealth = 150;
 
     private int defend_index = 0;
 
@@ -65,18 +66,14 @@ public class AttackFlowController : MonoBehaviour
             defendList[i].SetActive(false);
         }
 
-        // timeBar.StartTimer();
         TimingBarCanvas.SetActive(true);
 
         isAttacking = true;
-        timeBar.StartTimer();
         Attack.StartTiming(this);
     }
 
     public void OnAttackFinished()
     {
-        timeBar.StopTimer();
-
         isAttacking = false;
         StartDefend();
     }
@@ -144,6 +141,21 @@ public class AttackFlowController : MonoBehaviour
         buttonPanell.blocksRaycasts = enabled;
         buttonPanell.alpha = enabled ? 1f : 0.5f;
         buttonPanelPointer.SetActive(enabled);
+
+        // if (!enabled)
+        // {
+        //     if (EventSystem.current != null)
+        //     {
+        //         EventSystem.current.SetSelectedGameObject(null);
+        //     }
+        // }
+        // else
+        // {
+        //     if (EventSystem.current != null && buttonPanelPointer != null)
+        //     {
+        //         EventSystem.current.SetSelectedGameObject(buttonPanelPointer);
+        //     }
+        // }
     }
 
 }

@@ -37,7 +37,7 @@ public class TimingBar : MonoBehaviour
 
         if (currPos >= 1f)
         {
-            hasPressed = true;
+            // hasPressed = true;
             speed = 0;
             currPos = 1f;
 
@@ -58,7 +58,7 @@ public class TimingBar : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            hasPressed = true;
+            // hasPressed = true;
             speed = 0;
 
             int score = CalculateScore();
