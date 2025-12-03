@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Diagnostics;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,10 +12,17 @@ public class PlayerController : MonoBehaviour
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
+    public Image[] heartImages;
+
+
+    // Gold amount
+    public int goldCoins; 
+    public TextMeshProUGUI goldText;
 
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
+    
 
     [SerializeField] private AudioClip healthPickupSound;
 
@@ -32,6 +41,8 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("PlayerController requires a SpriteRenderer component!");
 
         UpdateSprite();
+        UpdateGoldUI();
+        UpdateHeartsUI();
     }
 
     void Update()
@@ -76,6 +87,11 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
             other.gameObject.SetActive(false);
         }
+        else if (tag == "GoldPickup")
+        {   
+            GainGold();
+            other.gameObject.SetActive(false);
+        }
 
     }
 
@@ -103,6 +119,7 @@ public class PlayerController : MonoBehaviour
     {
         health = (health > 1) ? health - 1 : 3;
         UpdateSprite();
+        UpdateHeartsUI();
     }
     public void GainHealth()
     {
@@ -110,6 +127,37 @@ public class PlayerController : MonoBehaviour
         {
             health += 1;
             UpdateSprite();
+            UpdateHeartsUI();
+        }
+    }
+
+    public void UpdateHeartsUI()
+    {
+        if (heartImages == null) return;
+
+        for (int i = 0; i < heartImages.Length; i++)
+        {
+            if (heartImages[i] == null) continue;
+
+            bool fullHealth = i < health;
+
+            heartImages[i].color = fullHealth ? Color.white : Color.black;
+
+        }        
+
+    }
+
+    public void GainGold()
+    {
+        goldCoins += 1;
+        UpdateGoldUI();
+    }
+
+    public void UpdateGoldUI()
+    {
+        if (goldText != null)
+        {
+            goldText.text = goldCoins.ToString();
         }
     }
 

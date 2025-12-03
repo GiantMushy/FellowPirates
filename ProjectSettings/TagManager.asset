@@ -11,6 +11,7 @@ TagManager:
   - Loot
   - ShallowWater
   - HealthPickup
+  - GoldPickup
   layers:
   - Default
   - TransparentFX
