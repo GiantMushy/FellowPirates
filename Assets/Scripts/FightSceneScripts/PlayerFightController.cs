@@ -13,32 +13,54 @@ public class PlayerFightController : MonoBehaviour
 
     public AttackFlowController flow;
 
+    public SpriteRenderer minigameBackgroundSprite;
+
+    public Vector2 SpriteSizeMargin = new Vector2(1f, 1.3f);
+
+
+
     void Update()
     {
+        Bounds b = minigameBackgroundSprite.bounds;
+
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            transform.position = new UnityEngine.Vector3(transform.position.x, transform.position.y + speed, transform.position.z);
+            float new_y = transform.position.y + speed * Time.deltaTime;
+            if (new_y + SpriteSizeMargin.y < b.max.y)
+            {
+                transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
+            }
         }
+
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            transform.position = new UnityEngine.Vector3(transform.position.x, transform.position.y - speed, transform.position.z);
+            float new_y = transform.position.y - speed * Time.deltaTime;
+            if (new_y - SpriteSizeMargin.y > b.min.y)
+            {
+                transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
+            }
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            transform.position = new UnityEngine.Vector3(transform.position.x + speed, transform.position.y, transform.position.z);
+            float new_x = transform.position.x + speed * Time.deltaTime;
+            if (new_x + SpriteSizeMargin.x < b.max.x)
+            {
+                transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
+            }
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.position = new UnityEngine.Vector3(transform.position.x - speed, transform.position.y, transform.position.z);
-
+            float new_x = transform.position.x - speed * Time.deltaTime;
+            if (new_x - SpriteSizeMargin.x > b.min.x)
+            {
+                transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
+            }
         }
     }
 
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("OnTriggerEnter with: " + other.name + " (tag: " + other.tag + ")");
-
         if (other.CompareTag("Bomb"))
         {
             Debug.Log("collided with boooomb!!");
@@ -49,12 +71,9 @@ public class PlayerFightController : MonoBehaviour
 
     private void TakeDamage()
     {
-
         StopAllCoroutines();
 
         StartCoroutine(DamageFlash());
-
-
     }
 
     private IEnumerator DamageFlash()
