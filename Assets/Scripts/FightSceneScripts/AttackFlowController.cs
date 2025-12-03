@@ -49,7 +49,6 @@ public class AttackFlowController : MonoBehaviour
             return;
         }
 
-        // defendList[defend_index].SetActive(false);
         for (int i = 0; i < defendList.Length; i++)
         {
             defendList[i].SetActive(false);
@@ -59,7 +58,6 @@ public class AttackFlowController : MonoBehaviour
 
         isAttacking = true;
         Attack.StartTiming(this);
-        // isAttacking = false;
     }
 
     public void OnAttackFinished()
