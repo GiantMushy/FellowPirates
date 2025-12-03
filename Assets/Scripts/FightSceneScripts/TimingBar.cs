@@ -17,6 +17,8 @@ public class TimingBar : MonoBehaviour
     private SpriteRenderer barSR;
     private SpriteRenderer redSR;
 
+    public BattleTimeBar timeBar;
+
     void Awake()
     {
         barSR = bar.GetComponent<SpriteRenderer>();
@@ -25,8 +27,11 @@ public class TimingBar : MonoBehaviour
 
     void Update()
     {
-        if (hasPressed)
-            return;
+        // if (hasPressed)
+        // {
+        //     flow.OnAttackFinished();
+        //     return;
+        // }
 
         currPos += Time.deltaTime * speed;
 
@@ -113,4 +118,5 @@ public class TimingBar : MonoBehaviour
         hasPressed = false;
         speed = 1.5f;
     }
+
 }

@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections;
-using NUnit.Framework;
 
 
 
 public class AttackFlowController : MonoBehaviour
 {
+
+
     public GameObject TimingBarCanvas;
     public GameObject DefendPattern1;
     public GameObject DefendPattern2;
@@ -15,6 +16,9 @@ public class AttackFlowController : MonoBehaviour
     public GameObject buttonPanelPointer;
 
     private TimingBar Attack;
+    public BattleTimeBar timeBar;
+
+    // public BattleTimeBar timeBar;
 
     private int defend_index = 0;
 
@@ -61,14 +65,18 @@ public class AttackFlowController : MonoBehaviour
             defendList[i].SetActive(false);
         }
 
+        // timeBar.StartTimer();
         TimingBarCanvas.SetActive(true);
 
         isAttacking = true;
+        timeBar.StartTimer();
         Attack.StartTiming(this);
     }
 
     public void OnAttackFinished()
     {
+        timeBar.StopTimer();
+
         isAttacking = false;
         StartDefend();
     }
@@ -82,6 +90,7 @@ public class AttackFlowController : MonoBehaviour
 
         Debug.Log("start defenf");
         Debug.Log("defend idx: " + defend_index);
+        timeBar.StartTimer();
         StartCoroutine(StartDefendDelayed());
     }
 
@@ -102,6 +111,8 @@ public class AttackFlowController : MonoBehaviour
 
     public void OnDefendFinished()
     {
+        timeBar.StopTimer();
+
         for (int i = 0; i < defendList.Length; i++)
         {
             defendList[i].SetActive(false);
@@ -115,7 +126,7 @@ public class AttackFlowController : MonoBehaviour
             bullet.SetActive(false);
         }
 
-        
+
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject bomb in bombs)
         {

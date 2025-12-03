@@ -17,10 +17,27 @@ public class PlayerFightController : MonoBehaviour
 
     public Vector2 SpriteSizeMargin = new Vector2(1f, 1.3f);
 
+    public BattleTimeBar timeBar;
 
+    private bool gameOver = false;
+
+    // private bool timeHandled = false;
 
     void Update()
     {
+        if (gameOver)
+        {
+            return;
+        }
+
+        if (timeBar.IsTimeOver)
+        {
+            Debug.Log("YOU WOOON!!");
+            flow.OnDefendFinished();
+            StopAllCoroutines();
+            return;
+        }
+
         Bounds b = minigameBackgroundSprite.bounds;
 
         if (Input.GetKey(KeyCode.UpArrow))
@@ -71,6 +88,7 @@ public class PlayerFightController : MonoBehaviour
 
     private void TakeDamage()
     {
+        gameOver = true;
         StopAllCoroutines();
 
         StartCoroutine(DamageFlash());
@@ -78,6 +96,7 @@ public class PlayerFightController : MonoBehaviour
 
     private IEnumerator DamageFlash()
     {
+
         damageSprite.color = hitColor;
 
         float t = 0f;
