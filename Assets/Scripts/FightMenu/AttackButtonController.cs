@@ -6,11 +6,7 @@ public class AttackButtonController : MonoBehaviour
 {
     public AttackFlowController flow;
     void Start()
-    {
-        // if (EventSystem.current != null)
-        // {
-            // EventSystem.current.SetSelectedGameObject(gameObject);
-        // }
+    { 
     }
     public void Attack()
     {

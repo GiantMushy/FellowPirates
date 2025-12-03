@@ -6,8 +6,6 @@ using UnityEngine.EventSystems;
 
 public class AttackFlowController : MonoBehaviour
 {
-
-
     public GameObject TimingBarCanvas;
     public GameObject DefendPattern1;
     public GameObject DefendPattern2;
@@ -50,6 +48,7 @@ public class AttackFlowController : MonoBehaviour
     {
         if (isAttacking || isDefending || defend_index > 2)
         {
+            BattleOver();
             return;
         }
 
@@ -82,11 +81,9 @@ public class AttackFlowController : MonoBehaviour
     {
         if (isAttacking || isDefending || defend_index > 2)
         {
+            BattleOver();
             return;
         }
-
-        Debug.Log("start defenf");
-        Debug.Log("defend idx: " + defend_index);
         timeBar.StartTimer();
         StartCoroutine(StartDefendDelayed());
     }
@@ -98,11 +95,8 @@ public class AttackFlowController : MonoBehaviour
         TimingBarCanvas.SetActive(false);
 
         isDefending = true;
-        // if (DefendPrefab != null)
         defendList[defend_index].SetActive(true);
         defend_index++;
-
-        // isDefending = false;
     }
 
 
@@ -141,21 +135,11 @@ public class AttackFlowController : MonoBehaviour
         buttonPanell.blocksRaycasts = enabled;
         buttonPanell.alpha = enabled ? 1f : 0.5f;
         buttonPanelPointer.SetActive(enabled);
+    }
 
-        // if (!enabled)
-        // {
-        //     if (EventSystem.current != null)
-        //     {
-        //         EventSystem.current.SetSelectedGameObject(null);
-        //     }
-        // }
-        // else
-        // {
-        //     if (EventSystem.current != null && buttonPanelPointer != null)
-        //     {
-        //         EventSystem.current.SetSelectedGameObject(buttonPanelPointer);
-        //     }
-        // }
+    void BattleOver()
+    {
+        PlayerController.Instance.OnBattleWon();
     }
 
 }

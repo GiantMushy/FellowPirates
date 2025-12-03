@@ -142,7 +142,15 @@ public class PlayerController : MonoBehaviour
 
             returnSceneName = SceneManager.GetActiveScene().name;
             if (spriteRenderer != null) spriteRenderer.enabled = false;
-            if (shipController != null) shipController.enabled = false;
+            if (shipController != null)
+            {
+                shipController.EnableControl();
+                shipController.Stop();
+                shipController.SetAccelerate(false);
+                shipController.SetDecelerate(false);
+                shipController.SetTurnPort(false);
+                shipController.SetTurnStarboard(false);
+            }
 
             if (currentEnemy != null)
             {
@@ -265,4 +273,60 @@ public class PlayerController : MonoBehaviour
         else if (health == 2) spriteRenderer.sprite = damagedSprite;
         else if (health == 1) spriteRenderer.sprite = heavilyDamagedSprite;
     }
+
+
+    public void OnBattleWon()
+    {
+        Debug.Log("Battle won – returning to overworld and destroying enemy");
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+        if (shipController != null)
+        {
+            shipController.EnableControl();
+            shipController.Stop();
+            shipController.SetAccelerate(false);
+            shipController.SetDecelerate(false);
+            shipController.SetTurnPort(false);
+            shipController.SetTurnStarboard(false);
+        }
+
+        fleeCooldownUntil = Time.time + 2f;
+
+        SceneManager.LoadScene(returnSceneName);
+
+        StartCoroutine(DestroyEnemyAfterReturn());
+    }
+
+    private System.Collections.IEnumerator DestroyEnemyAfterReturn()
+    {
+        // wait one frame so the scene has actually spawned its enemies
+        yield return null;
+
+        var enemies = FindObjectsOfType<EnemyController>();
+        if (enemies.Length > 0)
+        {
+            EnemyController best = null;
+            float bestDist = float.MaxValue;
+
+            foreach (var e in enemies)
+            {
+                float d = (e.transform.position - lastEnemyPosition).sqrMagnitude;
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    best = e;
+                }
+            }
+
+            if (best != null)
+            {
+                Debug.Log("Destroying defeated enemy: " + best.name);
+                Destroy(best.gameObject);
+            }
+        }
+    }
+
 }
