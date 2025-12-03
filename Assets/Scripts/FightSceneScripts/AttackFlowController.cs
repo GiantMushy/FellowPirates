@@ -11,6 +11,9 @@ public class AttackFlowController : MonoBehaviour
     public GameObject DefendPattern2;
     public GameObject DefendPattern3;
 
+    public CanvasGroup buttonPanell;
+    public GameObject buttonPanelPointer;
+
     private TimingBar Attack;
 
     private int defend_index = 0;
@@ -19,6 +22,8 @@ public class AttackFlowController : MonoBehaviour
 
     private bool isDefending = false;
     private bool isAttacking = false;
+
+
 
     private void Awake()
     {
@@ -42,6 +47,8 @@ public class AttackFlowController : MonoBehaviour
         {
             return;
         }
+
+        SetButtonsEnabled(false);
 
         Debug.Log("starting attack");
         if (Attack == null)
@@ -101,5 +108,16 @@ public class AttackFlowController : MonoBehaviour
         }
 
         isDefending = false;
+
+        SetButtonsEnabled(true);
     }
+
+    private void SetButtonsEnabled(bool enabled)
+    {
+        buttonPanell.interactable = enabled;
+        buttonPanell.blocksRaycasts = enabled;
+        buttonPanell.alpha = enabled ? 1f : 0.5f;
+        buttonPanelPointer.SetActive(enabled);
+    }
+
 }
