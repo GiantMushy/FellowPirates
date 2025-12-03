@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance { get; private set; }
     public int maxHealth = 3;
     public int health = 3;
     public Sprite fullHealthSprite;
@@ -16,15 +17,36 @@ public class PlayerController : MonoBehaviour
 
 
     // Gold amount
-    public int goldCoins; 
+    public int goldCoins;
     public TextMeshProUGUI goldText;
 
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
-    
+
 
     [SerializeField] private AudioClip healthPickupSound;
+
+    private EnemyController currentEnemy;
+    private string returnSceneName;
+    private float fleeCooldownUntil = 0f;
+
+    private Vector3 lastEnemyPosition;
+
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+
+        DontDestroyOnLoad(gameObject);
+    }
+
 
     void Start()
     {
@@ -88,7 +110,7 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false);
         }
         else if (tag == "GoldPickup")
-        {   
+        {
             GainGold();
             other.gameObject.SetActive(false);
         }
@@ -98,22 +120,81 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         string tag = collision.gameObject.tag;
-        if (tag == "Pirate" || tag == "Monster") // TODO: have seperate logic for the monsters
+        if ((tag == "Pirate" || tag == "Monster") && Time.time < fleeCooldownUntil)
         {
-            Debug.Log("hit enemy");
-            TakeDamage();
+            Debug.Log("Ignoring enemy collision during flee cooldown");
+            return;
+        }
 
+        if (tag == "Pirate" || tag == "Monster") // TODO: seperate logic for the monsters
+        {
+            currentEnemy = collision.gameObject.GetComponent<EnemyController>();
 
-            // Enable chase 
-            EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
-            if (enemy)
+            lastEnemyPosition = currentEnemy.transform.position;
+
+            returnSceneName = SceneManager.GetActiveScene().name;
+            if (spriteRenderer != null) spriteRenderer.enabled = false;
+            if (shipController != null) shipController.enabled = false;
+
+            if (currentEnemy != null)
             {
-                enemy.StartChasing(transform);
+                var enemyRenderer = currentEnemy.GetComponent<SpriteRenderer>();
+                if (enemyRenderer != null) enemyRenderer.enabled = false;
             }
+            spriteRenderer.enabled = false;
+            SceneManager.LoadScene("FightDemo");
+
+            return;
 
         }
         StartCoroutine(damageTypeController.HandleLandCollision());
     }
+
+
+    public void StartChase()
+    {
+
+        SceneManager.LoadScene(returnSceneName);
+
+        shipController.EnableControl();
+        shipController.Stop();
+        shipController.SetAccelerate(false);
+        shipController.SetDecelerate(false);
+        shipController.SetTurnPort(false);
+        shipController.SetTurnStarboard(false);
+
+
+        fleeCooldownUntil = Time.time + 2f;
+        StartCoroutine(StartChaseAfterReturn());
+    }
+
+    private System.Collections.IEnumerator StartChaseAfterReturn()
+    {
+        yield return null;
+
+        var enemies = FindObjectsOfType<EnemyController>();
+        if (enemies.Length > 0)
+        {
+            EnemyController best = null;
+            float bestDist = float.MaxValue;
+
+            foreach (var e in enemies)
+            {
+                float d = (e.transform.position - lastEnemyPosition).sqrMagnitude;
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    best = e;
+                }
+            }
+
+            if (best != null)
+            {
+                best.StartChasing(transform);
+            }
+        }
+    }
+
 
     public void TakeDamage()
     {
@@ -143,7 +224,7 @@ public class PlayerController : MonoBehaviour
 
             heartImages[i].color = fullHealth ? Color.white : Color.black;
 
-        }        
+        }
 
     }
 

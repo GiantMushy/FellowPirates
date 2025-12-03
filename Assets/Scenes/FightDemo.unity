@@ -430,7 +430,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 694247718807b4cc28c1622e8bcb6a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonSelectorController
-  buttonCount: 4
 --- !u!1 &227873291
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +487,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ITEMS
+  m_text: HEAL
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2404,6 +2403,7 @@ MonoBehaviour:
   buttonPanell: {fileID: 1794675205}
   buttonPanelPointer: {fileID: 82171758}
   timeBar: {fileID: 459638057}
+  enemyHealth: 150
 --- !u!4 &1128360402
 Transform:
   m_ObjectHideFlags: 0

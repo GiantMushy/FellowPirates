@@ -11,5 +11,14 @@ public class FleeButtonController : MonoBehaviour
         Debug.Log("Flee button pressed");
         EventSystem.current.SetSelectedGameObject(fleeButton.gameObject);
 
+        var player = PlayerController.Instance;
+        if (player != null)
+        {
+            player.StartChase();
+        }
+        else
+        {
+            Debug.LogError("FleeButtonController: PlayerController.Instance is null!");
+        }
     }
 }

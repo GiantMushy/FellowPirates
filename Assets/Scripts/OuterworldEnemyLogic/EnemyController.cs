@@ -26,6 +26,11 @@ public class EnemyController : MonoBehaviour
     public float turn_deadzone = 5f; // minimum angle off needed before changing angle
     public float turn_release_zone = 2f; // stop turning 
 
+    void Awake()
+    {
+        // DontDestroyOnLoad(gameObject);
+
+    }
     void Start()
     {
         shipController = GetComponent<ShipController>();
