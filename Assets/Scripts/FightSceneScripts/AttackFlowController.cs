@@ -109,6 +109,21 @@ public class AttackFlowController : MonoBehaviour
 
         isDefending = false;
 
+        GameObject[] BulletSpawner = GameObject.FindGameObjectsWithTag("BulletSpawner");
+        foreach (GameObject bullet in BulletSpawner)
+        {
+            bullet.SetActive(false);
+        }
+
+        
+        GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
+        foreach (GameObject bomb in bombs)
+        {
+            bomb.SetActive(false);
+        }
+
+
+
         SetButtonsEnabled(true);
     }
 

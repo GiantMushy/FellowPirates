@@ -12,6 +12,7 @@ TagManager:
   - ShallowWater
   - HealthPickup
   - GoldPickup
+  - BulletSpawner
   layers:
   - Default
   - TransparentFX
