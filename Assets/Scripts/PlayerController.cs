@@ -67,9 +67,13 @@ public class PlayerController : MonoBehaviour
 
         if (keyboard.eKey.wasPressedThisFrame)
         {
-            UseHealthItem();
-            SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-            StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+            if (health < maxHealth && healthInventory > 0)
+            {
+                UseHealthItem();
+                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+            }
+            else return;
         }
     }
 
