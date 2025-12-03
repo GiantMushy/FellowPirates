@@ -53,8 +53,9 @@ public class DamageTypeController : MonoBehaviour
         shipController.DisableControl();
 
         // teleport to start position (-0.5, 0)
-        transform.position = new Vector3(-0.5f, 0f, transform.position.z);
-        transform.rotation = Quaternion.Euler(0, 0, 0);
+        //transform.position = new Vector3(-0.5f, 0f, transform.position.z);
+        transform.rotation = Quaternion.Euler(0, 0, 90);
+        GetComponent<PlayerRespawn>().Respawn();
 
         // Blink effect
         if (spriteRenderer != null)
