@@ -6,10 +6,14 @@ public class PlayerFightController : MonoBehaviour
 {
     public float speed = 0.1f;
     public SpriteRenderer damageSprite;
+    public SpriteRenderer wonSprite;
 
     public float damageFadeSpeed = 2f;
-    Color clearColor = new Color(1f, 0f, 0f, 0f);
-    Color hitColor = new Color(1f, 0f, 0f, 0.2f);
+    Color damageClearColor = new Color(1f, 0f, 0f, 0f);
+    Color damageHitColor = new Color(1f, 0f, 0f, 0.2f);
+
+    Color wonClearColor = new Color(0f, 1f, 0f, 0f);
+    Color wonHitColor = new Color(0f, 1f, 0f, 0.2f);
 
     public AttackFlowController flow;
 
@@ -32,9 +36,11 @@ public class PlayerFightController : MonoBehaviour
 
         if (timeBar.IsTimeOver)
         {
+            StartCoroutine(FlashAnimation(damageSprite, wonHitColor, wonClearColor));
+
             Debug.Log("YOU WOOON!!");
-            flow.OnDefendFinished();
-            StopAllCoroutines();
+            // flow.OnDefendFinished();
+            // StopAllCoroutines();
             return;
         }
 
@@ -91,23 +97,23 @@ public class PlayerFightController : MonoBehaviour
         gameOver = true;
         StopAllCoroutines();
 
-        StartCoroutine(DamageFlash());
+        StartCoroutine(FlashAnimation(damageSprite, damageHitColor, damageClearColor));
     }
 
-    private IEnumerator DamageFlash()
+    private IEnumerator FlashAnimation(SpriteRenderer sprite, Color hitColor, Color clearColor)
     {
 
-        damageSprite.color = hitColor;
+        sprite.color = hitColor;
 
         float t = 0f;
         while (t < 1f)
         {
             t += Time.deltaTime;
-            damageSprite.color = Color.Lerp(hitColor, clearColor, t);
+            sprite.color = Color.Lerp(hitColor, clearColor, t);
             yield return null;
         }
 
-        damageSprite.color = clearColor;
+        sprite.color = clearColor;
 
         flow.OnDefendFinished();
 
