@@ -36,6 +36,10 @@ public class BulletSpawner : MonoBehaviour
     private Quaternion startRot;
 
 
+    public bool rotate;
+    public float rotateSpeed = 90f;
+
+
 
     void Start()
     {
@@ -78,6 +82,11 @@ public class BulletSpawner : MonoBehaviour
                 Duplicate();
             }
         }
+
+        if (rotate)
+        {
+            Rotate();
+        }
     }
 
     private void Fire()
@@ -113,5 +122,11 @@ public class BulletSpawner : MonoBehaviour
         BulletSpawner cloneSpawner = clone.GetComponent<BulletSpawner>();
         cloneSpawner.duplicate = false;
         cloneSpawner.delayTimer = 0f;
+    }
+
+
+    private void Rotate()
+    {
+        transform.Rotate(0f, 0f, rotateSpeed * Time.deltaTime);
     }
 }
