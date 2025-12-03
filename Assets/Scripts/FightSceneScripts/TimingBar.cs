@@ -45,7 +45,7 @@ public class TimingBar : MonoBehaviour
                 return;
             }
 
-            flow.StartDefend();
+            flow.OnAttackFinished();
             return;
         }
 
@@ -65,7 +65,7 @@ public class TimingBar : MonoBehaviour
                 return;
             }
 
-            flow.StartDefend();
+            flow.OnAttackFinished();
         }
     }
 

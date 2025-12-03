@@ -11,10 +11,7 @@ public class PlayerFightController : MonoBehaviour
     Color clearColor = new Color(1f, 0f, 0f, 0f);
     Color hitColor = new Color(1f, 0f, 0f, 0.2f);
 
-    void Start()
-    {
-
-    }
+    public AttackFlowController flow;
 
     void Update()
     {
@@ -58,7 +55,6 @@ public class PlayerFightController : MonoBehaviour
         StartCoroutine(DamageFlash());
 
 
-        // damageImage.color = new Color(1f, 0f, 0f, 0.8f);
     }
 
     private IEnumerator DamageFlash()
@@ -74,5 +70,9 @@ public class PlayerFightController : MonoBehaviour
         }
 
         damageSprite.color = clearColor;
+
+        flow.OnDefendFinished();
+
     }
+
 }
