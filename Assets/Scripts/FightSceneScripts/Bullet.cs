@@ -23,18 +23,10 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
-        // BulletSpawner bulletSpawner = GetComponent<BulletSpawner>();
-        // overlayCamera = bulletSpawner.overlayCamera;
     }
 
     void Update()
     {
-        // UnityEngine.Vector3 vp = overlayCamera.WorldToViewportPoint(transform.position);
-
-        // if (vp.x < 0f || vp.x > 1f || vp.y < 0f || vp.y > 1f || vp.z < 0f)
-        // {
-        //     Destroy(gameObject);
-        // }
 
         if (timer > bulletLife)
         {

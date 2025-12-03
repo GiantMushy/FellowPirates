@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class PlayerFightController : MonoBehaviour
 {
     public float speed = 0.1f;
-    public Image damageImage;
+    public SpriteRenderer damageSprite;
 
     public float damageFadeSpeed = 2f;
     Color clearColor = new Color(1f, 0f, 0f, 0f);
@@ -63,16 +63,16 @@ public class PlayerFightController : MonoBehaviour
 
     private IEnumerator DamageFlash()
     {
-        damageImage.color = hitColor;
+        damageSprite.color = hitColor;
 
         float t = 0f;
         while (t < 1f)
         {
             t += Time.deltaTime;
-            damageImage.color = Color.Lerp(hitColor, clearColor, t);
+            damageSprite.color = Color.Lerp(hitColor, clearColor, t);
             yield return null;
         }
 
-        damageImage.color = clearColor;
+        damageSprite.color = clearColor;
     }
 }
