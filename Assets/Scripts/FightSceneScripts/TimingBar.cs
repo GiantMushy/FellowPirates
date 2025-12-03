@@ -27,17 +27,10 @@ public class TimingBar : MonoBehaviour
 
     void Update()
     {
-        // if (hasPressed)
-        // {
-        //     flow.OnAttackFinished();
-        //     return;
-        // }
-
         currPos += Time.deltaTime * speed;
 
         if (currPos >= 1f)
         {
-            // hasPressed = true;
             speed = 0;
             currPos = 1f;
 
@@ -58,7 +51,6 @@ public class TimingBar : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            // hasPressed = true;
             speed = 0;
 
             int score = CalculateScore();

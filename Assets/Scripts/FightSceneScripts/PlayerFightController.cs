@@ -25,8 +25,6 @@ public class PlayerFightController : MonoBehaviour
 
     private bool gameOver = false;
 
-    // private bool timeHandled = false;
-
     void Update()
     {
         if (gameOver)

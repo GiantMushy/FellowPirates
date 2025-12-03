@@ -15,7 +15,10 @@ public class ButtonSelectorController : MonoBehaviour
     {
         GameObject selected = EventSystem.current.currentSelectedGameObject;
 
-        if (selected == null) return;
+        if (selected == null)
+        {
+            return;
+        }
 
         RectTransform btnRect = selected.GetComponent<RectTransform>();
 

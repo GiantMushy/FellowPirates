@@ -17,11 +17,6 @@ public class Bullet : MonoBehaviour
 
     public SpriteRenderer minigameBackgroundSprite;
 
-
-    void Start()
-    {
-    }
-
     void Update()
     {
 
