@@ -14,10 +14,14 @@ public class PlayerController : MonoBehaviour
     public Sprite heavilyDamagedSprite;
     public Image[] heartImages;
 
+    // Health invenentory
+    public int healthInventory;
+    public TextMeshProUGUI healthInventoryText;
 
     // Gold amount
     public int goldCoins; 
     public TextMeshProUGUI goldText;
+    [SerializeField] private AudioClip goldPickupSound;
 
     private ShipController shipController;
     private DamageTypeController damageTypeController;
@@ -43,6 +47,7 @@ public class PlayerController : MonoBehaviour
         UpdateSprite();
         UpdateGoldUI();
         UpdateHeartsUI();
+        UpdateHealthItemUI();
     }
 
     void Update()
@@ -58,6 +63,17 @@ public class PlayerController : MonoBehaviour
             shipController.SetDecelerate(keyboard.downArrowKey.isPressed);
             shipController.SetTurnPort(keyboard.leftArrowKey.isPressed);
             shipController.SetTurnStarboard(keyboard.rightArrowKey.isPressed);
+        }
+
+        if (keyboard.eKey.wasPressedThisFrame)
+        {
+            if (health < maxHealth && healthInventory > 0)
+            {
+                UseHealthItem();
+                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+            }
+            else return;
         }
     }
 
@@ -81,15 +97,25 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(currScene);
         }
         else if (tag == "HealthPickup")
-        {
-            GainHealth();
-            SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-            StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+        {   
+
+            if (health == maxHealth)
+            {
+                GainHealthItem();
+                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+            }
+            else
+            {
+                GainHealth();
+                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+            }
             other.gameObject.SetActive(false);
         }
         else if (tag == "GoldPickup")
         {   
             GainGold();
+            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
             other.gameObject.SetActive(false);
         }
 
@@ -145,6 +171,32 @@ public class PlayerController : MonoBehaviour
 
         }        
 
+    }
+
+    public void GainHealthItem()
+        {
+            healthInventory += 1;
+            UpdateHealthItemUI();
+            
+        }
+
+    public void UpdateHealthItemUI()
+    {
+        if (healthInventoryText != null)
+        {
+            healthInventoryText.text = healthInventory.ToString();
+        }
+        
+    }
+
+    public void UseHealthItem()
+    {
+        if (healthInventory > 0 && health < maxHealth)
+        {
+            healthInventory -= 1;
+            GainHealth();
+            UpdateHealthItemUI();
+        }
     }
 
     public void GainGold()
