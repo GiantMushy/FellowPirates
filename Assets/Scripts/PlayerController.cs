@@ -27,12 +27,14 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private AudioClip healthPickupSound;
 
+
+    // Scene switch logic
     private EnemyController currentEnemy;
     private string returnSceneName;
     private float fleeCooldownUntil = 0f;
-
     private Vector3 lastEnemyPosition;
-
+    public Vector3 savedCameraOffset;
+    public bool hasSavedCameraOffset;
 
     void Awake()
     {
@@ -128,6 +130,12 @@ public class PlayerController : MonoBehaviour
 
         if (tag == "Pirate" || tag == "Monster") // TODO: seperate logic for the monsters
         {
+            if (Camera.main != null)
+            {
+                savedCameraOffset = Camera.main.transform.position - transform.position;
+                hasSavedCameraOffset = true;
+            }
+
             currentEnemy = collision.gameObject.GetComponent<EnemyController>();
 
             lastEnemyPosition = currentEnemy.transform.position;
@@ -150,9 +158,14 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(damageTypeController.HandleLandCollision());
     }
 
-
     public void StartChase()
     {
+        Debug.Log("StartChase called from Flee");
+
+        if (spriteRenderer != null) spriteRenderer.enabled = true;
+        if (shipController != null) shipController.enabled = true;
+
+
 
         SceneManager.LoadScene(returnSceneName);
 
@@ -170,6 +183,7 @@ public class PlayerController : MonoBehaviour
 
     private System.Collections.IEnumerator StartChaseAfterReturn()
     {
+        // wait one frame so the overworld scene has actually spawned its enemies
         yield return null;
 
         var enemies = FindObjectsOfType<EnemyController>();
@@ -194,6 +208,8 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+
 
 
     public void TakeDamage()

@@ -12,7 +12,11 @@ public class CameraController : MonoBehaviour
             target = PlayerController.Instance.transform;
         }
 
-        if (target != null && offset == Vector3.zero)
+        if (PlayerController.Instance != null && PlayerController.Instance.hasSavedCameraOffset)
+        {
+            offset = PlayerController.Instance.savedCameraOffset;
+        }
+        else if (target != null && offset == Vector3.zero)
         {
             offset = transform.position - target.position;
         }
@@ -25,16 +29,13 @@ public class CameraController : MonoBehaviour
             if (PlayerController.Instance != null)
             {
                 target = PlayerController.Instance.transform;
-
-                if (offset == Vector3.zero)
-                    offset = transform.position - target.position;
             }
             else
             {
-                // no valid target
                 return;
             }
         }
+
         Vector3 newPosition = target.position + offset;
         newPosition.x = -0.5f;
         transform.position = newPosition;
