@@ -25,6 +25,7 @@ public class AttackFlowController : MonoBehaviour
 
     private bool isDefending = false;
     private bool isAttacking = false;
+    private bool isStartingDefend = false;
 
     PlayerController player;
 
@@ -101,11 +102,16 @@ public class AttackFlowController : MonoBehaviour
 
     public void StartDefend()
     {
-        if (isAttacking || isDefending || defend_index > 2)
+        if (isAttacking || isDefending || isStartingDefend || defend_index > 2)
         {
             BattleOver();
             return;
         }
+
+        isStartingDefend = true;
+        isDefending = true;
+
+
         timeBar.StartTimer();
         StartCoroutine(StartDefendDelayed());
     }
@@ -117,7 +123,7 @@ public class AttackFlowController : MonoBehaviour
 
         TimingBarCanvas.SetActive(false);
 
-        isDefending = true;
+        // isDefending = true;
         defendList[defend_index].SetActive(true);
         defend_index++;
     }
@@ -132,6 +138,7 @@ public class AttackFlowController : MonoBehaviour
             defendList[i].SetActive(false);
         }
 
+        isStartingDefend = false;
         isDefending = false;
 
         GameObject[] BulletSpawner = GameObject.FindGameObjectsWithTag("BulletSpawner");
@@ -225,7 +232,7 @@ public class AttackFlowController : MonoBehaviour
     // bribe logic
     void bribeAccepted()
     {
-        
+
     }
 
 }
