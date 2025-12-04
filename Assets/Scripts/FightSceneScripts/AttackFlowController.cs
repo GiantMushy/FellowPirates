@@ -69,12 +69,16 @@ public class AttackFlowController : MonoBehaviour
 
     public void StartAttack()
     {
+        Debug.Log("StartAttack");
         if (isAttacking || isDefending)
         {
-            BattleOver();
+            Debug.Log("battle over here 2");
+
+            // BattleOver();
             return;
         }
 
+        Debug.Log("StartAttack");
         SetButtonsEnabled(false);
 
         Debug.Log("starting attack");
@@ -96,15 +100,19 @@ public class AttackFlowController : MonoBehaviour
 
     public void OnAttackFinished()
     {
+        Debug.Log("OnAttackFinished");
         isAttacking = false;
         StartDefend();
     }
 
     public void StartDefend()
     {
+        Debug.Log("StartDefend");
         if (isAttacking || isDefending || isStartingDefend)
         {
-            BattleOver();
+            Debug.Log("battle over here 3");
+
+            // BattleOver();
             return;
         }
 
@@ -119,6 +127,8 @@ public class AttackFlowController : MonoBehaviour
 
     private IEnumerator StartDefendDelayed()
     {
+        Debug.Log("StartDefendDelayed");
+
         yield return new WaitForSeconds(0.3f);
 
         TimingBarCanvas.SetActive(false);
@@ -131,6 +141,7 @@ public class AttackFlowController : MonoBehaviour
 
     public void OnDefendFinished(bool tookDamage = false)
     {
+        Debug.Log("OnDefendFinished");
         timeBar.StopTimer();
 
         for (int i = 0; i < defendList.Length; i++)
@@ -162,6 +173,7 @@ public class AttackFlowController : MonoBehaviour
 
         if (defend_index >= defendList.Length || player.health == 0)
         {
+            Debug.Log("battle over here 1");
             BattleOver();
             return;
         }
@@ -179,6 +191,7 @@ public class AttackFlowController : MonoBehaviour
 
     void BattleOver()
     {
+        Debug.Log("BattleOver");
         PlayerController.Instance.OnBattleWon();
     }
 
@@ -235,10 +248,10 @@ public class AttackFlowController : MonoBehaviour
     }
 
 
-    // bribe logic
-    void bribeAccepted()
-    {
+    // // bribe logic
+    // void bribeAccepted()
+    // {
 
-    }
+    // }
 
 }
