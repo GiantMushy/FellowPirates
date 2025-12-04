@@ -12,15 +12,16 @@ TagManager:
   - ShallowWater
   - HealthPickup
   - GoldPickup
+  - BulletSpawner
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Sprites
   - Water
   - UI
   - IslandLayer
-  - 
+  - OverlayLayer
   - 
   - 
   - 
