@@ -299,6 +299,14 @@ public class PlayerController : MonoBehaviour
         }
         UpdateSprite();
         UpdateHeartsUI();
+
+        if (health <= 0)
+        {
+            GetComponent<PlayerRespawn>().Respawn();
+            health = 3;
+            UpdateHeartsUI();
+            UpdateSprite();
+        }
     }
     public void GainHealth()
     {
@@ -390,7 +398,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void RestartLevel()
-    {   
+    {
         Debug.Log("RestartLevel BUTTON pressed");
         Time.timeScale = 1f;
         SceneManager.LoadScene("Alpha_Test_Level");
@@ -398,7 +406,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void GoToMainMenu()
-    {   
+    {
         Debug.Log("GoToMainMenu BUTTON pressed");
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
@@ -553,7 +561,7 @@ public class PlayerController : MonoBehaviour
 
         //if (scene.name == "Alpha_Test_Level")
         //{
-          //  ResetPlayerState();
+        //  ResetPlayerState();
         //}
         //else
 
