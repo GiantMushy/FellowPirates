@@ -24,6 +24,14 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI goldText;
     [SerializeField] private AudioClip goldPickupSound;
 
+    // Victory Panel
+    public GameObject victoryPanel;
+
+    // Player start position
+    private Vector3 startPosition;
+    private Quaternion startRotation;
+
+
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
@@ -68,11 +76,34 @@ public class PlayerController : MonoBehaviour
         if (spriteRenderer == null)
             Debug.LogError("PlayerController requires a SpriteRenderer component!");
 
+
+        // Save current position/rotation as spawn
+        startPosition = transform.position;
+        startRotation = transform.rotation;
+
+        ResetPlayerState();
+    }
+
+    private void ResetPlayerState()
+    {
+        // Position + rotation
+        transform.position = startPosition;
+        transform.rotation = startRotation;
+
+        // Core stats
+        health = maxHealth;
+        healthInventory = 0;
+        goldCoins = 0;
+
+        // Update visuals/UI
         UpdateSprite();
-        UpdateGoldUI();
         UpdateHeartsUI();
         UpdateHealthItemUI();
+        UpdateGoldUI();
+
+        shipController.EnableControl();
     }
+
 
     void Update()
     {
@@ -115,10 +146,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (tag == "Finish")
         {
-            int currScene = SceneManager.GetActiveScene().buildIndex + 1;
-            if (currScene >= SceneManager.sceneCountInBuildSettings)
-                currScene = 0; // Loop back to main menu or first scene
-            SceneManager.LoadScene(currScene);
+            ShowVictoryScreen();
         }
         else if (tag == "HealthPickup")
         {   
@@ -321,6 +349,34 @@ public class PlayerController : MonoBehaviour
         {
             goldText.text = goldCoins.ToString();
         }
+    }
+
+    public void ShowVictoryScreen()
+    {
+        // stop moving, disable controls
+        shipController.Stop();
+        shipController.DisableControl();
+        if (victoryPanel != null)
+        {
+            victoryPanel.SetActive(true);
+        }
+        // Pause world
+        Time.timeScale = 0f;
+    }
+
+    public void RestartLevel()
+    {   
+        Debug.Log("RestartLevel BUTTON pressed");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Alpha_Test_Level");
+        ResetPlayerState();
+    }
+
+    public void GoToMainMenu()
+    {   
+        Debug.Log("GoToMainMenu BUTTON pressed");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
     }
 
     void UpdateSprite()
