@@ -7,7 +7,10 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController Instance { get; private set; }
+    // public static PlayerController Instance { get; private set; }
+    public static PlayerController Instance;
+
+
     public int maxHealth = 3;
     public int health = 3;
     public Sprite fullHealthSprite;
@@ -121,7 +124,7 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(currScene);
         }
         else if (tag == "HealthPickup")
-        {   
+        {
 
             if (health == maxHealth)
             {
@@ -284,11 +287,11 @@ public class PlayerController : MonoBehaviour
     }
 
     public void GainHealthItem()
-        {
-            healthInventory += 1;
-            UpdateHealthItemUI();
-            
-        }
+    {
+        healthInventory += 1;
+        UpdateHealthItemUI();
+
+    }
 
     public void UpdateHealthItemUI()
     {
@@ -296,7 +299,7 @@ public class PlayerController : MonoBehaviour
         {
             healthInventoryText.text = healthInventory.ToString();
         }
-        
+
     }
 
     public void UseHealthItem()

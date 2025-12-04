@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
-
-
+using UnityEngine.UI;
+using TMPro;
 
 public class AttackFlowController : MonoBehaviour
 {
@@ -26,6 +26,20 @@ public class AttackFlowController : MonoBehaviour
     private bool isDefending = false;
     private bool isAttacking = false;
 
+    PlayerController player;
+
+    // Items UI
+    private int maxHealth;
+    private int health;
+    private int healthInventory;
+    private int goldCoins;
+
+    public Sprite fullHealthSprite;
+    public Sprite damagedSprite;
+    public Sprite heavilyDamagedSprite;
+    public Image[] heartImages;
+    public TextMeshProUGUI healthInventoryText;
+    public TextMeshProUGUI goldText;
 
 
     private void Awake()
@@ -42,6 +56,24 @@ public class AttackFlowController : MonoBehaviour
         {
             defendList[i].SetActive(false);
         }
+    }
+
+    void Start()
+    {
+        player = PlayerController.Instance;
+
+        if (player == null)
+        {
+            Debug.LogError("AttackFlowController: PlayerController.Instance is null!");
+            return;
+        }
+
+        maxHealth = player.maxHealth;
+        health = player.health;
+        healthInventory = player.healthInventory;
+        goldCoins = player.goldCoins;
+
+        RefreshItemsUI();
     }
 
     public void StartAttack()
@@ -87,6 +119,7 @@ public class AttackFlowController : MonoBehaviour
         timeBar.StartTimer();
         StartCoroutine(StartDefendDelayed());
     }
+
 
     private IEnumerator StartDefendDelayed()
     {
@@ -141,5 +174,53 @@ public class AttackFlowController : MonoBehaviour
     {
         PlayerController.Instance.OnBattleWon();
     }
+
+
+    private void RefreshItemsUI()
+    {
+        UpdateHeartsUI();
+        UpdatHealthItemUI();
+        UpdateGoldUI();
+    }
+
+    private void UpdateHeartsUI()
+    {
+        if (heartImages == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < heartImages.Length; i++)
+        {
+            if (heartImages[i] == null)
+            {
+                continue;
+            }
+            bool full = i < health;
+            heartImages[i].color = full ? Color.white : Color.black;
+        }
+    }
+
+    private void UpdatHealthItemUI()
+    {
+        if (healthInventoryText != null)
+        {
+            healthInventoryText.text = healthInventory.ToString();
+        }
+    }
+    private void UpdateGoldUI()
+    {
+        if (goldText != null)
+        {
+            goldText.text = goldCoins.ToString();
+        }
+    }
+
+    // private void DoDamageInFight(int amount)
+    // {
+    //     player.health -= amount;            // change real data
+    //     health = player.health;             // sync local copy
+    //     RefreshItemsUI();                   // update fight UI
+    // }
 
 }
