@@ -160,7 +160,7 @@ public class AttackFlowController : MonoBehaviour
             DoDamageInFight();
         }
 
-        if (defend_index >= defendList.Length)
+        if (defend_index >= defendList.Length || player.health == 0)
         {
             BattleOver();
             return;
