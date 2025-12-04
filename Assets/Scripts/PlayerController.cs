@@ -4,10 +4,10 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
-    // public static PlayerController Instance { get; private set; }
     public static PlayerController Instance;
 
 
@@ -43,8 +43,13 @@ public class PlayerController : MonoBehaviour
     public Vector3 savedCameraOffset;
     public bool hasSavedCameraOffset;
 
+
+
     void Awake()
+
     {
+        Debug.Log($"PlayerController Awake, Instance={Instance}, health={health}, savedHealth=");
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -54,6 +59,20 @@ public class PlayerController : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
+
+        // if (!hasSavedData)
+        // {
+        //     savedHealth = health;
+        //     savedHealthInventory = healthInventory;
+        //     savedGoldCoins = goldCoins;
+        //     hasSavedData = true;
+        // }
+        // else
+        // {
+        //     health = savedHealth;
+        //     healthInventory = savedHealthInventory;
+        //     goldCoins = savedGoldCoins;
+        // }
     }
 
 
@@ -256,7 +275,11 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage()
     {
-        health = (health > 1) ? health - 1 : 3;
+        if (health > 0)
+        {
+            health -= 1;
+        }
+        // SavePersistentData();
         UpdateSprite();
         UpdateHeartsUI();
     }
@@ -265,6 +288,7 @@ public class PlayerController : MonoBehaviour
         if (health < maxHealth)
         {
             health += 1;
+            // SavePersistentData();
             UpdateSprite();
             UpdateHeartsUI();
         }
@@ -289,6 +313,7 @@ public class PlayerController : MonoBehaviour
     public void GainHealthItem()
     {
         healthInventory += 1;
+        // SavePersistentData();
         UpdateHealthItemUI();
 
     }
@@ -308,6 +333,7 @@ public class PlayerController : MonoBehaviour
         {
             healthInventory -= 1;
             GainHealth();
+            // SavePersistentData();
             UpdateHealthItemUI();
         }
     }
@@ -315,6 +341,7 @@ public class PlayerController : MonoBehaviour
     public void GainGold()
     {
         goldCoins += 1;
+        // SavePersistentData();
         UpdateGoldUI();
     }
 
@@ -337,7 +364,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnBattleWon()
     {
-        Debug.Log("Battle won – returning to overworld and destroying enemy");
+        Debug.Log("Battle won, returning to overworld");
 
         if (spriteRenderer != null)
         {
@@ -388,5 +415,73 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    // private IEnumerator ResyncUIAfterSceneLoad()
+    // {
+    //     yield return null;
+
+    //     UpdateHeartsUI();
+    //     UpdateHealthItemUI();
+    //     UpdateGoldUI();
+    //     UpdateSprite();
+    // }
+
+
+    void OnEnable()
+    {
+        Debug.Log($"PlayerController OnEnable, Instance={Instance}, health={health}, savedHealth=");
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        if (Instance == this)
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+
+    // private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    // {
+    //     UpdateHeartsUI();
+    //     UpdateHealthItemUI();
+    //     UpdateGoldUI();
+    //     UpdateSprite();
+    // }
+
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+            StartCoroutine(RebindUIAfterLoad());
+
+        Debug.Log($"[OnSceneLoaded] {scene.name}: health={health}, gold={goldCoins}, inv={healthInventory}");
+
+        // Hearts (if you have a HeartsParent)
+        var heartsParent = GameObject.Find("HeartsParent");
+        if (heartsParent != null)
+        {
+            heartImages = heartsParent.GetComponentsInChildren<Image>(true);
+        }
+
+        // Health inventory text (your actual name!)
+        var healthTextGO = GameObject.Find("HealthItem_UI");
+        if (healthTextGO != null)
+        {
+            healthInventoryText = healthTextGO.GetComponent<TextMeshProUGUI>();
+        }
+
+        // Gold text (your actual name!)
+        var goldTextGO = GameObject.Find("GoldCoin_UI");
+        if (goldTextGO != null)
+        {
+            goldText = goldTextGO.GetComponent<TextMeshProUGUI>();
+        }
+
+        UpdateHeartsUI();
+        UpdateHealthItemUI();
+        UpdateGoldUI();
+        UpdateSprite();
+    }
+
 
 }

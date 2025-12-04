@@ -29,11 +29,6 @@ public class AttackFlowController : MonoBehaviour
     PlayerController player;
 
     // Items UI
-    private int maxHealth;
-    private int health;
-    private int healthInventory;
-    private int goldCoins;
-
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
@@ -67,11 +62,6 @@ public class AttackFlowController : MonoBehaviour
             Debug.LogError("AttackFlowController: PlayerController.Instance is null!");
             return;
         }
-
-        maxHealth = player.maxHealth;
-        health = player.health;
-        healthInventory = player.healthInventory;
-        goldCoins = player.goldCoins;
 
         RefreshItemsUI();
     }
@@ -133,7 +123,7 @@ public class AttackFlowController : MonoBehaviour
     }
 
 
-    public void OnDefendFinished()
+    public void OnDefendFinished(bool tookDamage = false)
     {
         timeBar.StopTimer();
 
@@ -158,6 +148,10 @@ public class AttackFlowController : MonoBehaviour
         }
 
 
+        if (tookDamage)
+        {
+            DoDamageInFight();
+        }
 
         SetButtonsEnabled(true);
     }
@@ -176,8 +170,13 @@ public class AttackFlowController : MonoBehaviour
     }
 
 
+    //  UPDATING THE UI ELEMENTS 
     private void RefreshItemsUI()
     {
+        if (player == null)
+        {
+            return;
+        }
         UpdateHeartsUI();
         UpdatHealthItemUI();
         UpdateGoldUI();
@@ -196,7 +195,7 @@ public class AttackFlowController : MonoBehaviour
             {
                 continue;
             }
-            bool full = i < health;
+            bool full = i < player.health;
             heartImages[i].color = full ? Color.white : Color.black;
         }
     }
@@ -205,22 +204,21 @@ public class AttackFlowController : MonoBehaviour
     {
         if (healthInventoryText != null)
         {
-            healthInventoryText.text = healthInventory.ToString();
+            healthInventoryText.text = player.healthInventory.ToString();
         }
     }
     private void UpdateGoldUI()
     {
         if (goldText != null)
         {
-            goldText.text = goldCoins.ToString();
+            goldText.text = player.goldCoins.ToString();
         }
     }
 
-    // private void DoDamageInFight(int amount)
-    // {
-    //     player.health -= amount;            // change real data
-    //     health = player.health;             // sync local copy
-    //     RefreshItemsUI();                   // update fight UI
-    // }
+    private void DoDamageInFight()
+    {
+        player.TakeDamage();
+        RefreshItemsUI();
+    }
 
 }
