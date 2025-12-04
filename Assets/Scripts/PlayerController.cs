@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         {
             TakeDamage();
             if (health < maxHealth)
-                StartCoroutine(damageTypeController.HandleLandCollision());
+                StartCoroutine(damageTypeController.HandleLandCollision("Land"));
             else
                 StartCoroutine(damageTypeController.HandleRespawn());
         }
@@ -137,8 +137,15 @@ public class PlayerController : MonoBehaviour
                 enemy.StartChasing(transform);
             }
 
+            StartCoroutine(damageTypeController.HandleLandCollision(tag));
+
         }
-        StartCoroutine(damageTypeController.HandleLandCollision());
+
+        else if (tag == "WorldBorders")
+        {
+            StartCoroutine(damageTypeController.HandleLandCollision(tag));
+        }
+
     }
 
     public void TakeDamage()

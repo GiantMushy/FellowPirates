@@ -12,6 +12,7 @@ TagManager:
   - ShallowWater
   - HealthPickup
   - GoldPickup
+  - WorldBorders
   layers:
   - Default
   - TransparentFX
