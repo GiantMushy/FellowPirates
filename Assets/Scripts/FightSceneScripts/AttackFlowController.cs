@@ -69,7 +69,7 @@ public class AttackFlowController : MonoBehaviour
 
     public void StartAttack()
     {
-        if (isAttacking || isDefending || defend_index > 2)
+        if (isAttacking || isDefending)
         {
             BattleOver();
             return;
@@ -102,7 +102,7 @@ public class AttackFlowController : MonoBehaviour
 
     public void StartDefend()
     {
-        if (isAttacking || isDefending || isStartingDefend || defend_index > 2)
+        if (isAttacking || isDefending || isStartingDefend)
         {
             BattleOver();
             return;
@@ -158,6 +158,12 @@ public class AttackFlowController : MonoBehaviour
         if (tookDamage)
         {
             DoDamageInFight();
+        }
+
+        if (defend_index >= defendList.Length)
+        {
+            BattleOver();
+            return;
         }
 
         SetButtonsEnabled(true);

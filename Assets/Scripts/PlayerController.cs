@@ -219,7 +219,10 @@ public class PlayerController : MonoBehaviour
         {
             spriteRenderer.enabled = true;
         }
-        if (shipController != null) shipController.enabled = true;
+        if (shipController != null)
+        {
+            shipController.enabled = true;
+        }
 
 
 
@@ -349,6 +352,7 @@ public class PlayerController : MonoBehaviour
             goldText.text = goldCoins.ToString();
         }
     }
+
     void UpdateSprite()
     {
 
@@ -408,13 +412,9 @@ public class PlayerController : MonoBehaviour
             shipController.SetTurnStarboard(false);
         }
 
-        fleeCooldownUntil = Time.time + 2f;
-
         SceneManager.LoadScene(returnSceneName);
 
         fleeCooldownUntil = Time.time + 2f;
-
-        // StartCoroutine(DestroyEnemyAfterReturn());
     }
 
     private System.Collections.IEnumerator DestroyEnemyAfterReturn()
