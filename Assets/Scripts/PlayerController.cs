@@ -34,7 +34,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private AudioClip healthPickupSound;
 
-
     // Scene switch logic
     private EnemyController currentEnemy;
     private string returnSceneName;
@@ -42,7 +41,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastEnemyPosition;
     public Vector3 savedCameraOffset;
     public bool hasSavedCameraOffset;
-
 
 
     void Awake()
@@ -59,20 +57,6 @@ public class PlayerController : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
-
-        // if (!hasSavedData)
-        // {
-        //     savedHealth = health;
-        //     savedHealthInventory = healthInventory;
-        //     savedGoldCoins = goldCoins;
-        //     hasSavedData = true;
-        // }
-        // else
-        // {
-        //     health = savedHealth;
-        //     healthInventory = savedHealthInventory;
-        //     goldCoins = savedGoldCoins;
-        // }
     }
 
 
@@ -279,7 +263,6 @@ public class PlayerController : MonoBehaviour
         {
             health -= 1;
         }
-        // SavePersistentData();
         UpdateSprite();
         UpdateHeartsUI();
     }
@@ -288,7 +271,6 @@ public class PlayerController : MonoBehaviour
         if (health < maxHealth)
         {
             health += 1;
-            // SavePersistentData();
             UpdateSprite();
             UpdateHeartsUI();
         }
@@ -296,15 +278,25 @@ public class PlayerController : MonoBehaviour
 
     public void UpdateHeartsUI()
     {
-        if (heartImages == null) return;
+        if (heartImages == null)
+        {
+            Debug.LogError("no heart images");
+            return;
+        }
 
         for (int i = 0; i < heartImages.Length; i++)
         {
-            if (heartImages[i] == null) continue;
+            if (heartImages[i] == null)
+            {
+                Debug.LogError("no heart images");
+                continue;
+            }
 
             bool fullHealth = i < health;
 
             heartImages[i].color = fullHealth ? Color.white : Color.black;
+
+            Debug.Log("fullHealth " + fullHealth);
 
         }
 
@@ -341,7 +333,6 @@ public class PlayerController : MonoBehaviour
     public void GainGold()
     {
         goldCoins += 1;
-        // SavePersistentData();
         UpdateGoldUI();
     }
 
@@ -352,13 +343,19 @@ public class PlayerController : MonoBehaviour
             goldText.text = goldCoins.ToString();
         }
     }
-
     void UpdateSprite()
     {
-        if (spriteRenderer == null) return;
-        if (health == 3) spriteRenderer.sprite = fullHealthSprite;
-        else if (health == 2) spriteRenderer.sprite = damagedSprite;
-        else if (health == 1) spriteRenderer.sprite = heavilyDamagedSprite;
+
+        Debug.Log("updating sprite with health: " + health);
+
+        if (spriteRenderer == null)
+        {
+            Debug.Log("not gonna upsate health");
+            return;
+        }
+        if (health == 3) { spriteRenderer.sprite = fullHealthSprite; }
+        else if (health == 2) { spriteRenderer.sprite = damagedSprite; }
+        else if (health == 1) { spriteRenderer.sprite = heavilyDamagedSprite; }
     }
 
 
@@ -416,17 +413,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // private IEnumerator ResyncUIAfterSceneLoad()
-    // {
-    //     yield return null;
-
-    //     UpdateHeartsUI();
-    //     UpdateHealthItemUI();
-    //     UpdateGoldUI();
-    //     UpdateSprite();
-    // }
-
-
     void OnEnable()
     {
         Debug.Log($"PlayerController OnEnable, Instance={Instance}, health={health}, savedHealth=");
@@ -441,46 +427,47 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    // {
-    //     UpdateHeartsUI();
-    //     UpdateHealthItemUI();
-    //     UpdateGoldUI();
-    //     UpdateSprite();
-    // }
-
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-            StartCoroutine(RebindUIAfterLoad());
 
         Debug.Log($"[OnSceneLoaded] {scene.name}: health={health}, gold={goldCoins}, inv={healthInventory}");
 
-        // Hearts (if you have a HeartsParent)
-        var heartsParent = GameObject.Find("HeartsParent");
-        if (heartsParent != null)
+        var itemsCanvas = GameObject.Find("ItemsCanvas");
+        if (itemsCanvas != null)
         {
-            heartImages = heartsParent.GetComponentsInChildren<Image>(true);
+            heartImages = new Image[]
+            {
+        itemsCanvas.transform.Find("Heart_1")?.GetComponent<Image>(),
+        itemsCanvas.transform.Find("Heart_2")?.GetComponent<Image>(),
+        itemsCanvas.transform.Find("Heart_3")?.GetComponent<Image>()
+            };
+
+            Debug.Log("[HUD] Hearts rebound from ItemsCanvas");
+        }
+        else
+        {
+            Debug.LogError("[HUD] ItemsCanvas NOT FOUND");
         }
 
-        // Health inventory text (your actual name!)
+
+
         var healthTextGO = GameObject.Find("HealthItem_UI");
         if (healthTextGO != null)
         {
             healthInventoryText = healthTextGO.GetComponent<TextMeshProUGUI>();
         }
 
-        // Gold text (your actual name!)
         var goldTextGO = GameObject.Find("GoldCoin_UI");
         if (goldTextGO != null)
         {
             goldText = goldTextGO.GetComponent<TextMeshProUGUI>();
         }
 
-        UpdateHeartsUI();
+
         UpdateHealthItemUI();
         UpdateGoldUI();
         UpdateSprite();
+        UpdateHeartsUI();
     }
 
 
