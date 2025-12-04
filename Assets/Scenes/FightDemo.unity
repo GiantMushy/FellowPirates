@@ -1821,6 +1821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BribeButtonController
   bribeButton: {fileID: 1589418774}
+  flow: {fileID: 1128360401}
 --- !u!1 &1350859425
 GameObject:
   m_ObjectHideFlags: 0

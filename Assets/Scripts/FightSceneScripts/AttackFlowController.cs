@@ -171,7 +171,7 @@ public class AttackFlowController : MonoBehaviour
 
 
     //  UPDATING THE UI ELEMENTS 
-    private void RefreshItemsUI()
+    public void RefreshItemsUI()
     {
         if (player == null)
         {
@@ -219,6 +219,13 @@ public class AttackFlowController : MonoBehaviour
     {
         player.TakeDamage();
         RefreshItemsUI();
+    }
+
+
+    // bribe logic
+    void bribeAccepted()
+    {
+        
     }
 
 }

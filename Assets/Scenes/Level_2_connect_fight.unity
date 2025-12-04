@@ -630,6 +630,7 @@ MonoBehaviour:
   healthPickupSound: {fileID: 8300000, guid: fdc7e9fb2c52c442ab3908fb01547091, type: 3}
   savedCameraOffset: {x: 0, y: 0, z: 0}
   hasSavedCameraOffset: 0
+  enemyBribeCost: 0
 --- !u!212 &696252219
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -62350,6 +62351,7 @@ MonoBehaviour:
   chase_delay: 3
   turn_deadzone: 5
   turn_release_zone: 2
+  bribeCost: 1
 --- !u!114 &7560258830155139610
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI healthInventoryText;
 
     // Gold amount
-    public int goldCoins;
+    public int goldCoins = 0;
     public TextMeshProUGUI goldText;
     [SerializeField] private AudioClip goldPickupSound;
 
@@ -41,6 +41,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastEnemyPosition;
     public Vector3 savedCameraOffset;
     public bool hasSavedCameraOffset;
+
+    // for bribe
+    public int enemyBribeCost; // taken from colliding enemy
 
 
     void Awake()
@@ -187,7 +190,11 @@ public class PlayerController : MonoBehaviour
             if (currentEnemy != null)
             {
                 var enemyRenderer = currentEnemy.GetComponent<SpriteRenderer>();
-                if (enemyRenderer != null) enemyRenderer.enabled = false;
+                enemyBribeCost = currentEnemy.bribeCost;
+                if (enemyRenderer != null)
+                {
+                    enemyRenderer.enabled = false;
+                }
             }
             spriteRenderer.enabled = false;
             SceneManager.LoadScene("FightDemo");
@@ -377,6 +384,33 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(returnSceneName);
 
         StartCoroutine(DestroyEnemyAfterReturn());
+    }
+
+    public void OnBribeAccepted()
+    {
+        Debug.Log("Bribe accepted, returning to overworld");
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+        if (shipController != null)
+        {
+            shipController.EnableControl();
+            shipController.Stop();
+            shipController.SetAccelerate(false);
+            shipController.SetDecelerate(false);
+            shipController.SetTurnPort(false);
+            shipController.SetTurnStarboard(false);
+        }
+
+        fleeCooldownUntil = Time.time + 2f;
+
+        SceneManager.LoadScene(returnSceneName);
+
+        fleeCooldownUntil = Time.time + 2f;
+
+        // StartCoroutine(DestroyEnemyAfterReturn());
     }
 
     private System.Collections.IEnumerator DestroyEnemyAfterReturn()
