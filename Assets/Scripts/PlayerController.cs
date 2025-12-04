@@ -254,9 +254,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
-
     public void TakeDamage()
     {
         if (health > 0)
@@ -305,7 +302,6 @@ public class PlayerController : MonoBehaviour
     public void GainHealthItem()
     {
         healthInventory += 1;
-        // SavePersistentData();
         UpdateHealthItemUI();
 
     }
@@ -325,7 +321,6 @@ public class PlayerController : MonoBehaviour
         {
             healthInventory -= 1;
             GainHealth();
-            // SavePersistentData();
             UpdateHealthItemUI();
         }
     }

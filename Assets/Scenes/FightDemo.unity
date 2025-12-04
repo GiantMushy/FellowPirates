@@ -1866,6 +1866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemsButtonController
   itemsButton: {fileID: 672208298}
+  attackButton: {fileID: 24634395}
 --- !u!1 &1589418772
 GameObject:
   m_ObjectHideFlags: 0

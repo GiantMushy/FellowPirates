@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 public class ItemsButtonController : MonoBehaviour
 {
     [SerializeField] private Button itemsButton;
+    [SerializeField] private Button attackButton;
     PlayerController player;
 
     void Start()
@@ -19,12 +20,20 @@ public class ItemsButtonController : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
+
+        if (player == null)
+        {
+            return;
+        }
 
 
         if (player.healthInventory < 0 || player.health > 2)
         {
             itemsButton.interactable = false;
+        }
+        else
+        {
+            itemsButton.interactable = true;
         }
     }
 
@@ -34,5 +43,12 @@ public class ItemsButtonController : MonoBehaviour
         Debug.Log("Items button pressed");
         EventSystem.current.SetSelectedGameObject(itemsButton.gameObject);
 
+        player.UseHealthItem();
+
+
+        if (player.healthInventory < 0 || player.health > 2)
+        {
+            EventSystem.current.SetSelectedGameObject(attackButton.gameObject);
+        }
     }
 }
