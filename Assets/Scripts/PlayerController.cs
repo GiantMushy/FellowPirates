@@ -199,7 +199,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             spriteRenderer.enabled = false;
-            SceneManager.LoadScene("FightDemo_Eva");
+            SceneManager.LoadScene("FightDemo");
 
             return;
         }
