@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance;
 
+    public PauseMenu pauseMenu;
 
     public int maxHealth = 3;
     public int health = 3;
@@ -79,6 +80,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        victoryPanel.SetActive(false);
         shipController = GetComponent<ShipController>();
         if (shipController == null)
             Debug.LogError("PlayerController requires a ShipController component!");
@@ -124,7 +126,10 @@ public class PlayerController : MonoBehaviour
     {
         var keyboard = Keyboard.current;
         if (keyboard.escapeKey.wasPressedThisFrame)
-            SceneManager.LoadScene("MainMenu");
+            if (pauseMenu != null)
+        {
+            pauseMenu.TogglePause();
+        }
 
         if (shipController != null)
         {
@@ -567,11 +572,17 @@ public class PlayerController : MonoBehaviour
             goldText = goldTextGO.GetComponent<TextMeshProUGUI>();
         }
 
-        //if (scene.name == "Alpha_Test_Level")
-        //{
-        //  ResetPlayerState();
-        //}
-        //else
+        var victoryGO = GameObject.Find("Victory_Panel");
+        if (victoryGO != null)
+        {
+            victoryPanel = victoryGO;
+            victoryPanel.SetActive(false);
+            Debug.Log("[HUD] Victory_Panel rebound");
+        }
+        else
+        {
+            Debug.LogWarning("[HUD] Victory_Panel NOT FOUND");
+        }
 
         if (scene.name != "FightDemo")
         {
