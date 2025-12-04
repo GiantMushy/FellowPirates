@@ -62,7 +62,6 @@ public class PlayerController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-
     void Start()
     {
         shipController = GetComponent<ShipController>();
@@ -106,7 +105,10 @@ public class PlayerController : MonoBehaviour
                 SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
                 StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
             }
-            else return;
+            else
+            {
+                return;
+            }
         }
     }
 
@@ -200,7 +202,6 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene("FightDemo");
 
             return;
-
         }
 
         else if (tag == "WorldBorders")
@@ -214,8 +215,14 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("StartChase called from Flee");
 
-        if (spriteRenderer != null) spriteRenderer.enabled = true;
-        if (shipController != null) shipController.enabled = true;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+        if (shipController != null)
+        {
+            shipController.enabled = true;
+        }
 
 
 
@@ -345,6 +352,7 @@ public class PlayerController : MonoBehaviour
             goldText.text = goldCoins.ToString();
         }
     }
+
     void UpdateSprite()
     {
 
@@ -404,13 +412,9 @@ public class PlayerController : MonoBehaviour
             shipController.SetTurnStarboard(false);
         }
 
-        fleeCooldownUntil = Time.time + 2f;
-
         SceneManager.LoadScene(returnSceneName);
 
         fleeCooldownUntil = Time.time + 2f;
-
-        // StartCoroutine(DestroyEnemyAfterReturn());
     }
 
     private System.Collections.IEnumerator DestroyEnemyAfterReturn()
