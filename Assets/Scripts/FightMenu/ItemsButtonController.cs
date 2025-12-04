@@ -4,6 +4,30 @@ using UnityEngine.EventSystems;
 public class ItemsButtonController : MonoBehaviour
 {
     [SerializeField] private Button itemsButton;
+    PlayerController player;
+
+    void Start()
+    {
+        player = PlayerController.Instance;
+
+        if (player == null)
+        {
+            Debug.LogError("ItemsButtonController: PlayerController.Instance is null!");
+            return;
+        }
+    }
+
+    void Update()
+    {
+        if (player == null) return;
+
+
+        if (player.healthInventory < 0 || player.health > 2)
+        {
+            itemsButton.interactable = false;
+        }
+    }
+
 
     public void Items()
     {

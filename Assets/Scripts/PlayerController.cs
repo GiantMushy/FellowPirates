@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     public Image[] heartImages;
 
     // Health invenentory
-    public int healthInventory;
+    public int healthInventory = 0;
     public TextMeshProUGUI healthInventoryText;
 
     // Gold amount
