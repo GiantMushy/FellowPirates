@@ -5,7 +5,7 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene("Level_1");
+        SceneManager.LoadScene("Alpha_Test_Level");
     }
     public void QuitGame()
     {

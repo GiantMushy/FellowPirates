@@ -27,6 +27,14 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI goldText;
     [SerializeField] private AudioClip goldPickupSound;
 
+    // Victory Panel
+    public GameObject victoryPanel;
+
+    // Player start position
+    private Vector3 startPosition;
+    private Quaternion startRotation;
+
+
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
@@ -45,6 +53,8 @@ public class PlayerController : MonoBehaviour
     // for bribe
     public int enemyBribeCost; // taken from colliding enemy
 
+    public GameObject levelObjects;
+
 
     void Awake()
 
@@ -62,6 +72,7 @@ public class PlayerController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+
     void Start()
     {
         shipController = GetComponent<ShipController>();
@@ -76,11 +87,34 @@ public class PlayerController : MonoBehaviour
         if (spriteRenderer == null)
             Debug.LogError("PlayerController requires a SpriteRenderer component!");
 
+
+        // Save current position/rotation as spawn
+        startPosition = transform.position;
+        startRotation = transform.rotation;
+
+        ResetPlayerState();
+    }
+
+    private void ResetPlayerState()
+    {
+        // Position + rotation
+        transform.position = startPosition;
+        transform.rotation = startRotation;
+
+        // Core stats
+        health = maxHealth;
+        healthInventory = 0;
+        goldCoins = 0;
+
+        // Update visuals/UI
         UpdateSprite();
-        UpdateGoldUI();
         UpdateHeartsUI();
         UpdateHealthItemUI();
+        UpdateGoldUI();
+
+        shipController.EnableControl();
     }
+
 
     void Update()
     {
@@ -105,10 +139,7 @@ public class PlayerController : MonoBehaviour
                 SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
                 StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
             }
-            else
-            {
-                return;
-            }
+            else return;
         }
     }
 
@@ -126,10 +157,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (tag == "Finish")
         {
-            int currScene = SceneManager.GetActiveScene().buildIndex + 1;
-            if (currScene >= SceneManager.sceneCountInBuildSettings)
-                currScene = 0; // Loop back to main menu or first scene
-            SceneManager.LoadScene(currScene);
+            ShowVictoryScreen();
         }
         else if (tag == "HealthPickup")
         {
@@ -202,6 +230,7 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene("FightDemo");
 
             return;
+
         }
 
         else if (tag == "WorldBorders")
@@ -215,14 +244,8 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("StartChase called from Flee");
 
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = true;
-        }
-        if (shipController != null)
-        {
-            shipController.enabled = true;
-        }
+        if (spriteRenderer != null) spriteRenderer.enabled = true;
+        if (shipController != null) shipController.enabled = true;
 
 
 
@@ -353,6 +376,34 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void ShowVictoryScreen()
+    {
+        // stop moving, disable controls
+        shipController.Stop();
+        shipController.DisableControl();
+        if (victoryPanel != null)
+        {
+            victoryPanel.SetActive(true);
+        }
+        // Pause world
+        Time.timeScale = 0f;
+    }
+
+    public void RestartLevel()
+    {   
+        Debug.Log("RestartLevel BUTTON pressed");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Alpha_Test_Level");
+
+    }
+
+    public void GoToMainMenu()
+    {   
+        Debug.Log("GoToMainMenu BUTTON pressed");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
+    }
+
     void UpdateSprite()
     {
 
@@ -412,9 +463,13 @@ public class PlayerController : MonoBehaviour
             shipController.SetTurnStarboard(false);
         }
 
+        fleeCooldownUntil = Time.time + 2f;
+
         SceneManager.LoadScene(returnSceneName);
 
         fleeCooldownUntil = Time.time + 2f;
+
+        // StartCoroutine(DestroyEnemyAfterReturn());
     }
 
     private System.Collections.IEnumerator DestroyEnemyAfterReturn()
@@ -470,9 +525,9 @@ public class PlayerController : MonoBehaviour
         {
             heartImages = new Image[]
             {
-        itemsCanvas.transform.Find("Heart_1")?.GetComponent<Image>(),
-        itemsCanvas.transform.Find("Heart_2")?.GetComponent<Image>(),
-        itemsCanvas.transform.Find("Heart_3")?.GetComponent<Image>()
+                itemsCanvas.transform.Find("Heart_1")?.GetComponent<Image>(),
+                itemsCanvas.transform.Find("Heart_2")?.GetComponent<Image>(),
+                itemsCanvas.transform.Find("Heart_3")?.GetComponent<Image>()
             };
 
             Debug.Log("[HUD] Hearts rebound from ItemsCanvas");
@@ -496,6 +551,11 @@ public class PlayerController : MonoBehaviour
             goldText = goldTextGO.GetComponent<TextMeshProUGUI>();
         }
 
+        //if (scene.name == "Alpha_Test_Level")
+        //{
+          //  ResetPlayerState();
+        //}
+        //else
 
         UpdateHealthItemUI();
         UpdateGoldUI();
