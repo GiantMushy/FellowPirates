@@ -7,11 +7,8 @@ public class BribeButtonController : MonoBehaviour
 {
     [SerializeField] private Button bribeButton;
     public AttackFlowController flow;
-
     PlayerController player;
-
     private int bribeCost;
-
 
     void Start()
     {

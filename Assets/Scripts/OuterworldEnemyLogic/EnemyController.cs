@@ -91,6 +91,17 @@ public class EnemyController : MonoBehaviour
             chasing = false;
             Debug.Log("Enemy did not find a path to player");
         }
+
+        float timer = 0f;
+        float chaseTime = 15f;
+        while (timer < chaseTime)
+        {
+            timer += Time.deltaTime;
+            Debug.Log("timer = " + timer);
+            yield return true;
+        }
+        Debug.Log("stopping chase from timer");
+        StopChase();
     }
 
     private void StopChase()
@@ -102,6 +113,7 @@ public class EnemyController : MonoBehaviour
         shipController.SetTurnPort(false);
         shipController.SetTurnStarboard(false);
     }
+
     private void FollowPath()
     {
         if (path == null || path_index >= path.Count)

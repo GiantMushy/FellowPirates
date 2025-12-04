@@ -27,7 +27,7 @@ public class ItemsButtonController : MonoBehaviour
         }
 
 
-        if (player.healthInventory < 0 || player.health > 2)
+        if (player.healthInventory <= 0 || player.health > 2)
         {
             itemsButton.interactable = false;
         }

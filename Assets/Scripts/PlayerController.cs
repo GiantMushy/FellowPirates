@@ -53,6 +53,8 @@ public class PlayerController : MonoBehaviour
     // for bribe
     public int enemyBribeCost; // taken from colliding enemy
 
+    public GameObject levelObjects;
+
 
     void Awake()
 
@@ -392,7 +394,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("RestartLevel BUTTON pressed");
         Time.timeScale = 1f;
         SceneManager.LoadScene("Alpha_Test_Level");
-        ResetPlayerState();
+
     }
 
     public void GoToMainMenu()
@@ -523,9 +525,9 @@ public class PlayerController : MonoBehaviour
         {
             heartImages = new Image[]
             {
-        itemsCanvas.transform.Find("Heart_1")?.GetComponent<Image>(),
-        itemsCanvas.transform.Find("Heart_2")?.GetComponent<Image>(),
-        itemsCanvas.transform.Find("Heart_3")?.GetComponent<Image>()
+                itemsCanvas.transform.Find("Heart_1")?.GetComponent<Image>(),
+                itemsCanvas.transform.Find("Heart_2")?.GetComponent<Image>(),
+                itemsCanvas.transform.Find("Heart_3")?.GetComponent<Image>()
             };
 
             Debug.Log("[HUD] Hearts rebound from ItemsCanvas");
@@ -549,6 +551,11 @@ public class PlayerController : MonoBehaviour
             goldText = goldTextGO.GetComponent<TextMeshProUGUI>();
         }
 
+        //if (scene.name == "Alpha_Test_Level")
+        //{
+          //  ResetPlayerState();
+        //}
+        //else
 
         UpdateHealthItemUI();
         UpdateGoldUI();
