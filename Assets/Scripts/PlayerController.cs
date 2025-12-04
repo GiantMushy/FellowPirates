@@ -56,6 +56,10 @@ public class PlayerController : MonoBehaviour
     public GameObject levelObjects;
 
 
+    private Vector3 preBattlePosition;
+    private bool returningFromBattle = false;
+
+
     void Awake()
 
     {
@@ -92,7 +96,7 @@ public class PlayerController : MonoBehaviour
         startPosition = transform.position;
         startRotation = transform.rotation;
 
-        ResetPlayerState();
+        // ResetPlayerState();
     }
 
     private void ResetPlayerState()
@@ -206,6 +210,10 @@ public class PlayerController : MonoBehaviour
             lastEnemyPosition = currentEnemy.transform.position;
 
             returnSceneName = SceneManager.GetActiveScene().name;
+
+            preBattlePosition = transform.position;
+            returningFromBattle = true;
+
             // if (spriteRenderer != null) spriteRenderer.enabled = false;
             if (shipController != null)
             {
@@ -580,6 +588,21 @@ public class PlayerController : MonoBehaviour
                 shipController.enabled = true;
                 shipController.EnableControl();
             }
+
+
+            if (returningFromBattle)
+            {
+                Debug.Log($"Restoring pre-battle position: {preBattlePosition}");
+                transform.position = preBattlePosition;
+
+                if (hasSavedCameraOffset && Camera.main != null)
+                {
+                    Camera.main.transform.position = transform.position + savedCameraOffset;
+                }
+
+                returningFromBattle = false;
+            }
+
         }
 
         UpdateHealthItemUI();
