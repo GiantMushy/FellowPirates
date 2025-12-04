@@ -17,7 +17,7 @@ public class DamageTypeController : MonoBehaviour
         shipController = GetComponent<ShipController>();
     }
 
-    public IEnumerator HandleLandCollision()
+    public IEnumerator HandleLandCollision(string collisionTag)
     {
         float knockbackSpeed;
         float knockbackTimer = 0f;
@@ -36,10 +36,14 @@ public class DamageTypeController : MonoBehaviour
             transform.Translate(knockbackDirection * knockbackSpeed * Time.deltaTime, Space.World);
             knockbackTimer += Time.deltaTime;
             yield return null;
+        
         }
 
+        bool blink = collisionTag != "WorldBorders";
+
         // Blink effect
-        if (spriteRenderer != null)
+        // Not blink when colliding with world
+        if (blink && spriteRenderer != null)
             yield return StartCoroutine(BlinkEffect());
 
         shipController.EnableControl();

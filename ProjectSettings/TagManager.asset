@@ -12,6 +12,7 @@ TagManager:
   - ShallowWater
   - HealthPickup
   - GoldPickup
+  - WorldBorders
   - BulletSpawner
   layers:
   - Default
