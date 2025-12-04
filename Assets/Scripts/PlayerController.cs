@@ -4,10 +4,13 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController Instance { get; private set; }
+    public static PlayerController Instance;
+
+
     public int maxHealth = 3;
     public int health = 3;
     public Sprite fullHealthSprite;
@@ -16,11 +19,11 @@ public class PlayerController : MonoBehaviour
     public Image[] heartImages;
 
     // Health invenentory
-    public int healthInventory;
+    public int healthInventory = 0;
     public TextMeshProUGUI healthInventoryText;
 
     // Gold amount
-    public int goldCoins;
+    public int goldCoins = 0;
     public TextMeshProUGUI goldText;
     [SerializeField] private AudioClip goldPickupSound;
 
@@ -31,7 +34,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private AudioClip healthPickupSound;
 
-
     // Scene switch logic
     private EnemyController currentEnemy;
     private string returnSceneName;
@@ -40,8 +42,15 @@ public class PlayerController : MonoBehaviour
     public Vector3 savedCameraOffset;
     public bool hasSavedCameraOffset;
 
+    // for bribe
+    public int enemyBribeCost; // taken from colliding enemy
+
+
     void Awake()
+
     {
+        Debug.Log($"PlayerController Awake, Instance={Instance}, health={health}, savedHealth=");
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -121,7 +130,7 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(currScene);
         }
         else if (tag == "HealthPickup")
-        {   
+        {
 
             if (health == maxHealth)
             {
@@ -181,7 +190,11 @@ public class PlayerController : MonoBehaviour
             if (currentEnemy != null)
             {
                 var enemyRenderer = currentEnemy.GetComponent<SpriteRenderer>();
-                if (enemyRenderer != null) enemyRenderer.enabled = false;
+                enemyBribeCost = currentEnemy.bribeCost;
+                if (enemyRenderer != null)
+                {
+                    enemyRenderer.enabled = false;
+                }
             }
             spriteRenderer.enabled = false;
             SceneManager.LoadScene("FightDemo");
@@ -248,12 +261,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
-
     public void TakeDamage()
     {
-        health = (health > 1) ? health - 1 : 3;
+        if (health > 0)
+        {
+            health -= 1;
+        }
         UpdateSprite();
         UpdateHeartsUI();
     }
@@ -269,26 +282,36 @@ public class PlayerController : MonoBehaviour
 
     public void UpdateHeartsUI()
     {
-        if (heartImages == null) return;
+        if (heartImages == null)
+        {
+            Debug.LogError("no heart images");
+            return;
+        }
 
         for (int i = 0; i < heartImages.Length; i++)
         {
-            if (heartImages[i] == null) continue;
+            if (heartImages[i] == null)
+            {
+                Debug.LogError("no heart images");
+                continue;
+            }
 
             bool fullHealth = i < health;
 
             heartImages[i].color = fullHealth ? Color.white : Color.black;
+
+            Debug.Log("fullHealth " + fullHealth);
 
         }
 
     }
 
     public void GainHealthItem()
-        {
-            healthInventory += 1;
-            UpdateHealthItemUI();
-            
-        }
+    {
+        healthInventory += 1;
+        UpdateHealthItemUI();
+
+    }
 
     public void UpdateHealthItemUI()
     {
@@ -296,7 +319,7 @@ public class PlayerController : MonoBehaviour
         {
             healthInventoryText.text = healthInventory.ToString();
         }
-        
+
     }
 
     public void UseHealthItem()
@@ -322,19 +345,25 @@ public class PlayerController : MonoBehaviour
             goldText.text = goldCoins.ToString();
         }
     }
-
     void UpdateSprite()
     {
-        if (spriteRenderer == null) return;
-        if (health == 3) spriteRenderer.sprite = fullHealthSprite;
-        else if (health == 2) spriteRenderer.sprite = damagedSprite;
-        else if (health == 1) spriteRenderer.sprite = heavilyDamagedSprite;
+
+        Debug.Log("updating sprite with health: " + health);
+
+        if (spriteRenderer == null)
+        {
+            Debug.Log("not gonna upsate health");
+            return;
+        }
+        if (health == 3) { spriteRenderer.sprite = fullHealthSprite; }
+        else if (health == 2) { spriteRenderer.sprite = damagedSprite; }
+        else if (health == 1) { spriteRenderer.sprite = heavilyDamagedSprite; }
     }
 
 
     public void OnBattleWon()
     {
-        Debug.Log("Battle won – returning to overworld and destroying enemy");
+        Debug.Log("Battle won, returning to overworld");
 
         if (spriteRenderer != null)
         {
@@ -355,6 +384,33 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(returnSceneName);
 
         StartCoroutine(DestroyEnemyAfterReturn());
+    }
+
+    public void OnBribeAccepted()
+    {
+        Debug.Log("Bribe accepted, returning to overworld");
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+        if (shipController != null)
+        {
+            shipController.EnableControl();
+            shipController.Stop();
+            shipController.SetAccelerate(false);
+            shipController.SetDecelerate(false);
+            shipController.SetTurnPort(false);
+            shipController.SetTurnStarboard(false);
+        }
+
+        fleeCooldownUntil = Time.time + 2f;
+
+        SceneManager.LoadScene(returnSceneName);
+
+        fleeCooldownUntil = Time.time + 2f;
+
+        // StartCoroutine(DestroyEnemyAfterReturn());
     }
 
     private System.Collections.IEnumerator DestroyEnemyAfterReturn()
@@ -385,5 +441,63 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    void OnEnable()
+    {
+        Debug.Log($"PlayerController OnEnable, Instance={Instance}, health={health}, savedHealth=");
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        if (Instance == this)
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+
+        Debug.Log($"[OnSceneLoaded] {scene.name}: health={health}, gold={goldCoins}, inv={healthInventory}");
+
+        var itemsCanvas = GameObject.Find("ItemsCanvas");
+        if (itemsCanvas != null)
+        {
+            heartImages = new Image[]
+            {
+        itemsCanvas.transform.Find("Heart_1")?.GetComponent<Image>(),
+        itemsCanvas.transform.Find("Heart_2")?.GetComponent<Image>(),
+        itemsCanvas.transform.Find("Heart_3")?.GetComponent<Image>()
+            };
+
+            Debug.Log("[HUD] Hearts rebound from ItemsCanvas");
+        }
+        else
+        {
+            Debug.LogError("[HUD] ItemsCanvas NOT FOUND");
+        }
+
+
+
+        var healthTextGO = GameObject.Find("HealthItem_UI");
+        if (healthTextGO != null)
+        {
+            healthInventoryText = healthTextGO.GetComponent<TextMeshProUGUI>();
+        }
+
+        var goldTextGO = GameObject.Find("GoldCoin_UI");
+        if (goldTextGO != null)
+        {
+            goldText = goldTextGO.GetComponent<TextMeshProUGUI>();
+        }
+
+
+        UpdateHealthItemUI();
+        UpdateGoldUI();
+        UpdateSprite();
+        UpdateHeartsUI();
+    }
+
 
 }

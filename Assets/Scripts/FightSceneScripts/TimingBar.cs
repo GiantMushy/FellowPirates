@@ -12,8 +12,6 @@ public class TimingBar : MonoBehaviour
     public int maxScore = 100;
 
     private float currPos;
-    bool hasPressed = false;
-
     private SpriteRenderer barSR;
     private SpriteRenderer redSR;
 
@@ -107,7 +105,6 @@ public class TimingBar : MonoBehaviour
         Debug.Log("started timing bar");
         flow = f;
         currPos = 0f;
-        hasPressed = false;
         speed = 1.5f;
     }
 

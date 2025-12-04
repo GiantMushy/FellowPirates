@@ -34,7 +34,7 @@ public class PlayerFightController : MonoBehaviour
 
         if (timeBar.IsTimeOver)
         {
-            StartCoroutine(FlashAnimation(damageSprite, wonHitColor, wonClearColor));
+            StartCoroutine(FlashAnimation(damageSprite, wonHitColor, wonClearColor, false));
 
             Debug.Log("YOU WOOON!!");
             return;
@@ -93,10 +93,10 @@ public class PlayerFightController : MonoBehaviour
         gameOver = true;
         StopAllCoroutines();
 
-        StartCoroutine(FlashAnimation(damageSprite, damageHitColor, damageClearColor));
+        StartCoroutine(FlashAnimation(damageSprite, damageHitColor, damageClearColor, true));
     }
 
-    private IEnumerator FlashAnimation(SpriteRenderer sprite, Color hitColor, Color clearColor)
+    private IEnumerator FlashAnimation(SpriteRenderer sprite, Color hitColor, Color clearColor, bool tookDamage)
     {
 
         sprite.color = hitColor;
@@ -111,7 +111,7 @@ public class PlayerFightController : MonoBehaviour
 
         sprite.color = clearColor;
 
-        flow.OnDefendFinished();
+        flow.OnDefendFinished(tookDamage);
 
     }
 
