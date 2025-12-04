@@ -206,7 +206,7 @@ public class PlayerController : MonoBehaviour
             lastEnemyPosition = currentEnemy.transform.position;
 
             returnSceneName = SceneManager.GetActiveScene().name;
-            if (spriteRenderer != null) spriteRenderer.enabled = false;
+            // if (spriteRenderer != null) spriteRenderer.enabled = false;
             if (shipController != null)
             {
                 shipController.EnableControl();
@@ -564,6 +564,23 @@ public class PlayerController : MonoBehaviour
         //  ResetPlayerState();
         //}
         //else
+
+        if (scene.name != "FightDemo")
+        {
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.enabled = true;
+                var c = spriteRenderer.color;
+                c.a = 1f;
+                spriteRenderer.color = c;
+            }
+
+            if (shipController != null)
+            {
+                shipController.enabled = true;
+                shipController.EnableControl();
+            }
+        }
 
         UpdateHealthItemUI();
         UpdateGoldUI();
