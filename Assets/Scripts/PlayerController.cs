@@ -127,9 +127,9 @@ public class PlayerController : MonoBehaviour
         var keyboard = Keyboard.current;
         if (keyboard.escapeKey.wasPressedThisFrame)
             if (pauseMenu != null)
-        {
-            pauseMenu.TogglePause();
-        }
+            {
+                pauseMenu.TogglePause();
+            }
 
         if (shipController != null)
         {

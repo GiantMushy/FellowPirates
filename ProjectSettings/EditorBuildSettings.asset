@@ -32,6 +32,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FightDemo_Eva.unity
     guid: c98be2ba24f5945f2ad469f27e68f775
+  - enabled: 1
+    path: Assets/Scenes/FightDemo__EVA.unity
+    guid: 0a1184ad70dca4b4db3d2bc5e0edb5d8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
