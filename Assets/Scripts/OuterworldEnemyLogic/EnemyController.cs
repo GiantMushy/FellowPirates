@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using TMPro;
 
 public class EnemyController : MonoBehaviour
 {
@@ -16,7 +17,6 @@ public class EnemyController : MonoBehaviour
     public float chase_delay = 3f;
     private bool waiting_to_chase = false;
 
-
     // next 3 are to get rid of jitter
     // where turning last
     // 1 = turning port
@@ -26,15 +26,22 @@ public class EnemyController : MonoBehaviour
     public float turn_deadzone = 5f; // minimum angle off needed before changing angle
     public float turn_release_zone = 2f; // stop turning 
 
+    public ChaseTime chaseTimeController;
 
     // for bribe
     public int bribeCost = 1;
+
 
     void Start()
     {
         shipController = GetComponent<ShipController>();
         if (shipController == null)
+        {
             Debug.LogError("EnemyController requires a ShipController component!");
+        }
+
+        // chaseTime.SetActive(false);
+        chaseTimeController.timeWait = chase_delay;
     }
 
     void Update()
@@ -61,7 +68,12 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator Chase()
     {
+        chaseTimeController.startChaseCountodwn();
+
+
         yield return new WaitForSeconds(chase_delay);
+
+        chaseTimeController.StartChase();
 
         waiting_to_chase = false;
 
@@ -228,6 +240,5 @@ public class EnemyController : MonoBehaviour
             }
         }
     }
-
 }
 
