@@ -23,6 +23,14 @@ public class PlayerController : MonoBehaviour
     public int healthInventory = 0;
     public TextMeshProUGUI healthInventoryText;
 
+    [Header("Auto Heal")]
+    public float autoHealDelay = 1f; // seconds before using orange automatically
+    private bool autoHealPending = false;
+
+    [Header("Heal Effect")]
+    public GameObject orangeHealEffectPrefab;
+    public Vector3 orangeEffectOffset = new Vector3(0f, 0.5f, 0f);
+
     // Gold amount
     public int goldCoins = 0;
     public TextMeshProUGUI goldText;
@@ -126,10 +134,7 @@ public class PlayerController : MonoBehaviour
     {
         var keyboard = Keyboard.current;
         if (keyboard.escapeKey.wasPressedThisFrame)
-            if (pauseMenu != null)
-        {
-            pauseMenu.TogglePause();
-        }
+            SceneManager.LoadScene("MainMenu");
 
         if (shipController != null)
         {
@@ -161,8 +166,10 @@ public class PlayerController : MonoBehaviour
             TakeDamage();
             if (health < maxHealth)
                 StartCoroutine(damageTypeController.HandleLandCollision("Land"));
-            else
-                StartCoroutine(damageTypeController.HandleRespawn());
+                if (healthInventory > 0 && health < maxHealth && !autoHealPending)
+                    {
+                        StartCoroutine(AutoHealAfterDelay());
+                    }
         }
         else if (tag == "Finish")
         {
@@ -181,6 +188,7 @@ public class PlayerController : MonoBehaviour
                 GainHealth();
                 SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
                 StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+                SpawnOrangeHealEffect();
             }
             other.gameObject.SetActive(false);
         }
@@ -316,11 +324,15 @@ public class PlayerController : MonoBehaviour
         if (health <= 0)
         {
             GetComponent<PlayerRespawn>().Respawn();
-            health = 3;
+            health = maxHealth;
             UpdateHeartsUI();
             UpdateSprite();
+            shipController.Stop();
+            transform.up = Vector2.up;
+            return;
         }
     }
+
     public void GainHealth()
     {
         if (health < maxHealth)
@@ -330,6 +342,46 @@ public class PlayerController : MonoBehaviour
             UpdateHeartsUI();
         }
     }
+
+    private IEnumerator AutoHealAfterDelay()
+    {
+        autoHealPending = true;
+
+        // Wait before healing
+        yield return new WaitForSeconds(autoHealDelay);
+
+        // Conditions might have changed during the delay, so re-check
+        if (healthInventory > 0 && health < maxHealth)
+        {
+            // Reuse your existing logic
+            UseHealthItem();
+
+            // Same SFX + pulse
+            if (healthPickupSound != null)
+            {
+                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+            }
+            if (spriteRenderer != null)
+            {
+                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+            }
+
+            SpawnOrangeHealEffect();
+
+        }
+
+        autoHealPending = false;
+    }
+
+    private void SpawnOrangeHealEffect()
+    {
+        if (orangeHealEffectPrefab == null)
+            return;
+
+        Vector3 spawnPos = transform.position + orangeEffectOffset;
+        Instantiate(orangeHealEffectPrefab, spawnPos, Quaternion.identity);
+    }
+
 
     public void UpdateHeartsUI()
     {
