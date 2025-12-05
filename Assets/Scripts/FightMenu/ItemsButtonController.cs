@@ -5,15 +5,17 @@ public class ItemsButtonController : MonoBehaviour
 {
     [SerializeField] private Button itemsButton;
     [SerializeField] private Button attackButton;
-    PlayerController player;
+    GameManager gameManager;
+
+    public AttackFlowController attackFlow;
 
     void Start()
     {
-        player = PlayerController.Instance;
+        gameManager = GameManager.Instance;
 
-        if (player == null)
+        if (gameManager == null)
         {
-            Debug.LogError("ItemsButtonController: PlayerController.Instance is null!");
+            Debug.LogError("ItemsButtonController: GameManager.Instance is null!");
             return;
         }
     }
@@ -21,13 +23,13 @@ public class ItemsButtonController : MonoBehaviour
     void Update()
     {
 
-        if (player == null)
+        if (gameManager == null)
         {
             return;
         }
 
 
-        if (player.healthInventory <= 0 || player.health > 2)
+        if (gameManager.healthInventory <= 0 || gameManager.health > 2)
         {
             itemsButton.interactable = false;
         }
@@ -43,10 +45,11 @@ public class ItemsButtonController : MonoBehaviour
         Debug.Log("Items button pressed");
         EventSystem.current.SetSelectedGameObject(itemsButton.gameObject);
 
-        player.UseHealthItem();
+        gameManager.UseHealthItem();
+        attackFlow.RefreshItemsUI();
 
 
-        if (player.healthInventory < 0 || player.health > 2)
+        if (gameManager.healthInventory < 0 || gameManager.health > 2)
         {
             EventSystem.current.SetSelectedGameObject(attackButton.gameObject);
         }

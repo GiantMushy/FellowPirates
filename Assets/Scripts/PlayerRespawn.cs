@@ -4,10 +4,10 @@ public class PlayerRespawn : MonoBehaviour
 {
     public Vector2 respawnPoint;
     private PlayerController Player;
+    GameManager gameManager;
 
     void Start()
     {
-        Player = GetComponent<PlayerController>();
         respawnPoint = transform.position;
     }
 
@@ -20,7 +20,6 @@ public class PlayerRespawn : MonoBehaviour
     public void Respawn()
     {
         transform.position = respawnPoint;
-        Player.health = Player.maxHealth;
-    }
 
+    }
 }

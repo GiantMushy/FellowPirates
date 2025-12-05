@@ -27,7 +27,9 @@ public class AttackFlowController : MonoBehaviour
     private bool isAttacking = false;
     private bool isStartingDefend = false;
 
-    PlayerController player;
+    GameManager gameManager;
+
+
 
     // Items UI
     public Sprite fullHealthSprite;
@@ -56,11 +58,11 @@ public class AttackFlowController : MonoBehaviour
 
     void Start()
     {
-        player = PlayerController.Instance;
+        gameManager = GameManager.Instance;
 
-        if (player == null)
+        if (gameManager == null)
         {
-            Debug.LogError("AttackFlowController: PlayerController.Instance is null!");
+            Debug.LogError("AttackFlowController: GameManager.Instance is null!");
             return;
         }
 
@@ -72,16 +74,11 @@ public class AttackFlowController : MonoBehaviour
         Debug.Log("StartAttack");
         if (isAttacking || isDefending)
         {
-            Debug.Log("battle over here 2");
-
-            // BattleOver();
             return;
         }
 
-        Debug.Log("StartAttack");
         SetButtonsEnabled(false);
 
-        Debug.Log("starting attack");
         if (Attack == null)
         {
             return;
@@ -100,7 +97,6 @@ public class AttackFlowController : MonoBehaviour
 
     public void OnAttackFinished()
     {
-        Debug.Log("OnAttackFinished");
         isAttacking = false;
         StartDefend();
     }
@@ -110,9 +106,6 @@ public class AttackFlowController : MonoBehaviour
         Debug.Log("StartDefend");
         if (isAttacking || isDefending || isStartingDefend)
         {
-            Debug.Log("battle over here 3");
-
-            // BattleOver();
             return;
         }
 
@@ -133,7 +126,6 @@ public class AttackFlowController : MonoBehaviour
 
         TimingBarCanvas.SetActive(false);
 
-        // isDefending = true;
         defendList[defend_index].SetActive(true);
         defend_index++;
     }
@@ -141,7 +133,6 @@ public class AttackFlowController : MonoBehaviour
 
     public void OnDefendFinished(bool tookDamage = false)
     {
-        Debug.Log("OnDefendFinished");
         timeBar.StopTimer();
 
         for (int i = 0; i < defendList.Length; i++)
@@ -171,9 +162,8 @@ public class AttackFlowController : MonoBehaviour
             DoDamageInFight();
         }
 
-        if (defend_index >= defendList.Length || player.health == 0)
+        if (defend_index >= defendList.Length || gameManager.health == 0)
         {
-            Debug.Log("battle over here 1");
             BattleOver();
             return;
         }
@@ -191,15 +181,20 @@ public class AttackFlowController : MonoBehaviour
 
     void BattleOver()
     {
-        Debug.Log("BattleOver");
-        PlayerController.Instance.OnBattleWon();
+        if (gameManager.health <= 0)
+        {
+            GameManager.Instance.EndBattlePlayerDied();
+        }
+        else
+        {
+            GameManager.Instance.EndBattleWon();
+        }
     }
 
 
-    //  UPDATING THE UI ELEMENTS 
     public void RefreshItemsUI()
     {
-        if (player == null)
+        if (gameManager == null)
         {
             return;
         }
@@ -210,18 +205,14 @@ public class AttackFlowController : MonoBehaviour
 
     private void UpdateHeartsUI()
     {
-        if (heartImages == null)
-        {
-            return;
-        }
+        if (heartImages == null) return;
+
+        int health = gameManager.health;
 
         for (int i = 0; i < heartImages.Length; i++)
         {
-            if (heartImages[i] == null)
-            {
-                continue;
-            }
-            bool full = i < player.health;
+            if (heartImages[i] == null) continue;
+            bool full = i < health;
             heartImages[i].color = full ? Color.white : Color.black;
         }
     }
@@ -230,28 +221,21 @@ public class AttackFlowController : MonoBehaviour
     {
         if (healthInventoryText != null)
         {
-            healthInventoryText.text = player.healthInventory.ToString();
+            healthInventoryText.text = gameManager.healthInventory.ToString();
         }
     }
+
     private void UpdateGoldUI()
     {
         if (goldText != null)
         {
-            goldText.text = player.goldCoins.ToString();
+            goldText.text = gameManager.goldCoins.ToString();
         }
     }
 
     private void DoDamageInFight()
     {
-        player.TakeDamage();
+        gameManager.health--;
         RefreshItemsUI();
     }
-
-
-    // // bribe logic
-    // void bribeAccepted()
-    // {
-
-    // }
-
 }
