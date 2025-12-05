@@ -8,12 +8,33 @@ public class PlayerRespawn : MonoBehaviour
 
     void Start()
     {
-        respawnPoint = transform.position;
+        gameManager = GameManager.Instance;
+        if (gameManager != null)
+        {
+            if (!gameManager.hasSpawnPoint)
+            {
+                gameManager.spawnPoint = transform.position;
+                gameManager.hasSpawnPoint = true;
+            }
+
+            respawnPoint = gameManager.spawnPoint;
+        }
+        else
+        {
+            respawnPoint = transform.position;
+        }
     }
 
     public void SetCheckpoint(Vector2 newPoint)
     {
         respawnPoint = newPoint;
+
+        if (gameManager != null)
+        {
+            gameManager.spawnPoint = newPoint;
+            gameManager.hasSpawnPoint = true;
+        }
+
         Debug.Log("Checkpoint updated: " + respawnPoint);
     }
 

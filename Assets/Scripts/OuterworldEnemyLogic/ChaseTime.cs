@@ -151,4 +151,26 @@ public class ChaseTime : MonoBehaviour
             yield return null;
         }
     }
+
+
+    public void ForceStopChaseUI()
+    {
+        chaseWait = false;
+        isChasing = false;
+
+        chaseTimerText.gameObject.SetActive(false);
+        chasingText.gameObject.SetActive(false);
+        chaseTimeLeftText.gameObject.SetActive(false);
+        TimeRemaining.gameObject.SetActive(false);
+        FullTime.gameObject.SetActive(false);
+
+        if (blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            blinkCoroutine = null;
+        }
+
+        gameObject.SetActive(false);
+    }
+
 }

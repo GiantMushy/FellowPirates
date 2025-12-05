@@ -29,8 +29,14 @@ public class GameManager : MonoBehaviour
     private bool pendingChaseReturn = false;
     private bool pendingDeathReturn = false;
 
+    public Vector3 spawnPoint;
+    public bool hasSpawnPoint = false;
+
 
     public string currentLevelName;
+
+    public EnemyController chasingEnemy;
+
 
 
     void Awake()
@@ -214,7 +220,25 @@ public class GameManager : MonoBehaviour
 
         if (best != null)
         {
+            chasingEnemy = best;
             best.StartChasing(playerTransform);
         }
     }
+
+    public void CancelChase()
+    {
+        if (chasingEnemy != null)
+        {
+            chasingEnemy.StopChase();
+            chasingEnemy = null;
+        }
+
+
+        ChaseTime chaseUI = FindObjectOfType<ChaseTime>();
+        if (chaseUI != null)
+        {
+            chaseUI.ForceStopChaseUI();
+        }
+    }
+
 }

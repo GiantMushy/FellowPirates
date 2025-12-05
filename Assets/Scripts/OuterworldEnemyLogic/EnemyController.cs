@@ -116,7 +116,7 @@ public class EnemyController : MonoBehaviour
         StopChase();
     }
 
-    private void StopChase()
+    public void StopChase()
     {
         Debug.Log("stopped chasing");
         chasing = false;

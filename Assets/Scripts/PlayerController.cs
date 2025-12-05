@@ -205,6 +205,7 @@ public class PlayerController : MonoBehaviour
 
         if (gameManager.health <= 0)
         {
+            gameManager.CancelChase();
             GetComponent<PlayerRespawn>().Respawn();
             gameManager.health = gameManager.maxHealth;
             UpdateSprite();
