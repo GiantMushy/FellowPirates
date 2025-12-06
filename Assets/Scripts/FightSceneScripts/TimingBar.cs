@@ -17,6 +17,9 @@ public class TimingBar : MonoBehaviour
 
     public BattleTimeBar timeBar;
 
+    private bool hasFinished = false; // so they cant double press for more damage (that was a bug lolz)
+
+
     void Awake()
     {
         barSR = bar.GetComponent<SpriteRenderer>();
@@ -25,6 +28,11 @@ public class TimingBar : MonoBehaviour
 
     void Update()
     {
+        if (hasFinished)
+        {
+            return;
+        }
+
         currPos += Time.deltaTime * speed;
 
         if (currPos >= 1f)
@@ -41,6 +49,7 @@ public class TimingBar : MonoBehaviour
                 return;
             }
 
+            hasFinished = true;
             flow.OnAttackFinished(0);
             return;
         }
@@ -63,6 +72,7 @@ public class TimingBar : MonoBehaviour
             }
 
             int damage = CalculateDamage();
+            hasFinished = true;
             flow.OnAttackFinished(damage);
         }
 
@@ -96,19 +106,17 @@ public class TimingBar : MonoBehaviour
         // full damage: inside red zone
         if (pointerX >= redLeft && pointerX <= redRight)
         {
-            return 2;   // 1 full life
+            return 2;   // full life
         }
 
         float barLeft = barSR.bounds.min.x;
         float barRight = barSR.bounds.max.x;
 
-        // half damage: inside bar but outside red zone
         if (pointerX >= barLeft && pointerX <= barRight)
         {
             return 1;   // half life
         }
 
-        // outside bar (shouldn't really happen with your current movement)
         return 0;
     }
 

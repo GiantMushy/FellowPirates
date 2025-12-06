@@ -35,6 +35,12 @@ public class AttackFlowController : MonoBehaviour
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
 
+    public TextMeshProUGUI actionText;
+
+
+    // healing
+    public GameObject healEffect;
+
 
     private void Awake()
     {
@@ -61,9 +67,35 @@ public class AttackFlowController : MonoBehaviour
             Debug.LogError("AttackFlowController: GameManager.Instance is null!");
             return;
         }
-
+        SetChooseActionText();
         RefreshItemsUI();
     }
+
+    private void SetChooseActionText()
+    {
+        if (actionText != null)
+            actionText.text = "CHOOSE ACTION";
+    }
+
+
+    private void SetAttackText()
+    {
+        if (actionText != null)
+            actionText.text = "ATTACK";
+    }
+
+    private void SetHealText()
+    {
+        if (actionText != null)
+            actionText.text = "HEALING";
+    }
+
+    private void SetDefendText()
+    {
+        if (actionText != null)
+            actionText.text = "DEFEND";
+    }
+
 
     public void StartAttack()
     {
@@ -73,6 +105,7 @@ public class AttackFlowController : MonoBehaviour
             return;
         }
 
+        SetAttackText();
         SetButtonsEnabled(false);
 
         if (Attack == null)
@@ -102,6 +135,13 @@ public class AttackFlowController : MonoBehaviour
         StartDefend();
     }
 
+    public void StartDefendAfterPlayerAction()
+    {
+        SetButtonsEnabled(false);
+        StartDefend();
+    }
+
+
     public void StartDefend()
     {
         Debug.Log("StartDefend");
@@ -109,6 +149,8 @@ public class AttackFlowController : MonoBehaviour
         {
             return;
         }
+
+        SetDefendText();
 
         isStartingDefend = true;
         isDefending = true;
@@ -176,6 +218,7 @@ public class AttackFlowController : MonoBehaviour
             return;
         }
 
+        SetChooseActionText();
         SetButtonsEnabled(true);
     }
 
@@ -292,6 +335,12 @@ public class AttackFlowController : MonoBehaviour
         if (gameManager.enemyHealth < 0)
             gameManager.enemyHealth = 0;
 
+        if (!string.IsNullOrEmpty(gameManager.currentEnemyId))
+        {
+            gameManager.enemyHealthById[gameManager.currentEnemyId] = gameManager.enemyHealth;
+        }
+
+
         int damageDone = gameManager.enemyMaxHealth - gameManager.enemyHealth;
         defend_index = damageDone / 2;
 
@@ -329,8 +378,46 @@ public class AttackFlowController : MonoBehaviour
             bomb.SetActive(false);
         }
     }
+    public void StartHealVisualAndDefend()
+    {
+        SetButtonsEnabled(false);
+        StartCoroutine(HealAndDefendRoutine());
+    }
 
+    private IEnumerator HealAndDefendRoutine()
+    {
+        SetHealText();
 
+        SpriteRenderer healSprite = null;
+        Coroutine pulseRoutine = null;
 
+        if (healEffect != null)
+        {
+            healEffect.SetActive(true);
+
+            healSprite = healEffect.GetComponent<SpriteRenderer>();
+            if (healSprite != null)
+            {
+                pulseRoutine = StartCoroutine(
+                    PulseEffect.sprite_pulse(healSprite)
+                );
+            }
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        if (pulseRoutine != null && healSprite != null)
+        {
+            StopCoroutine(pulseRoutine);
+            healSprite.color = Color.white;
+        }
+
+        if (healEffect != null)
+        {
+            healEffect.SetActive(false);
+        }
+
+        StartDefend();
+    }
 
 }

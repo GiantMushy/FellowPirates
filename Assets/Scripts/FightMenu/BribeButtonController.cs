@@ -32,6 +32,8 @@ public class BribeButtonController : MonoBehaviour
         if (gameManager.goldCoins < bribeCost)
         {
             Debug.Log("you cant afford that buddy");
+            flow.StartDefendAfterPlayerAction();
+
         }
         else
         {

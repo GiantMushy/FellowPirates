@@ -72,6 +72,12 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+        }
+
+
         player = target;
         waiting_to_chase = true;
         StartCoroutine(Chase());

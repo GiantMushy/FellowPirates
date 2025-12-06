@@ -42,5 +42,10 @@ public class PlayerRespawn : MonoBehaviour
     {
         transform.position = respawnPoint;
 
+        if (gameManager != null)
+        {
+            gameManager.CancelChase();
+        }
+
     }
 }

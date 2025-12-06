@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
 
 
     public HashSet<string> defeatedEnemies = new HashSet<string>(); // to not render the dead dudes
+    public Dictionary<string, int> enemyHealthById = new Dictionary<string, int>(); // to keep lives persistent per enemy
+
     public string currentEnemyId;
 
     void Awake()
@@ -110,9 +112,14 @@ public class GameManager : MonoBehaviour
 
         enemyBribeCost = enemy.bribeCost;
 
-        if (enemyHealth <= 0)
+        if (!string.IsNullOrEmpty(currentEnemyId) &&
+           enemyHealthById.TryGetValue(currentEnemyId, out var savedHp))
         {
-            enemyHealth = enemyMaxHealth;
+            enemyHealth = Mathf.Clamp(savedHp, 0, enemyMaxHealth);
+        }
+        else
+        {
+            enemyHealth = enemyMaxHealth; // first time fighting this enemy
         }
 
         player.PrepareForBattle();
@@ -131,6 +138,7 @@ public class GameManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(currentEnemyId))
         {
+            enemyHealthById.Remove(currentEnemyId);
             defeatedEnemies.Add(currentEnemyId);
         }
 
@@ -211,6 +219,7 @@ public class GameManager : MonoBehaviour
         if (pendingChaseReturn)
         {
             pendingChaseReturn = false;
+            StopAllCoroutines();
             player.StartCoroutine(StartChaseAfterReturn(player.transform));
         }
     }
@@ -257,6 +266,8 @@ public class GameManager : MonoBehaviour
         {
             chaseUI.ForceStopChaseUI();
         }
+
+        StopAllCoroutines();
     }
 
 }
