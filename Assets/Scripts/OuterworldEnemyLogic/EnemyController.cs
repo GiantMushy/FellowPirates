@@ -6,6 +6,8 @@ using TMPro;
 public class EnemyController : MonoBehaviour
 {
     private ShipController shipController;
+
+    // CHASSSINNNNG LOGIC VARIABLES
     public GridManager grid;
     private int path_index;
     private List<State> path;
@@ -30,7 +32,6 @@ public class EnemyController : MonoBehaviour
 
     // for bribe
     public int bribeCost = 1;
-
 
     void Start()
     {
@@ -109,16 +110,14 @@ public class EnemyController : MonoBehaviour
         while (timer < chaseTime)
         {
             timer += Time.deltaTime;
-            Debug.Log("timer = " + timer);
             yield return true;
         }
-        Debug.Log("stopping chase from timer");
         StopChase();
     }
 
     public void StopChase()
     {
-        Debug.Log("stopped chasing");
+        Debug.Log("Stopped chasing");
         chasing = false;
         shipController.SetAccelerate(false);
         shipController.SetDecelerate(true);

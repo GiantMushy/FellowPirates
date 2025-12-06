@@ -16,9 +16,6 @@ public class AttackFlowController : MonoBehaviour
 
     private TimingBar Attack;
     public BattleTimeBar timeBar;
-
-    public int enemyHealth = 150;
-
     private int defend_index = 0;
 
     private GameObject[] defendList;
@@ -28,13 +25,14 @@ public class AttackFlowController : MonoBehaviour
     private bool isStartingDefend = false;
 
     GameManager gameManager;
+    // public int enemyHealth = 6;
 
-
+    public Image[] enemyHeartImages;
 
     // Items UI
-    public Sprite fullHealthSprite;
-    public Sprite damagedSprite;
-    public Sprite heavilyDamagedSprite;
+    // public Sprite fullHealthSprite;
+    // public Sprite damagedSprite;
+    // public Sprite heavilyDamagedSprite;
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
@@ -95,8 +93,13 @@ public class AttackFlowController : MonoBehaviour
         Attack.StartTiming(this);
     }
 
-    public void OnAttackFinished()
+    public void OnAttackFinished(int damageToEnemy = 0)
     {
+        if (damageToEnemy > 0)
+        {
+            DamageEnemy(damageToEnemy);
+        }
+
         isAttacking = false;
         StartDefend();
     }
@@ -159,7 +162,7 @@ public class AttackFlowController : MonoBehaviour
 
         if (tookDamage)
         {
-            DoDamageInFight();
+            DamagePlayer();
         }
 
         if (defend_index >= defendList.Length || gameManager.health == 0)
@@ -201,6 +204,7 @@ public class AttackFlowController : MonoBehaviour
         UpdateHeartsUI();
         UpdatHealthItemUI();
         UpdateGoldUI();
+        UpdateEnemyHeartsUI();
     }
 
     private void UpdateHeartsUI()
@@ -216,6 +220,40 @@ public class AttackFlowController : MonoBehaviour
             heartImages[i].color = full ? Color.white : Color.black;
         }
     }
+
+    private void UpdateEnemyHeartsUI()
+    {
+        if (enemyHeartImages == null || gameManager == null)
+        {
+            return;
+        }
+
+        int hpUnits = gameManager.enemyHealth;
+
+        for (int i = 0; i < enemyHeartImages.Length; i++)
+        {
+            if (enemyHeartImages[i] == null) continue;
+
+            int unitsForThisHeart = Mathf.Clamp(hpUnits - i * 2, 0, 2);
+
+            Image img = enemyHeartImages[i];
+
+            if (unitsForThisHeart == 2)
+            {
+                img.color = Color.red;
+            }
+            else if (unitsForThisHeart == 1)
+            {
+                img.color = new Color(0.5f, 0f, 0f); // darker red
+            }
+            else
+            {
+                img.color = Color.black;
+            }
+        }
+    }
+
+
 
     private void UpdatHealthItemUI()
     {
@@ -233,9 +271,26 @@ public class AttackFlowController : MonoBehaviour
         }
     }
 
-    private void DoDamageInFight()
+    private void DamagePlayer()
     {
         gameManager.health--;
         RefreshItemsUI();
     }
+
+    private void DamageEnemy(int units)
+    {
+        if (gameManager == null) return;
+
+        gameManager.enemyHealth -= units;
+        if (gameManager.enemyHealth < 0)
+            gameManager.enemyHealth = 0;
+
+        UpdateEnemyHeartsUI();
+
+        if (gameManager.enemyHealth <= 0)
+        {
+            BattleOver();
+        }
+    }
+
 }

@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
     public string currentLevelName;
 
     public EnemyController chasingEnemy;
+    public int enemyMaxHealth = 6;   // only 6 because i dont work with floats when losing half
+    public int enemyHealth = 6;
 
 
 
@@ -103,6 +105,11 @@ public class GameManager : MonoBehaviour
         preBattlePosition = player.transform.position;
 
         enemyBribeCost = enemy.bribeCost;
+
+        if (enemyHealth <= 0)
+        {
+            enemyHealth = enemyMaxHealth;
+        }
 
         player.PrepareForBattle();
 
