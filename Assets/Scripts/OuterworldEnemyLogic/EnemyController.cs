@@ -1,11 +1,13 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
 using TMPro;
+using System.Collections.Generic;
 
 public class EnemyController : MonoBehaviour
 {
     private ShipController shipController;
+    public string enemyId;
+
 
     // CHASSSINNNNG LOGIC VARIABLES
     public GridManager grid;
@@ -35,14 +37,22 @@ public class EnemyController : MonoBehaviour
 
     void Start()
     {
-        shipController = GetComponent<ShipController>();
-        if (shipController == null)
+        var gm = GameManager.Instance;
+        if (gm != null && gm.defeatedEnemies.Contains(enemyId))
         {
-            Debug.LogError("EnemyController requires a ShipController component!");
+            Destroy(gameObject);
         }
+        else
+        {
+            shipController = GetComponent<ShipController>();
+            if (shipController == null)
+            {
+                Debug.LogError("EnemyController requires a ShipController component!");
+            }
 
-        // chaseTime.SetActive(false);
-        chaseTimeController.timeWait = chase_delay;
+            // chaseTime.SetActive(false);
+            chaseTimeController.timeWait = chase_delay;
+        }
     }
 
     void Update()
@@ -194,7 +204,6 @@ public class EnemyController : MonoBehaviour
 
 
     }
-
 
     private void ReplanIfNeeded()
     {

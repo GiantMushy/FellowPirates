@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
-
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
     public int enemyHealth = 6;
 
 
+
+    public HashSet<string> defeatedEnemies = new HashSet<string>(); // to not render the dead dudes
+    public string currentEnemyId;
 
     void Awake()
     {
@@ -99,6 +102,7 @@ public class GameManager : MonoBehaviour
         }
 
         currentEnemy = enemy;
+        currentEnemyId = enemy.enemyId;
         lastEnemyPosition = enemy.transform.position;
 
         returnSceneName = SceneManager.GetActiveScene().name;
@@ -122,7 +126,14 @@ public class GameManager : MonoBehaviour
         pendingChaseReturn = false;
         pendingDeathReturn = false;
 
+
         fleeCooldownUntil = Time.time + 2f;
+
+        if (!string.IsNullOrEmpty(currentEnemyId))
+        {
+            defeatedEnemies.Add(currentEnemyId);
+        }
+
         SceneManager.LoadScene(returnSceneName);
     }
 

@@ -25,8 +25,6 @@ public class AttackFlowController : MonoBehaviour
     private bool isStartingDefend = false;
 
     GameManager gameManager;
-    // public int enemyHealth = 6;
-
     public Image[] enemyHeartImages;
 
     // Items UI
@@ -115,6 +113,12 @@ public class AttackFlowController : MonoBehaviour
         isStartingDefend = true;
         isDefending = true;
 
+        var playerFight = FindObjectOfType<PlayerFightController>();
+        if (playerFight != null)
+        {
+            playerFight.ResetForNewDefend();
+        }
+
 
         timeBar.StartTimer();
         StartCoroutine(StartDefendDelayed());
@@ -130,13 +134,14 @@ public class AttackFlowController : MonoBehaviour
         TimingBarCanvas.SetActive(false);
 
         defendList[defend_index].SetActive(true);
-        defend_index++;
     }
 
 
     public void OnDefendFinished(bool tookDamage = false)
     {
         timeBar.StopTimer();
+
+        ClearDefenseObjects();
 
         for (int i = 0; i < defendList.Length; i++)
         {
@@ -277,6 +282,8 @@ public class AttackFlowController : MonoBehaviour
         RefreshItemsUI();
     }
 
+
+
     private void DamageEnemy(int units)
     {
         if (gameManager == null) return;
@@ -285,12 +292,45 @@ public class AttackFlowController : MonoBehaviour
         if (gameManager.enemyHealth < 0)
             gameManager.enemyHealth = 0;
 
+        int damageDone = gameManager.enemyMaxHealth - gameManager.enemyHealth;
+        defend_index = damageDone / 2;
+
+        if (defend_index >= defendList.Length)
+        {
+            defend_index = defendList.Length - 1;
+        }
+
         UpdateEnemyHeartsUI();
 
         if (gameManager.enemyHealth <= 0)
         {
             BattleOver();
+            return;
         }
     }
+
+    private void ClearDefenseObjects()
+    {
+        for (int i = 0; i < defendList.Length; i++)
+        {
+            if (defendList[i] != null)
+                defendList[i].SetActive(false);
+        }
+
+        BulletSpawner[] spawners = FindObjectsOfType<BulletSpawner>(true);
+        foreach (var sp in spawners)
+        {
+            sp.ResetSpawner();
+        }
+
+        GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
+        foreach (GameObject bomb in bombs)
+        {
+            bomb.SetActive(false);
+        }
+    }
+
+
+
 
 }
