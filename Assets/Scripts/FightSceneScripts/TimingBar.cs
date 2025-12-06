@@ -28,11 +28,6 @@ public class TimingBar : MonoBehaviour
 
     void Update()
     {
-        if (hasFinished)
-        {
-            return;
-        }
-
         currPos += Time.deltaTime * speed;
 
         if (currPos >= 1f)
@@ -49,12 +44,17 @@ public class TimingBar : MonoBehaviour
                 return;
             }
 
-            hasFinished = true;
+            // hasFinished = true;
             flow.OnAttackFinished(0);
             return;
         }
 
         UpdatePointerPosition(currPos);
+
+        if (hasFinished)
+        {
+            return;
+        }
 
 
         if (
@@ -127,6 +127,7 @@ public class TimingBar : MonoBehaviour
         flow = f;
         currPos = 0f;
         speed = 1.5f;
+        hasFinished = false;
     }
 
 }
