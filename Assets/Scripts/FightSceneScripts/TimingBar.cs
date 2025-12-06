@@ -17,6 +17,9 @@ public class TimingBar : MonoBehaviour
 
     public BattleTimeBar timeBar;
 
+    private bool hasFinished = false; // so they cant double press for more damage (that was a bug lolz)
+
+
     void Awake()
     {
         barSR = bar.GetComponent<SpriteRenderer>();
@@ -41,18 +44,26 @@ public class TimingBar : MonoBehaviour
                 return;
             }
 
-            flow.OnAttackFinished();
+            // hasFinished = true;
+            flow.OnAttackFinished(0);
             return;
         }
 
         UpdatePointerPosition(currPos);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (hasFinished)
+        {
+            return;
+        }
+
+
+        if (
+            Input.GetKeyDown(KeyCode.Space) ||
+            Input.GetKeyDown(KeyCode.Return) ||
+            Input.GetMouseButtonDown(0)
+        )
         {
             speed = 0;
-
-            int score = CalculateScore();
-            Debug.Log($"Score: {score}");
 
             if (flow == null)
             {
@@ -60,8 +71,11 @@ public class TimingBar : MonoBehaviour
                 return;
             }
 
-            flow.OnAttackFinished();
+            int damage = CalculateDamage();
+            hasFinished = true;
+            flow.OnAttackFinished(damage);
         }
+
     }
 
     private void UpdatePointerPosition(float t)
@@ -78,27 +92,34 @@ public class TimingBar : MonoBehaviour
         pointer.position = pos;
     }
 
-    int CalculateScore()
-    {
-        if (redSR == null || pointer == null) return 0;
 
-        float pointer_x = pointer.position.x;
+
+    private int CalculateDamage()
+    {
+        if (barSR == null || redSR == null || pointer == null) return 0;
+
+        float pointerX = pointer.position.x;
 
         float redLeft = redSR.bounds.min.x;
         float redRight = redSR.bounds.max.x;
 
-        float redCenter = (redLeft + redRight) * 0.5f;
-        float halfWidth = (redRight - redLeft) * 0.5f;
+        // full damage: inside red zone
+        if (pointerX >= redLeft && pointerX <= redRight)
+        {
+            return 2;   // full life
+        }
 
-        float dist = Mathf.Abs(pointer_x - redCenter);
-        float t = dist / halfWidth;
+        float barLeft = barSR.bounds.min.x;
+        float barRight = barSR.bounds.max.x;
 
-        if (t >= 1f)
-            return 0;
+        if (pointerX >= barLeft && pointerX <= barRight)
+        {
+            return 1;   // half life
+        }
 
-        float normalized = 1f - t;
-        return Mathf.RoundToInt(normalized * maxScore);
+        return 0;
     }
+
 
     public void StartTiming(AttackFlowController f)
     {
@@ -106,6 +127,7 @@ public class TimingBar : MonoBehaviour
         flow = f;
         currPos = 0f;
         speed = 1.5f;
+        hasFinished = false;
     }
 
 }

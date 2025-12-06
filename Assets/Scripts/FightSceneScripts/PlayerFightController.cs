@@ -111,8 +111,15 @@ public class PlayerFightController : MonoBehaviour
 
         sprite.color = clearColor;
 
+        gameOver = false;
+
         flow.OnDefendFinished(tookDamage);
 
     }
 
+    public void ResetForNewDefend()
+    {
+        gameOver = false;
+        StopAllCoroutines();
+    }
 }

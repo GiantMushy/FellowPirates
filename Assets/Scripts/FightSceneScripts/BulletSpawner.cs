@@ -129,4 +129,16 @@ public class BulletSpawner : MonoBehaviour
     {
         transform.Rotate(0f, 0f, rotateSpeed * Time.deltaTime);
     }
+
+
+    public void ResetSpawner()
+    {
+        delayTimer = 0f;
+        timer = 0f;
+        duplicateTimer = 0f;
+        t = 0f;
+
+        transform.position = startPos;
+        transform.rotation = startRot;
+    }
 }

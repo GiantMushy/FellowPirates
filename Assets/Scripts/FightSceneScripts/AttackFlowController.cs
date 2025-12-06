@@ -16,9 +16,6 @@ public class AttackFlowController : MonoBehaviour
 
     private TimingBar Attack;
     public BattleTimeBar timeBar;
-
-    public int enemyHealth = 150;
-
     private int defend_index = 0;
 
     private GameObject[] defendList;
@@ -27,15 +24,22 @@ public class AttackFlowController : MonoBehaviour
     private bool isAttacking = false;
     private bool isStartingDefend = false;
 
-    PlayerController player;
+    GameManager gameManager;
+    public Image[] enemyHeartImages;
 
     // Items UI
-    public Sprite fullHealthSprite;
-    public Sprite damagedSprite;
-    public Sprite heavilyDamagedSprite;
+    // public Sprite fullHealthSprite;
+    // public Sprite damagedSprite;
+    // public Sprite heavilyDamagedSprite;
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
+
+    public TextMeshProUGUI actionText;
+
+
+    // healing
+    public GameObject healEffect;
 
 
     private void Awake()
@@ -56,32 +60,54 @@ public class AttackFlowController : MonoBehaviour
 
     void Start()
     {
-        player = PlayerController.Instance;
+        gameManager = GameManager.Instance;
 
-        if (player == null)
+        if (gameManager == null)
         {
-            Debug.LogError("AttackFlowController: PlayerController.Instance is null!");
+            Debug.LogError("AttackFlowController: GameManager.Instance is null!");
             return;
         }
-
+        SetChooseActionText();
         RefreshItemsUI();
     }
+
+    private void SetChooseActionText()
+    {
+        if (actionText != null)
+            actionText.text = "CHOOSE ACTION";
+    }
+
+
+    private void SetAttackText()
+    {
+        if (actionText != null)
+            actionText.text = "ATTACK";
+    }
+
+    private void SetHealText()
+    {
+        if (actionText != null)
+            actionText.text = "HEALING";
+    }
+
+    private void SetDefendText()
+    {
+        if (actionText != null)
+            actionText.text = "DEFEND";
+    }
+
 
     public void StartAttack()
     {
         Debug.Log("StartAttack");
         if (isAttacking || isDefending)
         {
-            Debug.Log("battle over here 2");
-
-            // BattleOver();
             return;
         }
 
-        Debug.Log("StartAttack");
+        SetAttackText();
         SetButtonsEnabled(false);
 
-        Debug.Log("starting attack");
         if (Attack == null)
         {
             return;
@@ -98,26 +124,42 @@ public class AttackFlowController : MonoBehaviour
         Attack.StartTiming(this);
     }
 
-    public void OnAttackFinished()
+    public void OnAttackFinished(int damageToEnemy = 0)
     {
-        Debug.Log("OnAttackFinished");
+        if (damageToEnemy > 0)
+        {
+            DamageEnemy(damageToEnemy);
+        }
+
         isAttacking = false;
         StartDefend();
     }
+
+    public void StartDefendAfterPlayerAction()
+    {
+        SetButtonsEnabled(false);
+        StartDefend();
+    }
+
 
     public void StartDefend()
     {
         Debug.Log("StartDefend");
         if (isAttacking || isDefending || isStartingDefend)
         {
-            Debug.Log("battle over here 3");
-
-            // BattleOver();
             return;
         }
 
+        SetDefendText();
+
         isStartingDefend = true;
         isDefending = true;
+
+        var playerFight = FindObjectOfType<PlayerFightController>();
+        if (playerFight != null)
+        {
+            playerFight.ResetForNewDefend();
+        }
 
 
         timeBar.StartTimer();
@@ -133,16 +175,15 @@ public class AttackFlowController : MonoBehaviour
 
         TimingBarCanvas.SetActive(false);
 
-        // isDefending = true;
         defendList[defend_index].SetActive(true);
-        defend_index++;
     }
 
 
     public void OnDefendFinished(bool tookDamage = false)
     {
-        Debug.Log("OnDefendFinished");
         timeBar.StopTimer();
+
+        ClearDefenseObjects();
 
         for (int i = 0; i < defendList.Length; i++)
         {
@@ -168,16 +209,16 @@ public class AttackFlowController : MonoBehaviour
 
         if (tookDamage)
         {
-            DoDamageInFight();
+            DamagePlayer();
         }
 
-        if (defend_index >= defendList.Length || player.health == 0)
+        if (defend_index >= defendList.Length || gameManager.health == 0)
         {
-            Debug.Log("battle over here 1");
             BattleOver();
             return;
         }
 
+        SetChooseActionText();
         SetButtonsEnabled(true);
     }
 
@@ -191,67 +232,192 @@ public class AttackFlowController : MonoBehaviour
 
     void BattleOver()
     {
-        Debug.Log("BattleOver");
-        PlayerController.Instance.OnBattleWon();
+        if (gameManager.health <= 0)
+        {
+            GameManager.Instance.EndBattlePlayerDied();
+        }
+        else
+        {
+            GameManager.Instance.EndBattleWon();
+        }
     }
 
 
-    //  UPDATING THE UI ELEMENTS 
     public void RefreshItemsUI()
     {
-        if (player == null)
+        if (gameManager == null)
         {
             return;
         }
         UpdateHeartsUI();
         UpdatHealthItemUI();
         UpdateGoldUI();
+        UpdateEnemyHeartsUI();
     }
 
     private void UpdateHeartsUI()
     {
-        if (heartImages == null)
+        if (heartImages == null) return;
+
+        int health = gameManager.health;
+
+        for (int i = 0; i < heartImages.Length; i++)
+        {
+            if (heartImages[i] == null) continue;
+            bool full = i < health;
+            heartImages[i].color = full ? Color.white : Color.black;
+        }
+    }
+
+    private void UpdateEnemyHeartsUI()
+    {
+        if (enemyHeartImages == null || gameManager == null)
         {
             return;
         }
 
-        for (int i = 0; i < heartImages.Length; i++)
+        int hpUnits = gameManager.enemyHealth;
+
+        for (int i = 0; i < enemyHeartImages.Length; i++)
         {
-            if (heartImages[i] == null)
+            if (enemyHeartImages[i] == null) continue;
+
+            int unitsForThisHeart = Mathf.Clamp(hpUnits - i * 2, 0, 2);
+
+            Image img = enemyHeartImages[i];
+
+            if (unitsForThisHeart == 2)
             {
-                continue;
+                img.color = Color.red;
             }
-            bool full = i < player.health;
-            heartImages[i].color = full ? Color.white : Color.black;
+            else if (unitsForThisHeart == 1)
+            {
+                img.color = new Color(0.5f, 0f, 0f); // darker red
+            }
+            else
+            {
+                img.color = Color.black;
+            }
         }
     }
+
+
 
     private void UpdatHealthItemUI()
     {
         if (healthInventoryText != null)
         {
-            healthInventoryText.text = player.healthInventory.ToString();
+            healthInventoryText.text = gameManager.healthInventory.ToString();
         }
     }
+
     private void UpdateGoldUI()
     {
         if (goldText != null)
         {
-            goldText.text = player.goldCoins.ToString();
+            goldText.text = gameManager.goldCoins.ToString();
         }
     }
 
-    private void DoDamageInFight()
+    private void DamagePlayer()
     {
-        player.TakeDamage();
+        gameManager.health--;
         RefreshItemsUI();
     }
 
 
-    // // bribe logic
-    // void bribeAccepted()
-    // {
 
-    // }
+    private void DamageEnemy(int units)
+    {
+        if (gameManager == null) return;
+
+        gameManager.enemyHealth -= units;
+        if (gameManager.enemyHealth < 0)
+            gameManager.enemyHealth = 0;
+
+        if (!string.IsNullOrEmpty(gameManager.currentEnemyId))
+        {
+            gameManager.enemyHealthById[gameManager.currentEnemyId] = gameManager.enemyHealth;
+        }
+
+
+        int damageDone = gameManager.enemyMaxHealth - gameManager.enemyHealth;
+        defend_index = damageDone / 2;
+
+        if (defend_index >= defendList.Length)
+        {
+            defend_index = defendList.Length - 1;
+        }
+
+        UpdateEnemyHeartsUI();
+
+        if (gameManager.enemyHealth <= 0)
+        {
+            BattleOver();
+            return;
+        }
+    }
+
+    private void ClearDefenseObjects()
+    {
+        for (int i = 0; i < defendList.Length; i++)
+        {
+            if (defendList[i] != null)
+                defendList[i].SetActive(false);
+        }
+
+        BulletSpawner[] spawners = FindObjectsOfType<BulletSpawner>(true);
+        foreach (var sp in spawners)
+        {
+            sp.ResetSpawner();
+        }
+
+        GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
+        foreach (GameObject bomb in bombs)
+        {
+            bomb.SetActive(false);
+        }
+    }
+    public void StartHealVisualAndDefend()
+    {
+        SetButtonsEnabled(false);
+        StartCoroutine(HealAndDefendRoutine());
+    }
+
+    private IEnumerator HealAndDefendRoutine()
+    {
+        SetHealText();
+
+        SpriteRenderer healSprite = null;
+        Coroutine pulseRoutine = null;
+
+        if (healEffect != null)
+        {
+            healEffect.SetActive(true);
+
+            healSprite = healEffect.GetComponent<SpriteRenderer>();
+            if (healSprite != null)
+            {
+                pulseRoutine = StartCoroutine(
+                    PulseEffect.sprite_pulse(healSprite)
+                );
+            }
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        if (pulseRoutine != null && healSprite != null)
+        {
+            StopCoroutine(pulseRoutine);
+            healSprite.color = Color.white;
+        }
+
+        if (healEffect != null)
+        {
+            healEffect.SetActive(false);
+        }
+
+        StartDefend();
+    }
 
 }
