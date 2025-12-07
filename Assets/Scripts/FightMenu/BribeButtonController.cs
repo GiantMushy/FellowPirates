@@ -9,6 +9,8 @@ public class BribeButtonController : MonoBehaviour
     public AttackFlowController flow;
     GameManager gameManager;
     private int bribeCost;
+    private bool isSelected = false;
+    public Button defaultButton;
 
     void Start()
     {
@@ -23,6 +25,37 @@ public class BribeButtonController : MonoBehaviour
         bribeCost = gameManager.enemyBribeCost;
     }
 
+    void Update()
+    {
+        if (EventSystem.current == null || bribeButton == null || flow == null)
+        {
+            return;
+        }
+
+        if (!flow.buttonPanell.interactable)
+        {
+            if (isSelected)
+            {
+                isSelected = false;
+                flow.HideBribeCost();
+            }
+            return;
+        }
+
+
+        bool nowSelected = EventSystem.current.currentSelectedGameObject == bribeButton.gameObject;
+
+        if (nowSelected && !isSelected)
+        {
+            isSelected = true;
+            flow.ShowBribeCost();
+        }
+        else if (!nowSelected && isSelected)
+        {
+            isSelected = false;
+            flow.HideBribeCost();
+        }
+    }
 
     public void Bribe()
     {
@@ -31,8 +64,17 @@ public class BribeButtonController : MonoBehaviour
 
         if (gameManager.goldCoins < bribeCost)
         {
-            Debug.Log("you cant afford that buddy");
+            // Debug.Log("you cant afford that buddy");
+
+            isSelected = false;
+            flow.HideBribeCost();
             flow.StartAngryAndDefend();
+
+            if (EventSystem.current != null)
+            {
+                EventSystem.current.SetSelectedGameObject(defaultButton.gameObject);
+            }
+
         }
         else
         {
