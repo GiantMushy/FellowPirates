@@ -4,7 +4,7 @@ using UnityEngine;
 public class FloatingHealIcon : MonoBehaviour
 {
     public float moveUpDistance = 0.5f;   
-    public float duration = 0.5f;
+    public float duration = 1f;
 
     private SpriteRenderer spriteRenderer;
 

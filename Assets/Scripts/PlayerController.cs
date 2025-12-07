@@ -4,17 +4,26 @@ using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    public PauseMenu pauseMenu;
+    [Header("Ship sprites")]
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
+    
+    [Header("UI elements")]
+    public PauseMenu pauseMenu;
     public Image[] heartImages;
 
     public TextMeshProUGUI healthInventoryText;
+    public TextMeshProUGUI goldText;
+
+    // Victory and defeat panels
+    GameManager gameManager;
+    public VictoryPanelController victoryPanelController;
+    public DeathPanelController deathPanelController;
 
     [Header("Auto Heal")]
     public float autoHealDelay = 1f; // seconds before using orange automatically
@@ -24,30 +33,13 @@ public class PlayerController : MonoBehaviour
     public GameObject orangeHealEffectPrefab;
     public Vector3 orangeEffectOffset = new Vector3(0f, 0.5f, 0f);
 
-    // Gold amount
-    public int goldCoins = 0;
-    public TextMeshProUGUI goldText;
+    [Header("Audio")]
+    [SerializeField] private AudioClip healthPickupSound;
     [SerializeField] private AudioClip goldPickupSound;
-
-    // Victory Panel
-    public GameObject victoryPanel;
-
-    // Player start position
-    private Vector3 startPosition;
-    private Quaternion startRotation;
-
 
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
-
-    [SerializeField] private AudioClip healthPickupSound;
-    [SerializeField] private AudioClip goldPickupSound;
-
-    public TextMeshProUGUI goldText;
-
-    GameManager gameManager;
-    public VictoryPanelController victoryPanelController;
 
 
     void Start()
@@ -92,18 +84,35 @@ public class PlayerController : MonoBehaviour
 
         if (shipController != null)
         {
-            shipController.SetAccelerate(keyboard.upArrowKey.isPressed);
-            shipController.SetDecelerate(keyboard.downArrowKey.isPressed);
-            shipController.SetTurnPort(keyboard.leftArrowKey.isPressed);
-            shipController.SetTurnStarboard(keyboard.rightArrowKey.isPressed);
+            bool forward =
+            keyboard.upArrowKey.isPressed ||
+            keyboard.wKey.isPressed;
+
+            bool backward =
+                keyboard.downArrowKey.isPressed ||
+                keyboard.sKey.isPressed;
+
+            bool turnLeft =
+                keyboard.leftArrowKey.isPressed ||
+                keyboard.aKey.isPressed;
+
+            bool turnRight =
+                keyboard.rightArrowKey.isPressed ||
+                keyboard.dKey.isPressed;
+
+            shipController.SetAccelerate(forward);
+            shipController.SetDecelerate(backward);
+            shipController.SetTurnPort(turnLeft);
+            shipController.SetTurnStarboard(turnRight);
         }
 
-        if (keyboard.eKey.wasPressedThisFrame && gameManager != null)
+        if (keyboard.spaceKey.wasPressedThisFrame && gameManager != null)
         {
             if (gameManager.health < gameManager.maxHealth &&
                 gameManager.healthInventory > 0)
             {
                 UseHealthItem();
+                SpawnOrangeHealEffect();
 
                 if (healthPickupSound != null)
                     SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
@@ -128,11 +137,14 @@ public class PlayerController : MonoBehaviour
         {
             TakeDamage();
             if (gameManager.health < gameManager.maxHealth)
+            {
                 StartCoroutine(damageTypeController.HandleLandCollision("Land"));
-                if (healthInventory > 0 && health < maxHealth && !autoHealPending)
+
+                if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
                     {
                         StartCoroutine(AutoHealAfterDelay());
                     }
+            }
         }
         else if (tag == "Finish")
         {
@@ -228,10 +240,27 @@ public class PlayerController : MonoBehaviour
         if (gameManager.health <= 0)
         {
             gameManager.CancelChase();
-            GetComponent<PlayerRespawn>().Respawn();
-            gameManager.health = gameManager.maxHealth;
-            UpdateSprite();
-            UpdateHeartsUI();
+
+            // Stop and disable ship controls
+            if (shipController != null)
+            {
+                shipController.Stop();
+                shipController.DisableControl();
+            }
+
+            // Show the "You Died" overlay
+            if (deathPanelController != null)
+            {
+                deathPanelController.Show();
+            }
+            else
+            {
+                //if no panel is assigned, keep old behaviour
+                GetComponent<PlayerRespawn>().Respawn();
+                gameManager.health = gameManager.maxHealth;
+                UpdateSprite();
+                UpdateHeartsUI();
+            }
         }
     }
 
@@ -270,9 +299,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(autoHealDelay);
 
         // Conditions might have changed during the delay, so re-check
-        if (healthInventory > 0 && health < maxHealth)
+        if (gameManager != null &&
+            gameManager.healthInventory > 0 &&
+            gameManager.health < gameManager.maxHealth)
         {
-            // Reuse your existing logic
             UseHealthItem();
 
             // Same SFX + pulse
@@ -325,7 +355,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void UpdateSprite()
+    public void UpdateSprite()
     {
         if (spriteRenderer == null) return;
         if (gameManager == null) return;
@@ -360,7 +390,15 @@ public class PlayerController : MonoBehaviour
         shipController?.Stop();
         shipController?.DisableControl();
 
-        victoryPanelController.Show();
+        if (victoryPanelController != null)
+        {
+            Debug.Log("Showing victory panel");
+            victoryPanelController.Show();
+        }
+        else
+        {
+            Debug.LogWarning("VictoryPanelController is NOT assigned!");
+        }
     }
 
 }

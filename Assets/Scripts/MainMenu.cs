@@ -5,8 +5,24 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene("Alpha_Test_Level");
+        // Reset game state before starting the level
+        var gm = GameManager.Instance;
+        if (gm != null)
+        {
+            gm.health = gm.maxHealth;
+            gm.healthInventory = 0;
+            gm.goldCoins = 0;
+
+            gm.defeatedEnemies.Clear();
+            gm.enemyHealthById.Clear();
+            gm.currentEnemyId = null;
+            gm.fleeCooldownUntil = 0f;
+            gm.CancelChase();
+        }
+
+        SceneManager.LoadScene("Alpha_Test_Level_David");
     }
+    
     public void QuitGame()
     {
         Application.Quit();

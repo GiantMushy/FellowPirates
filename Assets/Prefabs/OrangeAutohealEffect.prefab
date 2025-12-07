@@ -103,5 +103,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b596c43296de5d47aef764e419faa7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingHealIcon
-  moveUpDistance: 0.5
-  duration: 0.5
+  moveUpDistance: 1
+  duration: 1.5
