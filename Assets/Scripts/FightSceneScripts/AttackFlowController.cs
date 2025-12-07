@@ -28,9 +28,6 @@ public class AttackFlowController : MonoBehaviour
     public Image[] enemyHeartImages;
 
     // Items UI
-    // public Sprite fullHealthSprite;
-    // public Sprite damagedSprite;
-    // public Sprite heavilyDamagedSprite;
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
@@ -41,6 +38,13 @@ public class AttackFlowController : MonoBehaviour
     // healing
     public GameObject healEffect;
 
+
+    // failed bribe
+    public Image enemyImage;
+    public TextMeshProUGUI failedBribeMessage;
+    private float angryDuration = 2f;
+    private float shakeStrength = 3f;
+    public SpriteRenderer fightingWindowBackground;
 
     private void Awake()
     {
@@ -155,13 +159,6 @@ public class AttackFlowController : MonoBehaviour
         isStartingDefend = true;
         isDefending = true;
 
-        var playerFight = FindObjectOfType<PlayerFightController>();
-        if (playerFight != null)
-        {
-            playerFight.ResetForNewDefend();
-        }
-
-
         timeBar.StartTimer();
         StartCoroutine(StartDefendDelayed());
     }
@@ -169,14 +166,21 @@ public class AttackFlowController : MonoBehaviour
 
     private IEnumerator StartDefendDelayed()
     {
-        Debug.Log("StartDefendDelayed");
-
         yield return new WaitForSeconds(0.3f);
 
         TimingBarCanvas.SetActive(false);
 
-        defendList[defend_index].SetActive(true);
+        GameObject pattern = defendList[defend_index];
+        pattern.SetActive(true);
+
+        var playerFight = pattern.GetComponentInChildren<PlayerFightController>();
+        if (playerFight != null)
+        {
+            Debug.Log("ResetForNewDefend on " + playerFight.name);
+            playerFight.ResetForNewDefend();
+        }
     }
+
 
 
     public void OnDefendFinished(bool tookDamage = false)
@@ -420,4 +424,77 @@ public class AttackFlowController : MonoBehaviour
         StartDefend();
     }
 
+
+
+    public void StartAngryAndDefend()
+    {
+        SetButtonsEnabled(false);
+        StartCoroutine(AngryAndDefendRoutine());
+    }
+
+    private IEnumerator AngryAndDefendRoutine()
+    {
+        if (failedBribeMessage != null)
+        {
+            failedBribeMessage.gameObject.SetActive(true);
+        }
+
+        Color originalEnemyColor = Color.white;
+        RectTransform rect = null;
+
+        if (enemyImage != null)
+        {
+            originalEnemyColor = enemyImage.color;
+            enemyImage.color = Color.red;
+            rect = enemyImage.rectTransform;
+        }
+
+        Color originalPanelColor = Color.white;
+        if (fightingWindowBackground != null)
+        {
+            originalPanelColor = fightingWindowBackground.color;
+            fightingWindowBackground.color = Color.black;
+        }
+
+        // shake
+        Vector2 originalPos = rect.anchoredPosition;
+        float t = 0f;
+
+        while (t < angryDuration)
+        {
+            t += Time.deltaTime;
+
+            if (rect != null)
+            {
+                float x = Random.Range(-shakeStrength, shakeStrength);
+                float y = Random.Range(-shakeStrength, shakeStrength);
+                rect.anchoredPosition = originalPos + new Vector2(x, y);
+            }
+
+            yield return null;
+        }
+
+        // reset
+        if (rect != null)
+        {
+            rect.anchoredPosition = originalPos;
+        }
+
+        if (enemyImage != null)
+        {
+            enemyImage.color = originalEnemyColor;
+        }
+
+        if (fightingWindowBackground != null)
+        {
+            fightingWindowBackground.color = originalPanelColor;
+        }
+
+        if (failedBribeMessage != null)
+        {
+            failedBribeMessage.gameObject.SetActive(false);
+        }
+
+        StartDefend();
+    }
 }
