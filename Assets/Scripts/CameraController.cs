@@ -5,17 +5,22 @@ public class CameraController : MonoBehaviour
     public Transform target;
     public Vector3 offset;
 
+    GameManager gameManager;
+
     void Start()
     {
-        // To get the correct camera position when switching scenes from overworld to fight menu
-        if (target == null && PlayerController.Instance != null)
+        gameManager = GameManager.Instance;
+
+        if (target == null)
         {
-            target = PlayerController.Instance.transform;
+            var playerGO = GameObject.FindGameObjectWithTag("Player");
+            if (playerGO != null)
+                target = playerGO.transform;
         }
 
-        if (PlayerController.Instance != null && PlayerController.Instance.hasSavedCameraOffset)
+        if (gameManager != null && gameManager.hasSavedCameraOffset)
         {
-            offset = PlayerController.Instance.savedCameraOffset;
+            offset = gameManager.savedCameraOffset;
         }
         else if (target != null && offset == Vector3.zero)
         {
@@ -27,16 +32,11 @@ public class CameraController : MonoBehaviour
     {
         if (target == null)
         {
-            // To get the correct camera position when switching scenes from overworld to fight menu
-
-            if (PlayerController.Instance != null)
-            {
-                target = PlayerController.Instance.transform;
-            }
+            var playerGO = GameObject.FindGameObjectWithTag("Player");
+            if (playerGO != null)
+                target = playerGO.transform;
             else
-            {
                 return;
-            }
         }
 
         // Do not effect the rotation or the x position of the camera (only move up and down with the target)

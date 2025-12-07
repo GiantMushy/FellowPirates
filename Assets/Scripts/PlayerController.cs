@@ -1,165 +1,114 @@
+
 using UnityEngine;
-using UnityEngine.Diagnostics;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 
+
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController Instance;
-
     public PauseMenu pauseMenu;
-
-    public int maxHealth = 3;
-    public int health = 3;
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
     public Image[] heartImages;
 
-    // Health invenentory
-    public int healthInventory = 0;
     public TextMeshProUGUI healthInventoryText;
-
-    // Gold amount
-    public int goldCoins = 0;
-    public TextMeshProUGUI goldText;
-    [SerializeField] private AudioClip goldPickupSound;
-
-    // Victory Panel
-    public GameObject victoryPanel;
-
-    // Player start position
-    private Vector3 startPosition;
-    private Quaternion startRotation;
-
-
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
 
-
     [SerializeField] private AudioClip healthPickupSound;
+    [SerializeField] private AudioClip goldPickupSound;
 
-    // Scene switch logic
-    private EnemyController currentEnemy;
-    private string returnSceneName;
-    private float fleeCooldownUntil = 0f;
-    private Vector3 lastEnemyPosition;
-    public Vector3 savedCameraOffset;
-    public bool hasSavedCameraOffset;
+    public TextMeshProUGUI goldText;
 
-    // for bribe
-    public int enemyBribeCost; // taken from colliding enemy
-
-    public GameObject levelObjects;
-
-
-    private Vector3 preBattlePosition;
-    private bool returningFromBattle = false;
-
-
-    void Awake()
-
-    {
-        Debug.Log($"PlayerController Awake, Instance={Instance}, health={health}, savedHealth=");
-
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-
-        DontDestroyOnLoad(gameObject);
-    }
+    GameManager gameManager;
+    public VictoryPanelController victoryPanelController;
 
 
     void Start()
     {
-        victoryPanel.SetActive(false);
+        gameManager = GameManager.Instance;
+        if (gameManager == null)
+        {
+            Debug.LogError("PlayerController: GameManager.Instance is null!");
+        }
+
         shipController = GetComponent<ShipController>();
-        if (shipController == null)
-            Debug.LogError("PlayerController requires a ShipController component!");
-
         damageTypeController = GetComponent<DamageTypeController>();
-        if (damageTypeController == null)
-            Debug.LogError("PlayerController requires a DamageTypeController component!");
-
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-            Debug.LogError("PlayerController requires a SpriteRenderer component!");
+
+        if (healthInventoryText == null)
+        {
+            var healthGO = GameObject.Find("HealthItem_UI");
+            if (healthGO != null)
+                healthInventoryText = healthGO.GetComponent<TextMeshProUGUI>();
+        }
+
+        if (goldText == null)
+        {
+            var goldGO = GameObject.Find("GoldCoin_UI");
+            if (goldGO != null)
+                goldText = goldGO.GetComponent<TextMeshProUGUI>();
+        }
 
 
-        // Save current position/rotation as spawn
-        startPosition = transform.position;
-        startRotation = transform.rotation;
-
-        // ResetPlayerState();
-    }
-
-    private void ResetPlayerState()
-    {
-        // Position + rotation
-        transform.position = startPosition;
-        transform.rotation = startRotation;
-
-        // Core stats
-        health = maxHealth;
-        healthInventory = 0;
-        goldCoins = 0;
-
-        // Update visuals/UI
         UpdateSprite();
         UpdateHeartsUI();
         UpdateHealthItemUI();
         UpdateGoldUI();
-
-        shipController.EnableControl();
     }
-
 
     void Update()
     {
         var keyboard = Keyboard.current;
+
         if (keyboard.escapeKey.wasPressedThisFrame)
             if (pauseMenu != null)
-        {
-            pauseMenu.TogglePause();
-        }
+            {
+                pauseMenu.TogglePause();
+            }
 
         if (shipController != null)
         {
-            // Pass inputs to the ShipController
             shipController.SetAccelerate(keyboard.upArrowKey.isPressed);
             shipController.SetDecelerate(keyboard.downArrowKey.isPressed);
             shipController.SetTurnPort(keyboard.leftArrowKey.isPressed);
             shipController.SetTurnStarboard(keyboard.rightArrowKey.isPressed);
         }
 
-        if (keyboard.eKey.wasPressedThisFrame)
+        if (keyboard.eKey.wasPressedThisFrame && gameManager != null)
         {
-            if (health < maxHealth && healthInventory > 0)
+            if (gameManager.health < gameManager.maxHealth &&
+                gameManager.healthInventory > 0)
             {
                 UseHealthItem();
-                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
-            }
-            else return;
-        }
-    }
 
+                if (healthPickupSound != null)
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+
+                StartCoroutine(PulseEffect.sprite_pulse(
+                    spriteRenderer,
+                    num_pulses: 3,
+                    intensity: 1.2f,
+                    speed: 5f
+                ));
+            }
+        }
+
+    }
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (gameManager == null) return;
+
         string tag = other.tag;
 
         if (tag == "Land")
         {
             TakeDamage();
-            if (health < maxHealth)
+            if (gameManager.health < gameManager.maxHealth)
                 StartCoroutine(damageTypeController.HandleLandCollision("Land"));
             else
                 StartCoroutine(damageTypeController.HandleRespawn());
@@ -170,162 +119,122 @@ public class PlayerController : MonoBehaviour
         }
         else if (tag == "HealthPickup")
         {
-
-            if (health == maxHealth)
+            if (gameManager.health == gameManager.maxHealth)
             {
-                GainHealthItem();
-                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                gameManager.healthInventory++;
+                UpdateHealthItemUI();
+                if (healthPickupSound != null)
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
             }
             else
             {
                 GainHealth();
-                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                if (healthPickupSound != null)
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+
                 StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
             }
+
             other.gameObject.SetActive(false);
         }
         else if (tag == "GoldPickup")
         {
-            GainGold();
-            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
+            gameManager.goldCoins++;
+            UpdateGoldUI();
+            if (goldPickupSound != null)
+                SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
+
             other.gameObject.SetActive(false);
         }
-
     }
+
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (gameManager == null)
+        {
+            return;
+        }
+
         string tag = collision.gameObject.tag;
-        if ((tag == "Pirate" || tag == "Monster") && Time.time < fleeCooldownUntil)
+
+        if ((tag == "Pirate" || tag == "Monster") &&
+            Time.time < gameManager.fleeCooldownUntil)
         {
-            Debug.Log("Ignoring enemy collision during flee cooldown");
             return;
         }
 
-        if (tag == "Pirate" || tag == "Monster") // TODO: seperate logic for the monsters
+        if (tag == "Pirate" || tag == "Monster")
         {
-            if (Camera.main != null)
-            {
-                savedCameraOffset = Camera.main.transform.position - transform.position;
-                hasSavedCameraOffset = true;
-            }
-
-            currentEnemy = collision.gameObject.GetComponent<EnemyController>();
-
-            lastEnemyPosition = currentEnemy.transform.position;
-
-            returnSceneName = SceneManager.GetActiveScene().name;
-
-            preBattlePosition = transform.position;
-            returningFromBattle = true;
-
-            // if (spriteRenderer != null) spriteRenderer.enabled = false;
-            if (shipController != null)
-            {
-                shipController.EnableControl();
-                shipController.Stop();
-                shipController.SetAccelerate(false);
-                shipController.SetDecelerate(false);
-                shipController.SetTurnPort(false);
-                shipController.SetTurnStarboard(false);
-            }
-
-            if (currentEnemy != null)
-            {
-                var enemyRenderer = currentEnemy.GetComponent<SpriteRenderer>();
-                enemyBribeCost = currentEnemy.bribeCost;
-                if (enemyRenderer != null)
-                {
-                    enemyRenderer.enabled = false;
-                }
-            }
-            spriteRenderer.enabled = false;
-            SceneManager.LoadScene("FightDemo");
-
+            var enemy = collision.gameObject.GetComponent<EnemyController>();
+            gameManager.StartBattle(this, enemy);
             return;
-
         }
 
-        else if (tag == "WorldBorders")
+        if (tag == "WorldBorders")
         {
             StartCoroutine(damageTypeController.HandleLandCollision(tag));
         }
-
     }
 
-    public void StartChase()
+    public void PrepareForBattle()
     {
-        Debug.Log("StartChase called from Flee");
-
-        if (spriteRenderer != null) spriteRenderer.enabled = true;
-        if (shipController != null) shipController.enabled = true;
-
-
-
-        SceneManager.LoadScene(returnSceneName);
-
-        shipController.EnableControl();
-        shipController.Stop();
-        shipController.SetAccelerate(false);
-        shipController.SetDecelerate(false);
-        shipController.SetTurnPort(false);
-        shipController.SetTurnStarboard(false);
-
-
-        fleeCooldownUntil = Time.time + 2f;
-        StartCoroutine(StartChaseAfterReturn());
-    }
-
-    private System.Collections.IEnumerator StartChaseAfterReturn()
-    {
-        // wait one frame so the overworld scene has actually spawned its enemies
-        yield return null;
-
-        var enemies = FindObjectsOfType<EnemyController>();
-        if (enemies.Length > 0)
+        if (shipController != null)
         {
-            EnemyController best = null;
-            float bestDist = float.MaxValue;
-
-            foreach (var e in enemies)
-            {
-                float d = (e.transform.position - lastEnemyPosition).sqrMagnitude;
-                if (d < bestDist)
-                {
-                    bestDist = d;
-                    best = e;
-                }
-            }
-
-            if (best != null)
-            {
-                best.StartChasing(transform);
-            }
+            shipController.EnableControl();
+            shipController.Stop();
+            shipController.SetAccelerate(false);
+            shipController.SetDecelerate(false);
+            shipController.SetTurnPort(false);
+            shipController.SetTurnStarboard(false);
         }
+
+        if (spriteRenderer != null)
+            spriteRenderer.enabled = false;
     }
 
     public void TakeDamage()
     {
-        if (health > 0)
-        {
-            health -= 1;
-        }
+        if (gameManager == null) return;
+
+        if (gameManager.health > 0)
+            gameManager.health--;
+
         UpdateSprite();
         UpdateHeartsUI();
 
-        if (health <= 0)
+        if (gameManager.health <= 0)
         {
+            gameManager.CancelChase();
             GetComponent<PlayerRespawn>().Respawn();
-            health = 3;
-            UpdateHeartsUI();
+            gameManager.health = gameManager.maxHealth;
             UpdateSprite();
+            UpdateHeartsUI();
         }
     }
+
+    private void UseHealthItem()
+    {
+        if (gameManager == null) return;
+
+        if (gameManager.healthInventory > 0 &&
+            gameManager.health < gameManager.maxHealth)
+        {
+            gameManager.healthInventory--;
+            gameManager.health++;
+            UpdateHealthItemUI();
+            UpdateSprite();
+            UpdateHeartsUI();
+        }
+    }
+
     public void GainHealth()
     {
-        if (health < maxHealth)
+        if (gameManager == null) return;
+
+        if (gameManager.health < gameManager.maxHealth)
         {
-            health += 1;
+            gameManager.health += 1;
             UpdateSprite();
             UpdateHeartsUI();
         }
@@ -339,288 +248,58 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        int currentHealth = gameManager != null ? gameManager.health : 0;
+
         for (int i = 0; i < heartImages.Length; i++)
         {
             if (heartImages[i] == null)
             {
-                Debug.LogError("no heart images");
+                Debug.LogError("no heart image at index " + i);
                 continue;
             }
 
-            bool fullHealth = i < health;
-
+            bool fullHealth = i < currentHealth;
             heartImages[i].color = fullHealth ? Color.white : Color.black;
-
-            Debug.Log("fullHealth " + fullHealth);
-
-        }
-
-    }
-
-    public void GainHealthItem()
-    {
-        healthInventory += 1;
-        UpdateHealthItemUI();
-
-    }
-
-    public void UpdateHealthItemUI()
-    {
-        if (healthInventoryText != null)
-        {
-            healthInventoryText.text = healthInventory.ToString();
-        }
-
-    }
-
-    public void UseHealthItem()
-    {
-        if (healthInventory > 0 && health < maxHealth)
-        {
-            healthInventory -= 1;
-            GainHealth();
-            UpdateHealthItemUI();
         }
     }
 
-    public void GainGold()
+    void UpdateSprite()
     {
-        goldCoins += 1;
-        UpdateGoldUI();
+        if (spriteRenderer == null) return;
+        if (gameManager == null) return;
+
+        int h = gameManager.health;
+
+        if (h == 3) spriteRenderer.sprite = fullHealthSprite;
+        else if (h == 2) spriteRenderer.sprite = damagedSprite;
+        else if (h == 1) spriteRenderer.sprite = heavilyDamagedSprite;
     }
 
-    public void UpdateGoldUI()
+
+
+    void UpdateHealthItemUI()
     {
-        if (goldText != null)
+        if (healthInventoryText != null && gameManager != null)
         {
-            goldText.text = goldCoins.ToString();
+            healthInventoryText.text = gameManager.healthInventory.ToString();
+        }
+    }
+
+    void UpdateGoldUI()
+    {
+        if (goldText != null && gameManager != null)
+        {
+            goldText.text = gameManager.goldCoins.ToString();
         }
     }
 
     public void ShowVictoryScreen()
     {
-        // stop moving, disable controls
-        shipController.Stop();
-        shipController.DisableControl();
-        if (victoryPanel != null)
-        {
-            victoryPanel.SetActive(true);
-        }
-        // Pause world
-        Time.timeScale = 0f;
+        shipController?.Stop();
+        shipController?.DisableControl();
+
+        victoryPanelController.Show();
     }
-
-    public void RestartLevel()
-    {
-        Debug.Log("RestartLevel BUTTON pressed");
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("Alpha_Test_Level");
-
-    }
-
-    public void GoToMainMenu()
-    {
-        Debug.Log("GoToMainMenu BUTTON pressed");
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
-    }
-
-    void UpdateSprite()
-    {
-
-        Debug.Log("updating sprite with health: " + health);
-
-        if (spriteRenderer == null)
-        {
-            Debug.Log("not gonna upsate health");
-            return;
-        }
-        if (health == 3) { spriteRenderer.sprite = fullHealthSprite; }
-        else if (health == 2) { spriteRenderer.sprite = damagedSprite; }
-        else if (health == 1) { spriteRenderer.sprite = heavilyDamagedSprite; }
-    }
-
-
-    public void OnBattleWon()
-    {
-        Debug.Log("Battle won, returning to overworld");
-
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = true;
-        }
-        if (shipController != null)
-        {
-            shipController.EnableControl();
-            shipController.Stop();
-            shipController.SetAccelerate(false);
-            shipController.SetDecelerate(false);
-            shipController.SetTurnPort(false);
-            shipController.SetTurnStarboard(false);
-        }
-
-        fleeCooldownUntil = Time.time + 2f;
-
-        SceneManager.LoadScene(returnSceneName);
-
-        StartCoroutine(DestroyEnemyAfterReturn());
-    }
-
-    public void OnBribeAccepted()
-    {
-        Debug.Log("Bribe accepted, returning to overworld");
-
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = true;
-        }
-        if (shipController != null)
-        {
-            shipController.EnableControl();
-            shipController.Stop();
-            shipController.SetAccelerate(false);
-            shipController.SetDecelerate(false);
-            shipController.SetTurnPort(false);
-            shipController.SetTurnStarboard(false);
-        }
-
-        fleeCooldownUntil = Time.time + 2f;
-
-        SceneManager.LoadScene(returnSceneName);
-
-        fleeCooldownUntil = Time.time + 2f;
-
-        // StartCoroutine(DestroyEnemyAfterReturn());
-    }
-
-    private System.Collections.IEnumerator DestroyEnemyAfterReturn()
-    {
-        // wait one frame so the scene has actually spawned its enemies
-        yield return null;
-
-        var enemies = FindObjectsOfType<EnemyController>();
-        if (enemies.Length > 0)
-        {
-            EnemyController best = null;
-            float bestDist = float.MaxValue;
-
-            foreach (var e in enemies)
-            {
-                float d = (e.transform.position - lastEnemyPosition).sqrMagnitude;
-                if (d < bestDist)
-                {
-                    bestDist = d;
-                    best = e;
-                }
-            }
-
-            if (best != null)
-            {
-                Debug.Log("Destroying defeated enemy: " + best.name);
-                Destroy(best.gameObject);
-            }
-        }
-    }
-
-    void OnEnable()
-    {
-        Debug.Log($"PlayerController OnEnable, Instance={Instance}, health={health}, savedHealth=");
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    void OnDisable()
-    {
-        if (Instance == this)
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-
-        Debug.Log($"[OnSceneLoaded] {scene.name}: health={health}, gold={goldCoins}, inv={healthInventory}");
-
-        var itemsCanvas = GameObject.Find("ItemsCanvas");
-        if (itemsCanvas != null)
-        {
-            heartImages = new Image[]
-            {
-                itemsCanvas.transform.Find("Heart_1")?.GetComponent<Image>(),
-                itemsCanvas.transform.Find("Heart_2")?.GetComponent<Image>(),
-                itemsCanvas.transform.Find("Heart_3")?.GetComponent<Image>()
-            };
-
-            Debug.Log("[HUD] Hearts rebound from ItemsCanvas");
-        }
-        else
-        {
-            Debug.LogError("[HUD] ItemsCanvas NOT FOUND");
-        }
-
-
-
-        var healthTextGO = GameObject.Find("HealthItem_UI");
-        if (healthTextGO != null)
-        {
-            healthInventoryText = healthTextGO.GetComponent<TextMeshProUGUI>();
-        }
-
-        var goldTextGO = GameObject.Find("GoldCoin_UI");
-        if (goldTextGO != null)
-        {
-            goldText = goldTextGO.GetComponent<TextMeshProUGUI>();
-        }
-
-        var victoryGO = GameObject.Find("Victory_Panel");
-        if (victoryGO != null)
-        {
-            victoryPanel = victoryGO;
-            victoryPanel.SetActive(false);
-            Debug.Log("[HUD] Victory_Panel rebound");
-        }
-        else
-        {
-            Debug.LogWarning("[HUD] Victory_Panel NOT FOUND");
-        }
-
-        if (scene.name != "FightDemo")
-        {
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.enabled = true;
-                var c = spriteRenderer.color;
-                c.a = 1f;
-                spriteRenderer.color = c;
-            }
-
-            if (shipController != null)
-            {
-                shipController.enabled = true;
-                shipController.EnableControl();
-            }
-
-
-            if (returningFromBattle)
-            {
-                Debug.Log($"Restoring pre-battle position: {preBattlePosition}");
-                transform.position = preBattlePosition;
-
-                if (hasSavedCameraOffset && Camera.main != null)
-                {
-                    Camera.main.transform.position = transform.position + savedCameraOffset;
-                }
-
-                returningFromBattle = false;
-            }
-
-        }
-
-        UpdateHealthItemUI();
-        UpdateGoldUI();
-        UpdateSprite();
-        UpdateHeartsUI();
-    }
-
 
 }
+
