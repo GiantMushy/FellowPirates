@@ -7,20 +7,20 @@ public class BribeButtonController : MonoBehaviour
 {
     [SerializeField] private Button bribeButton;
     public AttackFlowController flow;
-    PlayerController player;
+    GameManager gameManager;
     private int bribeCost;
 
     void Start()
     {
-        player = PlayerController.Instance;
+        gameManager = GameManager.Instance;
 
-        if (player == null)
+        if (gameManager == null)
         {
-            Debug.LogError("BribeButtonController: PlayerController.Instance is null!");
+            Debug.LogError("BribeButtonController: GameManager.Instance is null!");
             return;
         }
 
-        bribeCost = player.enemyBribeCost;
+        bribeCost = gameManager.enemyBribeCost;
     }
 
 
@@ -29,18 +29,18 @@ public class BribeButtonController : MonoBehaviour
         Debug.Log("Bribe button pressed");
         EventSystem.current.SetSelectedGameObject(bribeButton.gameObject);
 
-        Debug.Log("Enemy bribe cost: " + bribeCost);
-
-        if (player.goldCoins < bribeCost)
+        if (gameManager.goldCoins < bribeCost)
         {
             Debug.Log("you cant afford that buddy");
+            flow.StartDefendAfterPlayerAction();
+
         }
         else
         {
             Debug.Log("you have lost money in a bribe");
-            player.goldCoins -= bribeCost;
+            gameManager.goldCoins -= bribeCost;
             flow.RefreshItemsUI();
-            player.OnBribeAccepted();
+            gameManager.EndBattleBribed();
         }
     }
 }

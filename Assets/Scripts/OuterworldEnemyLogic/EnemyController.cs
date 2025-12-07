@@ -1,10 +1,15 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using TMPro;
+using System.Collections.Generic;
 
 public class EnemyController : MonoBehaviour
 {
     private ShipController shipController;
+    public string enemyId;
+
+
+    // CHASSSINNNNG LOGIC VARIABLES
     public GridManager grid;
     private int path_index;
     private List<State> path;
@@ -16,7 +21,6 @@ public class EnemyController : MonoBehaviour
     public float chase_delay = 3f;
     private bool waiting_to_chase = false;
 
-
     // next 3 are to get rid of jitter
     // where turning last
     // 1 = turning port
@@ -26,15 +30,29 @@ public class EnemyController : MonoBehaviour
     public float turn_deadzone = 5f; // minimum angle off needed before changing angle
     public float turn_release_zone = 2f; // stop turning 
 
+    public ChaseTime chaseTimeController;
 
     // for bribe
     public int bribeCost = 1;
 
     void Start()
     {
-        shipController = GetComponent<ShipController>();
-        if (shipController == null)
-            Debug.LogError("EnemyController requires a ShipController component!");
+        var gm = GameManager.Instance;
+        if (gm != null && gm.defeatedEnemies.Contains(enemyId))
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            shipController = GetComponent<ShipController>();
+            if (shipController == null)
+            {
+                Debug.LogError("EnemyController requires a ShipController component!");
+            }
+
+            // chaseTime.SetActive(false);
+            chaseTimeController.timeWait = chase_delay;
+        }
     }
 
     void Update()
@@ -54,6 +72,12 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+        }
+
+
         player = target;
         waiting_to_chase = true;
         StartCoroutine(Chase());
@@ -61,7 +85,12 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator Chase()
     {
+        chaseTimeController.startChaseCountodwn();
+
+
         yield return new WaitForSeconds(chase_delay);
+
+        chaseTimeController.StartChase();
 
         waiting_to_chase = false;
 
@@ -97,16 +126,14 @@ public class EnemyController : MonoBehaviour
         while (timer < chaseTime)
         {
             timer += Time.deltaTime;
-            Debug.Log("timer = " + timer);
             yield return true;
         }
-        Debug.Log("stopping chase from timer");
         StopChase();
     }
 
-    private void StopChase()
+    public void StopChase()
     {
-        Debug.Log("stopped chasing");
+        Debug.Log("Stopped chasing");
         chasing = false;
         shipController.SetAccelerate(false);
         shipController.SetDecelerate(true);
@@ -184,7 +211,6 @@ public class EnemyController : MonoBehaviour
 
     }
 
-
     private void ReplanIfNeeded()
     {
         replan_timer += Time.deltaTime;
@@ -228,6 +254,5 @@ public class EnemyController : MonoBehaviour
             }
         }
     }
-
 }
 
