@@ -25,6 +25,8 @@ public class AttackFlowController : MonoBehaviour
     private bool isStartingDefend = false;
 
     GameManager gameManager;
+    EnemyController enemy;
+    PlayerController player;
     public Image[] enemyHeartImages;
 
     // Items UI
@@ -74,12 +76,33 @@ public class AttackFlowController : MonoBehaviour
             Debug.LogError("AttackFlowController: GameManager.Instance is null!");
             return;
         }
+
+        enemy = gameManager.activeEnemy;
+        if (enemy == null)
+        {
+            Debug.LogError("AttackFlowController: currentEnemy is null!");
+            return;
+        }
+
+        player = gameManager.player;
+        if (player == null)
+        {
+            player = FindObjectOfType<PlayerController>();
+            if (player != null)
+            {
+                gameManager.player = player;
+            }
+        }
+        if (player == null)
+        {
+            Debug.LogError("AttackFlowController: player is null!");
+            return;
+        }
+
         SetChooseActionText();
         RefreshItemsUI();
         HideBribeCost();
-        bribeCostButtonText.text = $"{gameManager.enemyBribeCost} gold coins";
-
-
+        bribeCostButtonText.text = $"{enemy.bribeCost} gold coins";
     }
 
     public void ShowBribeCost()
@@ -87,7 +110,7 @@ public class AttackFlowController : MonoBehaviour
         Debug.Log("ShowBribeCost");
         if (bribeCostText == null || gameManager == null) return;
 
-        bribeCostText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
+        bribeCostText.text = $"BRIBE COST: {enemy.bribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
         bribeCostText.gameObject.SetActive(true);
     }
 
@@ -239,7 +262,7 @@ public class AttackFlowController : MonoBehaviour
             DamagePlayer();
         }
 
-        if (defend_index >= defendList.Length || gameManager.health == 0)
+        if (defend_index >= defendList.Length || enemy.IsDead())
         {
             BattleOver();
             return;
@@ -259,7 +282,7 @@ public class AttackFlowController : MonoBehaviour
 
     void BattleOver()
     {
-        if (gameManager.health <= 0)
+        if (player.IsDead())
         {
             GameManager.Instance.EndBattlePlayerDied();
         }
@@ -286,7 +309,7 @@ public class AttackFlowController : MonoBehaviour
     {
         if (heartImages == null) return;
 
-        int health = gameManager.health;
+        int health = player.GetHealth();
 
         for (int i = 0; i < heartImages.Length; i++)
         {
@@ -303,7 +326,7 @@ public class AttackFlowController : MonoBehaviour
             return;
         }
 
-        int hpUnits = gameManager.enemyHealth;
+        int hpUnits = enemy.GetHealth();
 
         for (int i = 0; i < enemyHeartImages.Length; i++)
         {
@@ -348,7 +371,7 @@ public class AttackFlowController : MonoBehaviour
 
     private void DamagePlayer()
     {
-        gameManager.health--;
+        player.TakeDamage(1);
         RefreshItemsUI();
     }
 
@@ -358,17 +381,10 @@ public class AttackFlowController : MonoBehaviour
     {
         if (gameManager == null) return;
 
-        gameManager.enemyHealth -= units;
-        if (gameManager.enemyHealth < 0)
-            gameManager.enemyHealth = 0;
+        enemy.TakeDamage(units);
+        RefreshItemsUI();
 
-        if (!string.IsNullOrEmpty(gameManager.currentEnemyId))
-        {
-            gameManager.enemyHealthById[gameManager.currentEnemyId] = gameManager.enemyHealth;
-        }
-
-
-        int damageDone = gameManager.enemyMaxHealth - gameManager.enemyHealth;
+        int damageDone = enemy.GetMaxHealth() - enemy.GetHealth();
         defend_index = damageDone / 2;
 
         if (defend_index >= defendList.Length)
@@ -378,10 +394,9 @@ public class AttackFlowController : MonoBehaviour
 
         UpdateEnemyHeartsUI();
 
-        if (gameManager.enemyHealth <= 0)
+        if (enemy.GetHealth() <= 0)
         {
-            BattleOver();
-            return;
+            GameManager.Instance.EndBattleWon();
         }
     }
 
@@ -519,5 +534,14 @@ public class AttackFlowController : MonoBehaviour
         }
 
         StartDefend();
+    }
+
+    public int GetBribeCost()
+    {
+        if (enemy != null)
+        {
+            return enemy.bribeCost;
+        }
+        return 0;
     }
 }

@@ -40,10 +40,6 @@ public class DeathPanelController : MonoBehaviour
         Hide();
 
         var gm = GameManager.Instance;
-        if (gm != null)
-        {
-            gm.health = gm.maxHealth;
-        }
 
         // Respawn the player using the existing respawn script, change it maybe
         var player = FindObjectOfType<PlayerRespawn>();

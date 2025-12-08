@@ -7,45 +7,27 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-
     //  global player data 
-    public int maxHealth = 3;
-    public int health = 3;
+    public PlayerController player;
     public int healthInventory = 0;
     public int goldCoins = 0;
 
-    //  battle state 
-    public string returnSceneName;
-    public Vector3 preBattlePosition;
-    public Vector3 lastEnemyPosition;
-    public EnemyController currentEnemy;
-    public int enemyBribeCost;
+    // global enemy data
+    public List<EnemyController> Enemies;
+    public EnemyController activeEnemy;
 
-    public Vector3 savedCameraOffset;
-    public bool hasSavedCameraOffset;
+    //  battle state 
+    public GameObject fightPrefab; // Assign in inspector
     public float fleeCooldownUntil;
 
-    private bool pendingBattleReturn = false;
+    private Vector3 savedCameraPosition;
+    public bool hasSavedCameraOffset;
     private bool pendingChaseReturn = false;
     private bool pendingDeathReturn = false;
-    private bool pendingBribeReturn = false;
 
     public Vector3 spawnPoint;
     public bool hasSpawnPoint = false;
-
-
     public string currentLevelName;
-
-    public EnemyController chasingEnemy;
-    public int enemyMaxHealth = 6;   // only 6 because i dont work with floats when losing half
-    public int enemyHealth = 6;
-
-
-
-    public HashSet<string> defeatedEnemies = new HashSet<string>(); // to not render the dead dudes
-    public Dictionary<string, int> enemyHealthById = new Dictionary<string, int>(); // to keep lives persistent per enemy
-
-    public string currentEnemyId;
 
     void Awake()
     {
@@ -58,26 +40,19 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         currentLevelName = SceneManager.GetActiveScene().name;
-
-    }
-
-    void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    void OnDisable()
-    {
-        if (Instance == this)
+        player = GetComponent<PlayerController>();
+        // If player is a separate GameObject, make sure it persists
+        if (player != null && player.gameObject != this.gameObject)
         {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
+            DontDestroyOnLoad(player.gameObject);
         }
     }
+
+
 
     public void RestartCurrentLevel()
     {
         Time.timeScale = 1f;
-        pendingBattleReturn = false;
         pendingChaseReturn = false;
 
         var sceneName = SceneManager.GetActiveScene().name;
@@ -88,140 +63,90 @@ public class GameManager : MonoBehaviour
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        pendingBattleReturn = false;
         pendingChaseReturn = false;
 
         currentLevelName = "MainMenu";
         SceneManager.LoadScene("MainMenu");
     }
 
-
     public void StartBattle(PlayerController player, EnemyController enemy)
     {
-        if (Camera.main != null)
-        {
-            savedCameraOffset = Camera.main.transform.position - player.transform.position;
-            hasSavedCameraOffset = true;
-        }
-
-        currentEnemy = enemy;
-        currentEnemyId = enemy.enemyId;
-        lastEnemyPosition = enemy.transform.position;
-
-        returnSceneName = SceneManager.GetActiveScene().name;
-        preBattlePosition = player.transform.position;
-
-        enemyBribeCost = enemy.bribeCost;
-
-        if (!string.IsNullOrEmpty(currentEnemyId) &&
-           enemyHealthById.TryGetValue(currentEnemyId, out var savedHp))
-        {
-            enemyHealth = Mathf.Clamp(savedHp, 0, enemyMaxHealth);
-        }
-        else
-        {
-            enemyHealth = enemyMaxHealth; // first time fighting this enemy
-        }
-
+        activeEnemy = enemy;
         player.PrepareForBattle();
 
-        SceneManager.LoadScene("FightDemo");
-    }
-
-    public void EndBattleWon()
-    {
-        pendingBattleReturn = true;
-        pendingChaseReturn = false;
-        pendingDeathReturn = false;
-
-
-        fleeCooldownUntil = Time.time + 2f;
-
-        if (!string.IsNullOrEmpty(currentEnemyId))
+        // Save camera position
+        if (Camera.main != null)
         {
-            enemyHealthById.Remove(currentEnemyId);
-            defeatedEnemies.Add(currentEnemyId);
+            savedCameraPosition = Camera.main.transform.position;
         }
 
-        SceneManager.LoadScene(returnSceneName);
+        // Enable fight prefab and move camera
+        if (fightPrefab != null)
+        {
+            fightPrefab.SetActive(true);
+            
+            if (Camera.main != null)
+            {
+                Camera.main.transform.position = new Vector3(
+                    fightPrefab.transform.position.x,
+                    fightPrefab.transform.position.y,
+                    Camera.main.transform.position.z
+                );
+            }
+        }
+    }
+    
+    public void EndBattleWon()
+    {
+        activeEnemy.isDefeated = true;
+        EndBattle();
     }
 
     public void EndBattleBribed()
     {
-        pendingBattleReturn = true;
-        pendingChaseReturn = false;
-        pendingDeathReturn = false;
-        pendingBribeReturn = true;
-
-        fleeCooldownUntil = Time.time + 2f;
-        SceneManager.LoadScene(returnSceneName);
+        activeEnemy.isDefeated = true;
+        EndBattle();
     }
 
     public void EndBattlePlayerDied()
     {
-        pendingBattleReturn = true;
-        pendingChaseReturn = false;
         pendingDeathReturn = true;
-
-        SceneManager.LoadScene(returnSceneName);
+        EndBattle();
     }
 
     public void UseHealthItem()
     {
-        if (healthInventory > 0 && health < maxHealth)
-        {
-            healthInventory--;
-            health++;
-        }
+        player.UseHealthItem();
     }
 
     public void StartChase()
     {
-        pendingBattleReturn = true;
         pendingChaseReturn = true;
-        pendingDeathReturn = false;
-
         fleeCooldownUntil = Time.time + 2f;
-        SceneManager.LoadScene(returnSceneName);
+        EndBattle();
     }
 
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void EndBattle()
     {
-        if (!pendingBattleReturn) return;
-        if (scene.name != returnSceneName) return;
+        // Disable fight prefab
+        if (fightPrefab != null)
+        {
+            fightPrefab.SetActive(false);
+        }
 
-        pendingBattleReturn = false;
+        // Return camera to saved position
+        if (Camera.main != null)
+        {
+            Camera.main.transform.position = savedCameraPosition;
+        }
 
-        var player = FindObjectOfType<PlayerController>();
+        // Handle post-battle logic
         if (player == null) return;
-
+        
         if (pendingDeathReturn)
         {
             pendingDeathReturn = false;
-
-            var respawn = player.GetComponent<PlayerRespawn>();
-            if (respawn != null)
-            {
-                respawn.Respawn();
-            }
-
-            health = maxHealth;
-        }
-        else
-        {
-            player.transform.position = preBattlePosition;
-        }
-
-        if (hasSavedCameraOffset && Camera.main != null)
-        {
-            Camera.main.transform.position = player.transform.position + savedCameraOffset;
-        }
-
-        if (pendingBribeReturn)
-        {
-            pendingBribeReturn = false;
-            player.StartCoroutine(HandleBribedEnemyReturn(player.transform));
+            player.Respawn();
         }
 
         if (pendingChaseReturn)
@@ -230,6 +155,12 @@ public class GameManager : MonoBehaviour
             StopAllCoroutines();
             player.StartCoroutine(StartChaseAfterReturn(player.transform));
         }
+        else
+        {
+            fleeCooldownUntil = Time.time + 5f;
+        }
+        
+        player.EnableControl();
     }
 
 
@@ -237,39 +168,39 @@ public class GameManager : MonoBehaviour
     {
         yield return null;
 
-        var enemies = FindObjectsOfType<EnemyController>();
-        if (enemies.Length == 0) yield break;
+        if (Enemies.Count == 0) yield break;
+ 
+        EnemyController curr = null;
+        float bestDist = float.MaxValue; 
+ 
+        foreach (var enemy in Enemies)
+        {// Fund the closest enemy and initiate chase
+            if (enemy.isDefeated) continue;
+            if (enemy.isChasing) curr = enemy;
+            float d = (enemy.transform.position - player.transform.position).sqrMagnitude;
+            if (d < bestDist) 
+            { 
+                bestDist = d; 
+                curr = enemy;
+            } 
+        } 
 
-        EnemyController best = null;
-        float bestDist = float.MaxValue;
-
-        foreach (var e in enemies)
+        if (curr != null)
         {
-            float d = (e.transform.position - lastEnemyPosition).sqrMagnitude;
-            if (d < bestDist)
-            {
-                bestDist = d;
-                best = e;
-            }
-        }
-
-        if (best != null)
-        {
-            chasingEnemy = best;
-            best.StartChasing(playerTransform);
+            activeEnemy = curr;
+            curr.StartChasing(playerTransform);
         }
     }
 
     public void CancelChase()
     {
-        if (chasingEnemy != null)
+        if (activeEnemy != null)
         {
-            chasingEnemy.StopChase();
-            chasingEnemy = null;
+            activeEnemy.StopChase();
+            activeEnemy = null;
         }
 
-
-        ChaseTime chaseUI = FindObjectOfType<ChaseTime>();
+        ChaseTime chaseUI = FindFirstObjectByType<ChaseTime>();
         if (chaseUI != null)
         {
             chaseUI.ForceStopChaseUI();
@@ -278,31 +209,8 @@ public class GameManager : MonoBehaviour
         StopAllCoroutines();
     }
 
-    private IEnumerator HandleBribedEnemyReturn(Transform playerTransform)
+    public int GetPlayerHealth()
     {
-        yield return null;
-
-        var enemies = FindObjectsOfType<EnemyController>();
-        if (enemies.Length == 0) yield break;
-
-        EnemyController best = null;
-        float bestDist = float.MaxValue;
-
-        foreach (var e in enemies)
-        {
-            float d = (e.transform.position - lastEnemyPosition).sqrMagnitude;
-            if (d < bestDist)
-            {
-                bestDist = d;
-                best = e;
-            }
-        }
-
-        if (best != null)
-        {
-            best.StartBribeFlee(playerTransform);
-        }
+        return player.GetHealth();
     }
-
-
 }

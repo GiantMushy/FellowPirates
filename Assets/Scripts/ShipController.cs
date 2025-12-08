@@ -7,7 +7,8 @@ public class ShipController : MonoBehaviour
     public float turnSpeed;
     public float acceleration;
     public float deceleration;
-    public int health;
+    public int maxHealth = 3;
+    public int health = 3;
     
     private float speed;
     private bool disabled = false;

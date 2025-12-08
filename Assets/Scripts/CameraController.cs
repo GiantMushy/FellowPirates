@@ -5,12 +5,8 @@ public class CameraController : MonoBehaviour
     public Transform target;
     public Vector3 offset;
 
-    GameManager gameManager;
-
     void Start()
     {
-        gameManager = GameManager.Instance;
-
         if (target == null)
         {
             var playerGO = GameObject.FindGameObjectWithTag("Player");
@@ -18,11 +14,7 @@ public class CameraController : MonoBehaviour
                 target = playerGO.transform;
         }
 
-        if (gameManager != null && gameManager.hasSavedCameraOffset)
-        {
-            offset = gameManager.savedCameraOffset;
-        }
-        else if (target != null && offset == Vector3.zero)
+        if (target != null && offset == Vector3.zero)
         {
             offset = transform.position - target.position;
         }

@@ -6,8 +6,11 @@ using UnityEngine.Tilemaps;
 
 public class EnemyController : MonoBehaviour
 {
-    private ShipController shipController;
-    public string enemyId;
+    private ShipController ship;
+    public int enemyId;
+    public int bribeCost = 1;
+    public bool isDefeated = false;
+    public bool isChasing = false;
 
 
     // CHASSSINNNNG LOGIC VARIABLES
@@ -17,9 +20,7 @@ public class EnemyController : MonoBehaviour
     public Transform player;
     public float replan_interval = 0.3f;
     private float replan_timer = 0;
-
-    private bool chasing = false;
-    public float chase_delay = 3f;
+    public float chase_delay = 2f;
     private bool waiting_to_chase = false;
 
     // next 3 are to get rid of jitter
@@ -32,9 +33,6 @@ public class EnemyController : MonoBehaviour
     public float turn_release_zone = 2f; // stop turning 
 
     public ChaseTime chaseTimeController;
-
-    // for bribe
-    public int bribeCost = 1;
     private Collider2D enemyCollider;
     private bool bribeFleeing = false;
     public Tilemap oceanTilemap;
@@ -43,15 +41,21 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         var gm = GameManager.Instance;
-        if (gm != null && gm.defeatedEnemies.Contains(enemyId))
+        if (gm == null)
         {
             Destroy(gameObject);
+            Debug.Log("Missing GameManager instance - destroying enemy");
+        }
+        else if (isDefeated)
+        {
+            Destroy(gameObject);
+            Debug.Log("EnemyController: Destroying enemy as it is already defeated.");
         }
         else
         {
-            shipController = GetComponent<ShipController>();
+            ship = GetComponent<ShipController>();
             enemyCollider = GetComponent<Collider2D>();
-            if (shipController == null)
+            if (ship == null)
             {
                 Debug.LogError("EnemyController requires a ShipController component!");
             }
@@ -63,7 +67,7 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        if (chasing)
+        if (isChasing)
         {
             FollowPath();
             ReplanIfNeeded();
@@ -78,7 +82,7 @@ public class EnemyController : MonoBehaviour
 
     public void StartChasing(Transform target)
     {
-        if (chasing || waiting_to_chase)
+        if (isChasing || waiting_to_chase)
         {
             return;
         }
@@ -105,7 +109,7 @@ public class EnemyController : MonoBehaviour
 
         waiting_to_chase = false;
 
-        Debug.Log("Enemyt chasing started");
+        Debug.Log("Enemy chasing started");
 
         State start = grid.GetStateFromWorldPos(transform.position);
         State goal = grid.GetStateFromWorldPos(player.position);
@@ -113,7 +117,7 @@ public class EnemyController : MonoBehaviour
         if (start == null || goal == null)
         {
             Debug.LogWarning("Start or end outside of bounds");
-            chasing = false;
+            isChasing = false;
             yield break;
         }
 
@@ -122,13 +126,13 @@ public class EnemyController : MonoBehaviour
 
         if (path != null && path.Count > 0)
         {
-            chasing = true;
-            shipController.SetAccelerate(true);
-            shipController.SetDecelerate(false);
+            isChasing = true;
+            ship.SetAccelerate(true);
+            ship.SetDecelerate(false);
         }
         else
         {
-            chasing = false;
+            isChasing = false;
             Debug.Log("Enemy did not find a path to player");
         }
 
@@ -145,11 +149,11 @@ public class EnemyController : MonoBehaviour
     public void StopChase()
     {
         Debug.Log("Stopped chasing");
-        chasing = false;
-        shipController.SetAccelerate(false);
-        shipController.SetDecelerate(true);
-        shipController.SetTurnPort(false);
-        shipController.SetTurnStarboard(false);
+        isChasing = false;
+        ship.SetAccelerate(false);
+        ship.SetDecelerate(false);
+        ship.SetTurnPort(false);
+        ship.SetTurnStarboard(false);
     }
 
     private void FollowPath()
@@ -184,19 +188,19 @@ public class EnemyController : MonoBehaviour
         float angle = UnityEngine.Vector3.SignedAngle(forward, dir, UnityEngine.Vector3.forward);
         float angle_abs = Mathf.Abs(angle);
 
-        shipController.SetTurnPort(false);
-        shipController.SetTurnStarboard(false);
+        ship.SetTurnPort(false);
+        ship.SetTurnStarboard(false);
 
         if (angle_abs > turn_deadzone)
         {
             if (angle > 0f)
             {
-                shipController.SetTurnPort(true);
+                ship.SetTurnPort(true);
                 last_turn_dir = 1f;
             }
             else
             {
-                shipController.SetTurnStarboard(true);
+                ship.SetTurnStarboard(true);
                 last_turn_dir = -1f;
             }
         }
@@ -204,11 +208,11 @@ public class EnemyController : MonoBehaviour
         {
             if (last_turn_dir > 0f)
             {
-                shipController.SetTurnPort(true);
+                ship.SetTurnPort(true);
             }
             else if (last_turn_dir < 0f)
             {
-                shipController.SetTurnStarboard(true);
+                ship.SetTurnStarboard(true);
             }
         }
         else
@@ -216,8 +220,8 @@ public class EnemyController : MonoBehaviour
             last_turn_dir = 0f;
         }
 
-        shipController.SetAccelerate(true);
-        shipController.SetDecelerate(false);
+        ship.SetAccelerate(true);
+        ship.SetDecelerate(false);
 
 
     }
@@ -280,8 +284,8 @@ public class EnemyController : MonoBehaviour
         bribeFleeing = true;
         SetIgnoreWorldBorders(true);
 
-        shipController.SetAccelerate(true);
-        shipController.SetDecelerate(false);
+        ship.SetAccelerate(true);
+        ship.SetDecelerate(false);
     }
 
 
@@ -310,19 +314,19 @@ public class EnemyController : MonoBehaviour
         float angle = Vector3.SignedAngle(forward, dir, Vector3.forward);
         float angle_abs = Mathf.Abs(angle);
 
-        shipController.SetTurnPort(false);
-        shipController.SetTurnStarboard(false);
+        ship.SetTurnPort(false);
+        ship.SetTurnStarboard(false);
 
         if (angle_abs > turn_deadzone)
         {
             if (angle > 0f)
             {
-                shipController.SetTurnPort(true);
+                ship.SetTurnPort(true);
                 last_turn_dir = 1f;
             }
             else
             {
-                shipController.SetTurnStarboard(true);
+                ship.SetTurnStarboard(true);
                 last_turn_dir = -1f;
             }
         }
@@ -330,11 +334,11 @@ public class EnemyController : MonoBehaviour
         {
             if (last_turn_dir > 0f)
             {
-                shipController.SetTurnPort(true);
+                ship.SetTurnPort(true);
             }
             else if (last_turn_dir < 0f)
             {
-                shipController.SetTurnStarboard(true);
+                ship.SetTurnStarboard(true);
             }
         }
         else
@@ -342,8 +346,8 @@ public class EnemyController : MonoBehaviour
             last_turn_dir = 0f;
         }
 
-        shipController.SetAccelerate(true);
-        shipController.SetDecelerate(false);
+        ship.SetAccelerate(true);
+        ship.SetDecelerate(false);
     }
 
 
@@ -369,5 +373,28 @@ public class EnemyController : MonoBehaviour
         return !oceanTilemap.HasTile(cell);
     }
 
+    public bool IsDead()
+    {
+        return isDefeated;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        ship.health -= damage;
+        if (ship.health <= 0)
+        {
+            isDefeated = true;
+        }
+    }
+
+    public int GetHealth()
+    {
+        return ship.health;
+    }
+
+    public int GetMaxHealth()
+    {
+        return ship.maxHealth;
+    }
 }
 

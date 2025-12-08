@@ -22,7 +22,7 @@ public class BribeButtonController : MonoBehaviour
             return;
         }
 
-        bribeCost = gameManager.enemyBribeCost;
+        bribeCost = flow.GetBribeCost();
     }
 
     void Update()

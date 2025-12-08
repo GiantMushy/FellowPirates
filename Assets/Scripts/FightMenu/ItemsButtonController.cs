@@ -29,7 +29,7 @@ public class ItemsButtonController : MonoBehaviour
         }
 
 
-        if (gameManager.healthInventory <= 0 || gameManager.health > 2)
+        if (gameManager.healthInventory <= 0 || gameManager.GetPlayerHealth() > 2)
         {
             itemsButton.interactable = false;
         }
@@ -48,7 +48,7 @@ public class ItemsButtonController : MonoBehaviour
         gameManager.UseHealthItem();
         attackFlow.RefreshItemsUI();
 
-        if (gameManager.healthInventory < 0 || gameManager.health > 2)
+        if (gameManager.healthInventory < 0 || gameManager.GetPlayerHealth() > 2)
         {
             EventSystem.current.SetSelectedGameObject(attackButton.gameObject);
         }

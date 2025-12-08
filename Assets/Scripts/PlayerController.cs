@@ -8,10 +8,14 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    GameManager gameManager;
+    private ShipController ship;
+    private DamageTypeController damageTypeController;
     [Header("Ship sprites")]
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
+    private SpriteRenderer spriteRenderer;
     
     [Header("UI elements")]
     public PauseMenu pauseMenu;
@@ -21,7 +25,6 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI goldText;
 
     // Victory and defeat panels
-    GameManager gameManager;
     public VictoryPanelController victoryPanelController;
     public DeathPanelController deathPanelController;
 
@@ -37,9 +40,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip healthPickupSound;
     [SerializeField] private AudioClip goldPickupSound;
 
-    private ShipController shipController;
-    private DamageTypeController damageTypeController;
-    private SpriteRenderer spriteRenderer;
 
 
     void Start()
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("PlayerController: GameManager.Instance is null!");
         }
 
-        shipController = GetComponent<ShipController>();
+        ship = GetComponent<ShipController>();
         damageTypeController = GetComponent<DamageTypeController>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour
         if (keyboard.escapeKey.wasPressedThisFrame)
             SceneManager.LoadScene("MainMenu");
 
-        if (shipController != null)
+        if (ship != null)
         {
             bool forward =
             keyboard.upArrowKey.isPressed ||
@@ -100,32 +100,16 @@ public class PlayerController : MonoBehaviour
                 keyboard.rightArrowKey.isPressed ||
                 keyboard.dKey.isPressed;
 
-            shipController.SetAccelerate(forward);
-            shipController.SetDecelerate(backward);
-            shipController.SetTurnPort(turnLeft);
-            shipController.SetTurnStarboard(turnRight);
+            ship.SetAccelerate(forward);
+            ship.SetDecelerate(backward);
+            ship.SetTurnPort(turnLeft);
+            ship.SetTurnStarboard(turnRight);
         }
 
-        if (keyboard.spaceKey.wasPressedThisFrame && gameManager != null)
+        if (gameManager.healthInventory > 0 && ship.health < ship.maxHealth && !autoHealPending)
         {
-            if (gameManager.health < gameManager.maxHealth &&
-                gameManager.healthInventory > 0)
-            {
-                UseHealthItem();
-                SpawnOrangeHealEffect();
-
-                if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-
-                StartCoroutine(PulseEffect.sprite_pulse(
-                    spriteRenderer,
-                    num_pulses: 3,
-                    intensity: 1.2f,
-                    speed: 5f
-                ));
-            }
+            StartCoroutine(AutoHealAfterDelay());
         }
-
     }
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -135,16 +119,8 @@ public class PlayerController : MonoBehaviour
 
         if (tag == "Land")
         {
-            TakeDamage();
-            if (gameManager.health < gameManager.maxHealth)
-            {
-                StartCoroutine(damageTypeController.HandleLandCollision("Land"));
-
-                if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
-                    {
-                        StartCoroutine(AutoHealAfterDelay());
-                    }
-            }
+            TakeDamage(1);
+            StartCoroutine(damageTypeController.HandleLandCollision("Land"));
         }
         else if (tag == "Finish")
         {
@@ -152,22 +128,8 @@ public class PlayerController : MonoBehaviour
         }
         else if (tag == "HealthPickup")
         {
-            if (gameManager.health == gameManager.maxHealth)
-            {
-                gameManager.healthInventory++;
-                UpdateHealthItemUI();
-                if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-            }
-            else
-            {
-                GainHealth();
-                if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-
-                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
-                SpawnOrangeHealEffect();
-            }
+            gameManager.healthInventory++;
+            UpdateHealthItemUI();
 
             other.gameObject.SetActive(false);
         }
@@ -200,8 +162,7 @@ public class PlayerController : MonoBehaviour
 
         if (tag == "Pirate" || tag == "Monster")
         {
-            var enemy = collision.gameObject.GetComponent<EnemyController>();
-            gameManager.StartBattle(this, enemy);
+            gameManager.StartBattle(this, collision.gameObject.GetComponent<EnemyController>());
             return;
         }
 
@@ -213,39 +174,39 @@ public class PlayerController : MonoBehaviour
 
     public void PrepareForBattle()
     {
-        if (shipController != null)
+        if (ship != null)
         {
-            shipController.EnableControl();
-            shipController.Stop();
-            shipController.SetAccelerate(false);
-            shipController.SetDecelerate(false);
-            shipController.SetTurnPort(false);
-            shipController.SetTurnStarboard(false);
+            ship.SetAccelerate(false);
+            ship.SetDecelerate(false);
+            ship.SetTurnPort(false);
+            ship.SetTurnStarboard(false);
+            ship.Stop();
+            ship.DisableControl();
         }
 
         if (spriteRenderer != null)
             spriteRenderer.enabled = false;
     }
 
-    public void TakeDamage()
+    public void TakeDamage(int damage)
     {
         if (gameManager == null) return;
 
-        if (gameManager.health > 0)
-            gameManager.health--;
+        if (ship.health > 0)
+            ship.health -= damage;
 
         UpdateSprite();
         UpdateHeartsUI();
 
-        if (gameManager.health <= 0)
+        if (ship.health <= 0)
         {
             gameManager.CancelChase();
 
             // Stop and disable ship controls
-            if (shipController != null)
+            if (ship != null)
             {
-                shipController.Stop();
-                shipController.DisableControl();
+                ship.Stop();
+                ship.DisableControl();
             }
 
             // Show the "You Died" overlay
@@ -257,25 +218,31 @@ public class PlayerController : MonoBehaviour
             {
                 //if no panel is assigned, keep old behaviour
                 GetComponent<PlayerRespawn>().Respawn();
-                gameManager.health = gameManager.maxHealth;
+                ship.health = ship.maxHealth;
                 UpdateSprite();
                 UpdateHeartsUI();
             }
         }
     }
 
-    private void UseHealthItem()
+    public void Respawn()
+    {
+        ship.health = ship.maxHealth;
+        UpdateSprite();
+        UpdateHeartsUI();
+        StartCoroutine(damageTypeController.HandleRespawn());
+    }
+
+    public void UseHealthItem()
     {
         if (gameManager == null) return;
 
         if (gameManager.healthInventory > 0 &&
-            gameManager.health < gameManager.maxHealth)
+            ship.health < ship.maxHealth)
         {
             gameManager.healthInventory--;
-            gameManager.health++;
+            GainHealth();
             UpdateHealthItemUI();
-            UpdateSprite();
-            UpdateHeartsUI();
         }
     }
 
@@ -283,9 +250,9 @@ public class PlayerController : MonoBehaviour
     {
         if (gameManager == null) return;
 
-        if (gameManager.health < gameManager.maxHealth)
+        if (ship.health < ship.maxHealth)
         {
-            gameManager.health += 1;
+            ship.health += 1;
             UpdateSprite();
             UpdateHeartsUI();
         }
@@ -301,7 +268,7 @@ public class PlayerController : MonoBehaviour
         // Conditions might have changed during the delay, so re-check
         if (gameManager != null &&
             gameManager.healthInventory > 0 &&
-            gameManager.health < gameManager.maxHealth)
+            ship.health < ship.maxHealth)
         {
             UseHealthItem();
 
@@ -340,7 +307,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        int currentHealth = gameManager != null ? gameManager.health : 0;
+        int currentHealth = gameManager != null ? ship.health : 0;
 
         for (int i = 0; i < heartImages.Length; i++)
         {
@@ -358,13 +325,11 @@ public class PlayerController : MonoBehaviour
     public void UpdateSprite()
     {
         if (spriteRenderer == null) return;
-        if (gameManager == null) return;
+        if (ship == null) return;
 
-        int h = gameManager.health;
-
-        if (h == 3) spriteRenderer.sprite = fullHealthSprite;
-        else if (h == 2) spriteRenderer.sprite = damagedSprite;
-        else if (h == 1) spriteRenderer.sprite = heavilyDamagedSprite;
+        if (ship.health == 3) spriteRenderer.sprite = fullHealthSprite;
+        else if (ship.health == 2) spriteRenderer.sprite = damagedSprite;
+        else if (ship.health == 1) spriteRenderer.sprite = heavilyDamagedSprite;
     }
 
 
@@ -387,8 +352,8 @@ public class PlayerController : MonoBehaviour
 
     public void ShowVictoryScreen()
     {
-        shipController?.Stop();
-        shipController?.DisableControl();
+        ship?.Stop();
+        ship?.DisableControl();
 
         if (victoryPanelController != null)
         {
@@ -401,5 +366,29 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public bool IsDead()
+    {
+        return ship.health <= 0;
+    }
+
+    public int GetHealth()
+    {
+        return ship.health;
+    }
+
+    public void DisableControl()
+    {
+        ship.DisableControl();
+    }
+    public void EnableControl()
+    {
+        ship.EnableControl();
+    }
+
+    public void EnableSprite()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.enabled = true;
+    }
 }
 

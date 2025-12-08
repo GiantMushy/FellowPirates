@@ -561,23 +561,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed337f4948e564c08b45c4bcb2dccdb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 3
-  health: 3
   fullHealthSprite: {fileID: -5553616602620952373, guid: b9e32fb164c9743cfbf552764009c0a4, type: 3}
   damagedSprite: {fileID: -3577610281665444876, guid: b9e32fb164c9743cfbf552764009c0a4, type: 3}
   heavilyDamagedSprite: {fileID: -463308086812964116, guid: b9e32fb164c9743cfbf552764009c0a4, type: 3}
+  pauseMenu: {fileID: 0}
   heartImages:
   - {fileID: 1360367049}
   - {fileID: 821789055}
   - {fileID: 1352543698}
-  healthInventory: 0
   healthInventoryText: {fileID: 418114737}
-  goldCoins: 0
   goldText: {fileID: 1441066561}
-  goldPickupSound: {fileID: 8300000, guid: 408c622dfb159174c8da0381a90cab08, type: 3}
+  victoryPanelController: {fileID: 0}
+  deathPanelController: {fileID: 0}
+  autoHealDelay: 1
+  orangeHealEffectPrefab: {fileID: 0}
+  orangeEffectOffset: {x: 0, y: 0.5, z: 0}
   healthPickupSound: {fileID: 8300000, guid: fdc7e9fb2c52c442ab3908fb01547091, type: 3}
-  savedCameraOffset: {x: 0, y: 0, z: 0}
-  hasSavedCameraOffset: 0
+  goldPickupSound: {fileID: 8300000, guid: 408c622dfb159174c8da0381a90cab08, type: 3}
 --- !u!212 &696252219
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -731,6 +731,7 @@ MonoBehaviour:
   turnSpeed: 50
   acceleration: 1
   deceleration: 1
+  maxHealth: 3
   health: 0
 --- !u!114 &696252224
 MonoBehaviour:
@@ -21506,71 +21507,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6cfeed4ef98d07549a78e317319709b3, type: 3}
---- !u!1001 &1301296847
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3512108534550782939, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_Name
-      value: PickupHealth
-      objectReference: {fileID: 0}
-    - target: {fileID: 5247008491239253526, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -4609707251426246449, guid: 734d97ff2e75448c4ad703ec45cc9a88, type: 3}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -6.6618037
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 15.133566
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5969407983712523696, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c835b7f703d6b4bed86ecf71fcc310ba, type: 3}
 --- !u!114 &1352543698 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5068660176016521563, guid: 00d3b6d70963f491f9c933d3069a6afc, type: 3}
@@ -102479,6 +102415,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27a11a5162e444cb9fcad1f893b1f1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  player: {fileID: 0}
+  healthInventory: 0
+  goldCoins: 0
+  Enemies: []
+  activeEnemy: {fileID: 0}
+  returnSceneName: 
+  preBattlePosition: {x: 0, y: 0, z: 0}
+  lastEnemyPosition: {x: 0, y: 0, z: 0}
+  savedCameraOffset: {x: 0, y: 0, z: 0}
+  hasSavedCameraOffset: 0
+  fleeCooldownUntil: 0
+  spawnPoint: {x: 0, y: 0, z: 0}
+  hasSpawnPoint: 0
+  currentLevelName: 
 --- !u!4 &1806695544
 Transform:
   m_ObjectHideFlags: 0
@@ -127556,7 +127506,6 @@ SceneRoots:
   - {fileID: 1161332438}
   - {fileID: 1806695544}
   - {fileID: 1878988758}
-  - {fileID: 1301296847}
   - {fileID: 969340344}
   - {fileID: 1161782666}
   - {fileID: 1034982397}
