@@ -79,10 +79,12 @@ public class PlayerController : MonoBehaviour
     {
         var keyboard = Keyboard.current;
 
-        if (keyboard.escapeKey.wasPressedThisFrame)
-            SceneManager.LoadScene("MainMenu");
+        if (keyboard.escapeKey.wasPressedThisFrame && pauseMenu != null)
+        {
+            pauseMenu.TogglePause();
+        }
 
-        if (shipController != null)
+        if (shipController != null && (pauseMenu == null || !pauseMenu.IsPaused))
         {
             bool forward =
             keyboard.upArrowKey.isPressed ||
