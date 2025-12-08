@@ -20,9 +20,9 @@ public class MainMenu : MonoBehaviour
             gm.CancelChase();
         }
 
-        SceneManager.LoadScene("Alpha_Test_Level_David");
+        SceneManager.LoadScene("Alpha_Test_Level");
     }
-    
+
     public void QuitGame()
     {
         Application.Quit();
