@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Level_4.unity
     guid: 9665b1da02f8140588aa0cff0e4988f6
   - enabled: 1
-    path: Assets/Scenes/FightDemo_EVA.unity
+    path: Assets/Scenes/FightDemo_Eva.unity
     guid: 05e2c42def20544cfa8732b05794f44d
   - enabled: 0
     path: Assets/Scenes/AttackScene.unity
@@ -32,6 +32,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FightDemo_Eva.unity
     guid: c98be2ba24f5945f2ad469f27e68f775
+  - enabled: 1
+    path: Assets/Scenes/Alpha_Test_Level_OLD.unity
+    guid: b77de58076f94984bbca8f6b5f2d32af
+  - enabled: 1
+    path: Assets/Scenes/Alpha_Test_Level_EVA.unity
+    guid: a84037af9d9654aba9e55731b233533b
   - enabled: 1
     path: Assets/Scenes/FightDemo.unity
     guid: 0a1184ad70dca4b4db3d2bc5e0edb5d8
