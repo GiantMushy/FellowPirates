@@ -138,7 +138,10 @@ public class PlayerController : MonoBehaviour
             TakeDamage();
             if (gameManager.health < gameManager.maxHealth)
             {
-                StartCoroutine(damageTypeController.HandleLandCollision("Land"));
+                // Calculate normal direction away from the collision point
+                Vector2 collisionPoint = other.ClosestPoint(transform.position);
+                Vector3 normal = (transform.position - (Vector3)collisionPoint).normalized;
+                StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
                     {
@@ -207,7 +210,9 @@ public class PlayerController : MonoBehaviour
 
         if (tag == "WorldBorders")
         {
-            StartCoroutine(damageTypeController.HandleLandCollision(tag));
+            // Get the collision normal from the contact point
+            Vector3 normal = collision.GetContact(0).normal;
+            StartCoroutine(damageTypeController.HandleLandCollision(tag, normal));
         }
     }
 

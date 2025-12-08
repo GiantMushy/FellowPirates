@@ -17,11 +17,11 @@ public class DamageTypeController : MonoBehaviour
         shipController = GetComponent<ShipController>();
     }
 
-    public IEnumerator HandleLandCollision(string collisionTag)
+    public IEnumerator HandleLandCollision(string collisionTag, Vector3 normal)
     {
         float knockbackSpeed;
         float knockbackTimer = 0f;
-        Vector3 knockbackDirection = -transform.up;
+        Vector3 knockbackDirection = normal;
 
         if (!takingDamage)
         {
