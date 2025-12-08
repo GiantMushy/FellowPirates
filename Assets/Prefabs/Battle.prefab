@@ -289,7 +289,16 @@ MonoBehaviour:
   buttonPanell: {fileID: 0}
   buttonPanelPointer: {fileID: 0}
   timeBar: {fileID: 7501452546474413932}
-  enemyHealth: 150
+  enemyHeartImages: []
+  heartImages: []
+  healthInventoryText: {fileID: 0}
+  goldText: {fileID: 0}
+  actionText: {fileID: 0}
+  healEffect: {fileID: 0}
+  enemyImage: {fileID: 0}
+  failedBribeMessage: {fileID: 0}
+  angryDuration: 2.5
+  shakeStrength: 0.1
 --- !u!1 &7474866402743670523
 GameObject:
   m_ObjectHideFlags: 0

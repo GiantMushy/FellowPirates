@@ -24,6 +24,7 @@ public class PlayerFightController : MonoBehaviour
     public BattleTimeBar timeBar;
 
     private bool gameOver = false;
+    private bool defendResolved = false;
 
     void Update()
     {
@@ -32,8 +33,10 @@ public class PlayerFightController : MonoBehaviour
             return;
         }
 
-        if (timeBar.IsTimeOver)
+        if (!defendResolved && timeBar.IsTimeOver)
         {
+            defendResolved = true;
+            gameOver = true;
             StartCoroutine(FlashAnimation(damageSprite, wonHitColor, wonClearColor, false));
 
             Debug.Log("YOU WOOON!!");
@@ -90,6 +93,12 @@ public class PlayerFightController : MonoBehaviour
 
     private void TakeDamage()
     {
+        if (defendResolved)
+        {
+            return;
+        }
+
+        defendResolved = true;
         gameOver = true;
         StopAllCoroutines();
 
@@ -119,6 +128,7 @@ public class PlayerFightController : MonoBehaviour
 
     public void ResetForNewDefend()
     {
+        defendResolved = false;
         gameOver = false;
         StopAllCoroutines();
     }
