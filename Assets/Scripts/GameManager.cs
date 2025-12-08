@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     private bool pendingBattleReturn = false;
     private bool pendingChaseReturn = false;
     private bool pendingDeathReturn = false;
+    private bool pendingBribeReturn = false;
 
     public Vector3 spawnPoint;
     public bool hasSpawnPoint = false;
@@ -150,6 +151,7 @@ public class GameManager : MonoBehaviour
         pendingBattleReturn = true;
         pendingChaseReturn = false;
         pendingDeathReturn = false;
+        pendingBribeReturn = true;
 
         fleeCooldownUntil = Time.time + 2f;
         SceneManager.LoadScene(returnSceneName);
@@ -216,6 +218,12 @@ public class GameManager : MonoBehaviour
             Camera.main.transform.position = player.transform.position + savedCameraOffset;
         }
 
+        if (pendingBribeReturn)
+        {
+            pendingBribeReturn = false;
+            player.StartCoroutine(HandleBribedEnemyReturn(player.transform));
+        }
+
         if (pendingChaseReturn)
         {
             pendingChaseReturn = false;
@@ -269,5 +277,32 @@ public class GameManager : MonoBehaviour
 
         StopAllCoroutines();
     }
+
+    private IEnumerator HandleBribedEnemyReturn(Transform playerTransform)
+    {
+        yield return null;
+
+        var enemies = FindObjectsOfType<EnemyController>();
+        if (enemies.Length == 0) yield break;
+
+        EnemyController best = null;
+        float bestDist = float.MaxValue;
+
+        foreach (var e in enemies)
+        {
+            float d = (e.transform.position - lastEnemyPosition).sqrMagnitude;
+            if (d < bestDist)
+            {
+                bestDist = d;
+                best = e;
+            }
+        }
+
+        if (best != null)
+        {
+            best.StartBribeFlee(playerTransform);
+        }
+    }
+
 
 }

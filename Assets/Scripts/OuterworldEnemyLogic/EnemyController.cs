@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.Tilemaps;
 
 public class EnemyController : MonoBehaviour
 {
@@ -34,6 +35,10 @@ public class EnemyController : MonoBehaviour
 
     // for bribe
     public int bribeCost = 1;
+    private Collider2D enemyCollider;
+    private bool bribeFleeing = false;
+    public Tilemap oceanTilemap;
+
 
     void Start()
     {
@@ -45,6 +50,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             shipController = GetComponent<ShipController>();
+            enemyCollider = GetComponent<Collider2D>();
             if (shipController == null)
             {
                 Debug.LogError("EnemyController requires a ShipController component!");
@@ -61,6 +67,11 @@ public class EnemyController : MonoBehaviour
         {
             FollowPath();
             ReplanIfNeeded();
+        }
+
+        else if (bribeFleeing)
+        {
+            FollowBribeFleePath();
         }
     }
 
@@ -254,5 +265,109 @@ public class EnemyController : MonoBehaviour
             }
         }
     }
+
+    public void StartBribeFlee(Transform playerTransform)
+    {
+        StopChase();
+
+        if (chaseTimeController != null)
+        {
+            chaseTimeController.ForceStopChaseUI();
+        }
+
+        player = playerTransform;
+
+        bribeFleeing = true;
+        SetIgnoreWorldBorders(true);
+
+        shipController.SetAccelerate(true);
+        shipController.SetDecelerate(false);
+    }
+
+
+    private void FollowBribeFleePath()
+    {
+        if (!bribeFleeing || player == null)
+            return;
+
+        if (IsOutsideOcean())
+        {
+            Debug.Log("[BribeFlee] Outside ocean – destroying enemy");
+            Destroy(gameObject);
+            return;
+        }
+
+        Vector3 away = transform.position - player.position;
+        away.z = 0f;
+        if (away.sqrMagnitude < 0.01f)
+        {
+            away = transform.up;
+        }
+
+        Vector3 dir = away.normalized;
+        Vector3 forward = transform.up;
+
+        float angle = Vector3.SignedAngle(forward, dir, Vector3.forward);
+        float angle_abs = Mathf.Abs(angle);
+
+        shipController.SetTurnPort(false);
+        shipController.SetTurnStarboard(false);
+
+        if (angle_abs > turn_deadzone)
+        {
+            if (angle > 0f)
+            {
+                shipController.SetTurnPort(true);
+                last_turn_dir = 1f;
+            }
+            else
+            {
+                shipController.SetTurnStarboard(true);
+                last_turn_dir = -1f;
+            }
+        }
+        else if (angle_abs > turn_release_zone)
+        {
+            if (last_turn_dir > 0f)
+            {
+                shipController.SetTurnPort(true);
+            }
+            else if (last_turn_dir < 0f)
+            {
+                shipController.SetTurnStarboard(true);
+            }
+        }
+        else
+        {
+            last_turn_dir = 0f;
+        }
+
+        shipController.SetAccelerate(true);
+        shipController.SetDecelerate(false);
+    }
+
+
+    private void SetIgnoreWorldBorders(bool ignore)
+    {
+        if (enemyCollider == null) return;
+
+        GameObject[] borders = GameObject.FindGameObjectsWithTag("WorldBorders");
+        foreach (var go in borders)
+        {
+            Collider2D borderCol = go.GetComponent<Collider2D>();
+            if (borderCol != null)
+            {
+                Physics2D.IgnoreCollision(enemyCollider, borderCol, ignore);
+            }
+        }
+    }
+
+    private bool IsOutsideOcean()
+    {
+        if (oceanTilemap == null) return false;
+        Vector3Int cell = oceanTilemap.WorldToCell(transform.position);
+        return !oceanTilemap.HasTile(cell);
+    }
+
 }
 
