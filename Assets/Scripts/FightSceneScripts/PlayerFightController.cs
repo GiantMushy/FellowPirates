@@ -1,6 +1,9 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System.Collections;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerFightController : MonoBehaviour
 {
@@ -45,7 +48,14 @@ public class PlayerFightController : MonoBehaviour
 
         Bounds b = minigameBackgroundSprite.bounds;
 
-        if (Input.GetKey(KeyCode.UpArrow))
+        var key = Keyboard.current;
+
+        if (key.escapeKey.wasPressedThisFrame)
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+
+        if (key.upArrowKey.isPressed || key.wKey.isPressed)
         {
             float new_y = transform.position.y + speed * Time.deltaTime;
             if (new_y + SpriteSizeMargin.y < b.max.y)
@@ -53,8 +63,7 @@ public class PlayerFightController : MonoBehaviour
                 transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
             }
         }
-
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (key.downArrowKey.isPressed || key.sKey.isPressed)
         {
             float new_y = transform.position.y - speed * Time.deltaTime;
             if (new_y - SpriteSizeMargin.y > b.min.y)
@@ -62,7 +71,8 @@ public class PlayerFightController : MonoBehaviour
                 transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
             }
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+
+        if (key.rightArrowKey.isPressed || key.dKey.isPressed)
         {
             float new_x = transform.position.x + speed * Time.deltaTime;
             if (new_x + SpriteSizeMargin.x < b.max.x)
@@ -70,7 +80,7 @@ public class PlayerFightController : MonoBehaviour
                 transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
             }
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (key.leftArrowKey.isPressed || key.aKey.isPressed)
         {
             float new_x = transform.position.x - speed * Time.deltaTime;
             if (new_x - SpriteSizeMargin.x > b.min.x)
