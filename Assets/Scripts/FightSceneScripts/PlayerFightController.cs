@@ -50,11 +50,6 @@ public class PlayerFightController : MonoBehaviour
 
         var key = Keyboard.current;
 
-        if (key.escapeKey.wasPressedThisFrame)
-        {
-            SceneManager.LoadScene("MainMenu");
-        }
-
         if (key.upArrowKey.isPressed || key.wKey.isPressed)
         {
             float new_y = transform.position.y + speed * Time.deltaTime;
