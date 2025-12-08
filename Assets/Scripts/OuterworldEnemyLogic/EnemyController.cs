@@ -3,12 +3,12 @@ using System.Collections;
 using TMPro;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
+// using static State;
 
 public class EnemyController : MonoBehaviour
 {
     private ShipController shipController;
     public string enemyId;
-
 
     // CHASSSINNNNG LOGIC VARIABLES
     public GridManager grid;
@@ -56,7 +56,6 @@ public class EnemyController : MonoBehaviour
                 Debug.LogError("EnemyController requires a ShipController component!");
             }
 
-            // chaseTime.SetActive(false);
             chaseTimeController.timeWait = chase_delay;
         }
     }
@@ -68,13 +67,11 @@ public class EnemyController : MonoBehaviour
             FollowPath();
             ReplanIfNeeded();
         }
-
         else if (bribeFleeing)
         {
             FollowBribeFleePath();
         }
     }
-
 
     public void StartChasing(Transform target)
     {
@@ -105,7 +102,7 @@ public class EnemyController : MonoBehaviour
 
         waiting_to_chase = false;
 
-        Debug.Log("Enemyt chasing started");
+        Debug.Log("Enemy chasing started");
 
         State start = grid.GetStateFromWorldPos(transform.position);
         State goal = grid.GetStateFromWorldPos(player.position);
@@ -173,7 +170,9 @@ public class EnemyController : MonoBehaviour
             path_index++;
             if (path_index >= path.Count)
             {
-                StopChase();
+                Debug.Log("would have stopped");
+                ReplanIfNeeded();
+                // StopChase();
             }
             return;
         }
@@ -218,8 +217,6 @@ public class EnemyController : MonoBehaviour
 
         shipController.SetAccelerate(true);
         shipController.SetDecelerate(false);
-
-
     }
 
     private void ReplanIfNeeded()
@@ -243,18 +240,14 @@ public class EnemyController : MonoBehaviour
 
         if (prev_goal != curr_goal)
         {
-            Debug.Log("Enemy replanning path");
-
             if (path_index < 0 || path_index >= path.Count)
             {
                 return;
             }
 
-
             State start = path[path_index];
 
             List<State> newPath = AStar.Search(start, curr_goal);
-
 
             // To smoothly move to the new path
             if (newPath != null && newPath.Count > 0)
@@ -268,46 +261,85 @@ public class EnemyController : MonoBehaviour
 
     public void StartBribeFlee(Transform playerTransform)
     {
-        StopChase();
-
-        if (chaseTimeController != null)
-        {
-            chaseTimeController.ForceStopChaseUI();
-        }
+        chasing = false;
+        bribeFleeing = true;
 
         player = playerTransform;
 
-        bribeFleeing = true;
         SetIgnoreWorldBorders(true);
 
         shipController.SetAccelerate(true);
         shipController.SetDecelerate(false);
+
+        if (oceanTilemap == null)
+        {
+            Debug.LogError("oceanTilemap not assigned");
+            bribeFleeing = false;
+            return;
+        }
+
+        Vector3Int startCell = oceanTilemap.WorldToCell(transform.position);
+        Vector3Int cell = startCell;
+        Vector3Int step = new Vector3Int(-1, 0, 0);
+
+        Vector3Int lastOceanCell = cell;
+        while (oceanTilemap.HasTile(cell))
+        {
+            lastOceanCell = cell;
+            cell += step;
+        }
+
+        Bounds worldBounds = oceanTilemap.localBounds;
+        Vector3 lastOceanWorldPos = oceanTilemap.GetCellCenterWorld(lastOceanCell);
+
+
+        State start = grid.GetStateFromWorldPos(transform.position);
+        State goal = grid.GetStateFromWorldPos(lastOceanWorldPos);
+
+
+
+        if (start == null || goal == null)
+        {
+            Debug.LogWarning("bribe flee start/goal are null");
+            bribeFleeing = false;
+            return;
+        }
+
+        path = AStar.Search(start, goal);
+        path_index = 0;
     }
 
 
     private void FollowBribeFleePath()
     {
-        if (!bribeFleeing || player == null)
+
+        if (path == null)
+        {
+            // Debug.Log("null in FollowBribeFleePath " + path.Count + " " + path_index);
             return;
+        }
 
         if (IsOutsideOcean())
         {
-            Debug.Log("[BribeFlee] Outside ocean – destroying enemy");
+            Debug.Log("Enemy outside ocean (destroying)");
             Destroy(gameObject);
             return;
         }
 
-        Vector3 away = transform.position - player.position;
-        away.z = 0f;
-        if (away.sqrMagnitude < 0.01f)
-        {
-            away = transform.up;
-        }
+        // if (!bribeFleeing)
+        //     return;
 
-        Vector3 dir = away.normalized;
-        Vector3 forward = transform.up;
 
-        float angle = Vector3.SignedAngle(forward, dir, Vector3.forward);
+        State current_state = path[path_index];
+        Bounds worldBounds = oceanTilemap.localBounds;
+        UnityEngine.Vector3 forward = transform.up;
+        UnityEngine.Vector3 dist_vec = grid.GetWorldPosFromState(current_state) - transform.position;
+        dist_vec.z = 0;
+
+
+        UnityEngine.Vector3 dir = dist_vec.normalized;
+
+        float angle = UnityEngine.Vector3.SignedAngle(forward, dir, UnityEngine.Vector3.forward);
         float angle_abs = Mathf.Abs(angle);
 
         shipController.SetTurnPort(false);
@@ -364,8 +396,12 @@ public class EnemyController : MonoBehaviour
 
     private bool IsOutsideOcean()
     {
-        if (oceanTilemap == null) return false;
+        if (oceanTilemap == null)
+        {
+            return false;
+        }
         Vector3Int cell = oceanTilemap.WorldToCell(transform.position);
+
         return !oceanTilemap.HasTile(cell);
     }
 

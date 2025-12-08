@@ -2,13 +2,6 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-// public enum DamageAmount
-// {
-//     Full,
-//     Half,
-//     None
-// }
-
 public class TimingBar : MonoBehaviour
 {
     public Transform bar;
@@ -139,6 +132,4 @@ public class TimingBar : MonoBehaviour
         speed = 1.5f;
         hasFinished = false;
     }
-
-
 }
