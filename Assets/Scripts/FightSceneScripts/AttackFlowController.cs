@@ -167,9 +167,6 @@ public class AttackFlowController : MonoBehaviour
         {
             DamageEnemy(damageToEnemy);
         }
-
-        // isAttacking = false;
-        // StartDefend();
     }
 
     public void StartDefendAfterPlayerAction()
@@ -535,15 +532,15 @@ public class AttackFlowController : MonoBehaviour
     {
         if (damage == 2)
         {
-            DamageText.text = "Double damage";
+            DamageText.text = "2X DAMAGE";
         }
         else if (damage == 1)
         {
-            DamageText.text = "Normal damage";
+            DamageText.text = "1X DAMAGE";
         }
         else if (damage == 0)
         {
-            DamageText.text = "No damage";
+            DamageText.text = "0X DAMAGE";
         }
         else
         {
@@ -566,5 +563,19 @@ public class AttackFlowController : MonoBehaviour
     {
         UpdateDamageText(damage);
         StartCoroutine(ShowDamageAmountRoutine(damage));
+
+
+        // if (damage == 2)
+        // {
+        //     StartCoroutine(GreenHitEffects());
+        // }
+
     }
+
+
+    // private IEnumerator GreenHitEffects()
+    // {
+    //     yield return new WaitForSeconds(1);
+    //     // TODO: add something cool when winning
+    // }
 }

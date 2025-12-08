@@ -4,60 +4,61 @@ using System.Collections;
 
 public class TimingBar : MonoBehaviour
 {
-    public Transform bar;
     public Transform pointer;
-    public Transform redZone;
+    public Transform redPart;
+    public Transform greenPart;
+    public Transform yellowPart;
 
     private AttackFlowController flow;
 
-    public float speed = 1.5f;
-    public int maxScore = 100;
+    public float speed = 1f;
 
     private float currPos;
-    private SpriteRenderer barSR;
     private SpriteRenderer redSR;
+    private SpriteRenderer yellowSR;
+    private SpriteRenderer greenSR;
 
     public BattleTimeBar timeBar;
 
     private bool hasFinished = false; // so they cant double press for more damage (that was a bug lolz)
 
+    [Header("Speed Ramp")]
+    public float speedIncrease = 0.3f;
+    public float maxSpeed = 4f;
+
+    [Header("Green Hit Effects")]
+    public float slowMoTime = 0.15f;
+    public float greenSlowScale = 0.15f;
+    private Vector3 originalPointerPos;
+
+
 
     void Awake()
     {
-        barSR = bar.GetComponent<SpriteRenderer>();
-        redSR = redZone.GetComponent<SpriteRenderer>();
+        if (!(redPart != null || yellowPart != null || greenPart != null))
+        {
+            Debug.LogWarning("missing a part in attack in fight");
+            return;
+        }
+
+        redSR = redPart.GetComponent<SpriteRenderer>();
+        yellowSR = yellowPart.GetComponent<SpriteRenderer>();
+        greenSR = greenPart.GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
+        if (redPart == null || hasFinished)
+        {
+            return;
+        }
+
         currPos += Time.deltaTime * speed;
 
-        if (currPos >= 1f)
-        {
-            speed = 0;
-            currPos = 1f;
+        float ping = Mathf.PingPong(currPos, 1f);
+        float t = 0.5f - 0.5f * Mathf.Cos(ping * Mathf.PI);
 
-            UpdatePointerPosition(currPos);
-            Debug.Log("Score: 0 --> miss");
-
-
-            if (flow == null)
-            {
-                Debug.LogError("TimingBar: flow is null!");
-                return;
-            }
-            hasFinished = true;
-            flow.OnAttackFinished(0);
-            return;
-        }
-
-        UpdatePointerPosition(currPos);
-
-        if (hasFinished)
-        {
-            return;
-        }
-
+        UpdatePointerPosition(t);
 
         if (
             Input.GetKeyDown(KeyCode.Space) ||
@@ -76,17 +77,19 @@ public class TimingBar : MonoBehaviour
             int damage = CalculateDamage();
 
             hasFinished = true;
+
             flow.OnAttackFinished(damage);
+
         }
 
     }
 
     private void UpdatePointerPosition(float t)
     {
-        if (barSR == null || pointer == null) return;
+        if (redSR == null || pointer == null) return;
 
-        float left = barSR.bounds.min.x;
-        float right = barSR.bounds.max.x;
+        float left = redSR.bounds.min.x;
+        float right = redSR.bounds.max.x;
 
         float x = Mathf.Lerp(left, right, t);
 
@@ -99,29 +102,42 @@ public class TimingBar : MonoBehaviour
 
     private int CalculateDamage()
     {
-        if (barSR == null || redSR == null || pointer == null) return 0;
+        if (redPart == null || pointer == null)
+        {
+            return 0;
+        }
 
         float pointerX = pointer.position.x;
+        Debug.Log($"PointerX: {pointerX}");
 
-        float redLeft = redSR.bounds.min.x;
-        float redRight = redSR.bounds.max.x;
-
-        // full damage: inside red zone
-        if (pointerX >= redLeft && pointerX <= redRight)
+        if (greenSR != null)
         {
-            return 2;   // full life
+            float gLeft = greenSR.bounds.min.x;
+            float gRight = greenSR.bounds.max.x;
+            Debug.Log($"Green: {gLeft}  {gRight}");
+
+            if (pointerX >= gLeft && pointerX <= gRight)
+            {
+                Debug.Log("GREEN HIT");
+                return 2;
+            }
         }
 
-        float barLeft = barSR.bounds.min.x;
-        float barRight = barSR.bounds.max.x;
-
-        if (pointerX >= barLeft && pointerX <= barRight)
+        if (yellowSR != null)
         {
-            return 1;   // half life
-        }
+            float yLeft = yellowSR.bounds.min.x;
+            float yRight = yellowSR.bounds.max.x;
+            Debug.Log($"Yellow: {yLeft}  {yRight}");
 
+            if (pointerX >= yLeft && pointerX <= yRight)
+            {
+                Debug.Log("YELLOW HIT");
+                return 1;
+            }
+        }
         return 0;
     }
+
 
 
     public void StartTiming(AttackFlowController f)
@@ -132,4 +148,6 @@ public class TimingBar : MonoBehaviour
         speed = 1.5f;
         hasFinished = false;
     }
+
+
 }
