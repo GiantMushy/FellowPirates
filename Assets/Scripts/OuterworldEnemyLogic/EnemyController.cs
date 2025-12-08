@@ -261,121 +261,13 @@ public class EnemyController : MonoBehaviour
 
     public void StartBribeFlee(Transform playerTransform)
     {
-        chasing = false;
-        bribeFleeing = true;
 
-        player = playerTransform;
-
-        SetIgnoreWorldBorders(true);
-
-        shipController.SetAccelerate(true);
-        shipController.SetDecelerate(false);
-
-        if (oceanTilemap == null)
-        {
-            Debug.LogError("oceanTilemap not assigned");
-            bribeFleeing = false;
-            return;
-        }
-
-        Vector3Int startCell = oceanTilemap.WorldToCell(transform.position);
-        Vector3Int cell = startCell;
-        Vector3Int step = new Vector3Int(-1, 0, 0);
-
-        Vector3Int lastOceanCell = cell;
-        while (oceanTilemap.HasTile(cell))
-        {
-            lastOceanCell = cell;
-            cell += step;
-        }
-
-        Bounds worldBounds = oceanTilemap.localBounds;
-        Vector3 lastOceanWorldPos = oceanTilemap.GetCellCenterWorld(lastOceanCell);
-
-
-        State start = grid.GetStateFromWorldPos(transform.position);
-        State goal = grid.GetStateFromWorldPos(lastOceanWorldPos);
-
-
-
-        if (start == null || goal == null)
-        {
-            Debug.LogWarning("bribe flee start/goal are null");
-            bribeFleeing = false;
-            return;
-        }
-
-        path = AStar.Search(start, goal);
-        path_index = 0;
     }
 
 
     private void FollowBribeFleePath()
     {
 
-        if (path == null)
-        {
-            // Debug.Log("null in FollowBribeFleePath " + path.Count + " " + path_index);
-            return;
-        }
-
-        if (IsOutsideOcean())
-        {
-            Debug.Log("Enemy outside ocean (destroying)");
-            Destroy(gameObject);
-            return;
-        }
-
-        // if (!bribeFleeing)
-        //     return;
-
-
-        State current_state = path[path_index];
-        Bounds worldBounds = oceanTilemap.localBounds;
-        UnityEngine.Vector3 forward = transform.up;
-        UnityEngine.Vector3 dist_vec = grid.GetWorldPosFromState(current_state) - transform.position;
-        dist_vec.z = 0;
-
-
-        UnityEngine.Vector3 dir = dist_vec.normalized;
-
-        float angle = UnityEngine.Vector3.SignedAngle(forward, dir, UnityEngine.Vector3.forward);
-        float angle_abs = Mathf.Abs(angle);
-
-        shipController.SetTurnPort(false);
-        shipController.SetTurnStarboard(false);
-
-        if (angle_abs > turn_deadzone)
-        {
-            if (angle > 0f)
-            {
-                shipController.SetTurnPort(true);
-                last_turn_dir = 1f;
-            }
-            else
-            {
-                shipController.SetTurnStarboard(true);
-                last_turn_dir = -1f;
-            }
-        }
-        else if (angle_abs > turn_release_zone)
-        {
-            if (last_turn_dir > 0f)
-            {
-                shipController.SetTurnPort(true);
-            }
-            else if (last_turn_dir < 0f)
-            {
-                shipController.SetTurnStarboard(true);
-            }
-        }
-        else
-        {
-            last_turn_dir = 0f;
-        }
-
-        shipController.SetAccelerate(true);
-        shipController.SetDecelerate(false);
     }
 
 
