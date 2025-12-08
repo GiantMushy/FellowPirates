@@ -80,8 +80,6 @@ public class AttackFlowController : MonoBehaviour
         RefreshItemsUI();
         HideBribeCost();
         bribeCostButtonText.text = $"{gameManager.enemyBribeCost} gold coins";
-
-
     }
 
     public void ShowBribeCost()
@@ -103,26 +101,34 @@ public class AttackFlowController : MonoBehaviour
     private void SetChooseActionText()
     {
         if (actionText != null)
+        {
             actionText.text = "CHOOSE ACTION";
+        }
     }
 
 
     private void SetAttackText()
     {
         if (actionText != null)
+        {
             actionText.text = "ATTACK";
+        }
     }
 
     private void SetHealText()
     {
         if (actionText != null)
+        {
             actionText.text = "HEALING";
+        }
     }
 
     private void SetDefendText()
     {
         if (actionText != null)
+        {
             actionText.text = "DEFEND";
+        }
     }
 
 

@@ -48,10 +48,9 @@ public class BulletSpawner : MonoBehaviour
 
     void Update()
     {
-
         if (minigameBackgroundSprite == null)
         {
-            Debug.LogWarning("no minigame background seet");
+            Debug.LogWarning("no minigame background set");
             return;
         }
 
@@ -107,15 +106,12 @@ public class BulletSpawner : MonoBehaviour
     {
         if (bullet)
         {
-
             spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
             spawnedBullet.layer = LayerMask.NameToLayer("OverlayLayer");
             spawnedBullet.GetComponent<Bullet>().speed = speed;
             spawnedBullet.GetComponent<Bullet>().bulletLife = bulletLife;
             spawnedBullet.GetComponent<Bullet>().minigameBackgroundSprite = minigameBackgroundSprite;
             spawnedBullet.transform.rotation = transform.rotation;
-
-
         }
     }
 

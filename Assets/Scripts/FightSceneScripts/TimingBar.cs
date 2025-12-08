@@ -53,7 +53,7 @@ public class TimingBar : MonoBehaviour
                 Debug.LogError("TimingBar: flow is null!");
                 return;
             }
-
+            hasFinished = true;
             flow.OnAttackFinished(0);
             return;
         }
@@ -81,17 +81,6 @@ public class TimingBar : MonoBehaviour
             }
 
             int damage = CalculateDamage();
-
-            // ShowDamageAmount(damage);
-
-            // if (damage == 2)
-            // {
-            //     ShowDamageAmount(DamageAmount.Full);
-            // }
-            // else if (damage == 1)
-            // {
-            //     ShowDamageAmount(DamageAmount.Half);
-            // }
 
             hasFinished = true;
             flow.OnAttackFinished(damage);
