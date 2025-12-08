@@ -212,8 +212,7 @@ public class AttackFlowController : MonoBehaviour
     }
 
 
-
-    public void OnDefendFinished(bool tookDamage = false)
+    public void OnDefendFinished(bool tookDamage)
     {
         timeBar.StopTimer();
 
