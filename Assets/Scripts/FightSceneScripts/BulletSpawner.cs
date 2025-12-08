@@ -40,7 +40,6 @@ public class BulletSpawner : MonoBehaviour
     public float rotateSpeed = 90f;
 
 
-
     void Start()
     {
         startPos = transform.position;
@@ -49,6 +48,21 @@ public class BulletSpawner : MonoBehaviour
 
     void Update()
     {
+
+        if (minigameBackgroundSprite == null)
+        {
+            Debug.LogWarning("no minigame background seet");
+            return;
+        }
+
+        Bounds b = minigameBackgroundSprite.bounds;
+        UnityEngine.Vector3 pos = transform.position;
+
+        if (!b.Contains(pos))
+        {
+            Destroy(gameObject);
+        }
+
         delayTimer += Time.deltaTime;
 
         if (delayTimer < startDelay)

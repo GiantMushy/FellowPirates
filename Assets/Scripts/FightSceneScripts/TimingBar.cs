@@ -1,4 +1,13 @@
 using UnityEngine;
+using TMPro;
+using System.Collections;
+
+// public enum DamageAmount
+// {
+//     Full,
+//     Half,
+//     None
+// }
 
 public class TimingBar : MonoBehaviour
 {
@@ -38,13 +47,13 @@ public class TimingBar : MonoBehaviour
             UpdatePointerPosition(currPos);
             Debug.Log("Score: 0 --> miss");
 
+
             if (flow == null)
             {
                 Debug.LogError("TimingBar: flow is null!");
                 return;
             }
 
-            // hasFinished = true;
             flow.OnAttackFinished(0);
             return;
         }
@@ -72,6 +81,18 @@ public class TimingBar : MonoBehaviour
             }
 
             int damage = CalculateDamage();
+
+            // ShowDamageAmount(damage);
+
+            // if (damage == 2)
+            // {
+            //     ShowDamageAmount(DamageAmount.Full);
+            // }
+            // else if (damage == 1)
+            // {
+            //     ShowDamageAmount(DamageAmount.Half);
+            // }
+
             hasFinished = true;
             flow.OnAttackFinished(damage);
         }
@@ -129,5 +150,6 @@ public class TimingBar : MonoBehaviour
         speed = 1.5f;
         hasFinished = false;
     }
+
 
 }

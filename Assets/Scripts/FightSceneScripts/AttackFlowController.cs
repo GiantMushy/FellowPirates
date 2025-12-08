@@ -41,13 +41,15 @@ public class AttackFlowController : MonoBehaviour
     public TextMeshProUGUI bribeCostText;
     public TextMeshProUGUI bribeCostButtonText;
 
-
     // failed bribe
     public Image enemyImage;
     public TextMeshProUGUI failedBribeMessage;
     private float angryDuration = 2f;
     private float shakeStrength = 3f;
     public SpriteRenderer fightingWindowBackground;
+
+    public TextMeshProUGUI DamageText;
+
 
     private void Awake()
     {
@@ -153,13 +155,15 @@ public class AttackFlowController : MonoBehaviour
 
     public void OnAttackFinished(int damageToEnemy = 0)
     {
+
+        ShowDamageAmount(damageToEnemy);
         if (damageToEnemy > 0)
         {
             DamageEnemy(damageToEnemy);
         }
 
-        isAttacking = false;
-        StartDefend();
+        // isAttacking = false;
+        // StartDefend();
     }
 
     public void StartDefendAfterPlayerAction()
@@ -519,5 +523,42 @@ public class AttackFlowController : MonoBehaviour
         }
 
         StartDefend();
+    }
+
+    private void UpdateDamageText(int damage)
+    {
+        if (damage == 2)
+        {
+            DamageText.text = "Double damage";
+        }
+        else if (damage == 1)
+        {
+            DamageText.text = "Normal damage";
+        }
+        else if (damage == 0)
+        {
+            DamageText.text = "No damage";
+        }
+        else
+        {
+            // should not happen
+            Debug.LogError("UpdateDamageText called with wrong damage type");
+        }
+    }
+
+    private IEnumerator ShowDamageAmountRoutine(int damage)
+    {
+        // DamageText.enabled = true;
+        DamageText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        isAttacking = false;
+        DamageText.gameObject.SetActive(false);
+        StartDefend();
+    }
+
+    public void ShowDamageAmount(int damage)
+    {
+        UpdateDamageText(damage);
+        StartCoroutine(ShowDamageAmountRoutine(damage));
     }
 }
