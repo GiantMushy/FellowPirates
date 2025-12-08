@@ -38,18 +38,19 @@ public class AttackFlowController : MonoBehaviour
     public GameObject healEffect;
 
     //bribe stuff
-    public TextMeshProUGUI bribeCostText;
+    public TextMeshProUGUI bribeMiddleScreenText;
     public TextMeshProUGUI bribeCostButtonText;
 
     // failed bribe
     public Image enemyImage;
-    public TextMeshProUGUI failedBribeMessage;
+    public TextMeshProUGUI redMiddleScreenMessage;
     private float angryDuration = 2f;
     private float shakeStrength = 3f;
     public SpriteRenderer fightingWindowBackground;
 
     public TextMeshProUGUI DamageText;
 
+    public Button fleeButton;
 
     private void Awake()
     {
@@ -80,22 +81,29 @@ public class AttackFlowController : MonoBehaviour
         RefreshItemsUI();
         HideBribeCost();
         bribeCostButtonText.text = $"{gameManager.enemyBribeCost} gold coins";
+
+        UpdateFleeButtonState();
+        if (gameManager.playerCaughtWhileFleeing)
+        {
+            gameManager.playerCaughtWhileFleeing = false;
+            StartCoroutine(CaughtAfterFleeRoutine());
+        }
     }
 
     public void ShowBribeCost()
     {
         Debug.Log("ShowBribeCost");
-        if (bribeCostText == null || gameManager == null) return;
+        if (bribeMiddleScreenText == null || gameManager == null) return;
 
-        bribeCostText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
-        bribeCostText.gameObject.SetActive(true);
+        bribeMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
+        bribeMiddleScreenText.gameObject.SetActive(true);
     }
 
     public void HideBribeCost()
     {
         Debug.Log("HideBribeCost");
-        if (bribeCostText == null) return;
-        bribeCostText.gameObject.SetActive(false);
+        if (bribeMiddleScreenText == null) return;
+        bribeMiddleScreenText.gameObject.SetActive(false);
     }
 
     private void SetChooseActionText()
@@ -261,7 +269,23 @@ public class AttackFlowController : MonoBehaviour
         buttonPanell.blocksRaycasts = enabled;
         buttonPanell.alpha = enabled ? 1f : 0.5f;
         buttonPanelPointer.SetActive(enabled);
+
+        UpdateFleeButtonState();
     }
+
+    private void UpdateFleeButtonState()
+    {
+        if (fleeButton == null || gameManager == null)
+            return;
+
+        bool fleeDisabledForThisEnemy =
+            !string.IsNullOrEmpty(gameManager.currentEnemyId) &&
+            gameManager.fleeDisabledEnemies.Contains(gameManager.currentEnemyId);
+
+        fleeButton.interactable = !fleeDisabledForThisEnemy;
+    }
+
+
 
     void BattleOver()
     {
@@ -463,9 +487,9 @@ public class AttackFlowController : MonoBehaviour
 
     private IEnumerator AngryAndDefendRoutine()
     {
-        if (failedBribeMessage != null)
+        if (redMiddleScreenMessage != null)
         {
-            failedBribeMessage.gameObject.SetActive(true);
+            redMiddleScreenMessage.gameObject.SetActive(true);
         }
 
         Color originalEnemyColor = Color.white;
@@ -519,9 +543,9 @@ public class AttackFlowController : MonoBehaviour
             fightingWindowBackground.color = originalPanelColor;
         }
 
-        if (failedBribeMessage != null)
+        if (redMiddleScreenMessage != null)
         {
-            failedBribeMessage.gameObject.SetActive(false);
+            redMiddleScreenMessage.gameObject.SetActive(false);
         }
 
         StartDefend();
@@ -577,4 +601,42 @@ public class AttackFlowController : MonoBehaviour
     //     yield return new WaitForSeconds(1);
     //     // TODO: add something cool when winning
     // }
+
+    private IEnumerator CaughtAfterFleeRoutine()
+    {
+        Color originalPanelColor = Color.white;
+        if (fightingWindowBackground != null)
+        {
+            originalPanelColor = fightingWindowBackground.color;
+            fightingWindowBackground.color = Color.black;
+        }
+
+        SetButtonsEnabled(false);
+
+        if (redMiddleScreenMessage != null)
+        {
+            redMiddleScreenMessage.gameObject.SetActive(true);
+            redMiddleScreenMessage.text = "YOU WERE CAUGHT!";
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        if (redMiddleScreenMessage != null)
+        {
+            redMiddleScreenMessage.gameObject.SetActive(false);
+        }
+
+        UpdateFleeButtonState();
+
+        if (fightingWindowBackground != null)
+        {
+            fightingWindowBackground.color = originalPanelColor;
+        }
+
+        redMiddleScreenMessage.text = "YOU CANNOT AFFORD THAT!";
+
+        StartDefend();
+    }
+
+
 }

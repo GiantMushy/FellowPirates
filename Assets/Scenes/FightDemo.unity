@@ -4164,6 +4164,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1814307326}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: fleeButton
+      value: 
+      objectReference: {fileID: 1637390136}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: healEffect
       value: 
       objectReference: {fileID: 2003450687}
@@ -4177,6 +4181,10 @@ PrefabInstance:
       objectReference: {fileID: 1794675205}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: bribeCostText
+      value: 
+      objectReference: {fileID: 126716411}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: middleScreenText
       value: 
       objectReference: {fileID: 126716411}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
@@ -4200,9 +4208,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 690074005}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: bribeMiddleScreenText
+      value: 
+      objectReference: {fileID: 126716411}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: heartImages.Array.size
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: redMiddleScreenMessage
+      value: 
+      objectReference: {fileID: 329958658}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: fightingWindowBackground
       value: 

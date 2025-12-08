@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
-    
+
     [Header("UI elements")]
     public PauseMenu pauseMenu;
     public Image[] heartImages;
@@ -141,9 +141,9 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(damageTypeController.HandleLandCollision("Land"));
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
-                    {
-                        StartCoroutine(AutoHealAfterDelay());
-                    }
+                {
+                    StartCoroutine(AutoHealAfterDelay());
+                }
             }
         }
         else if (tag == "Finish")
@@ -201,6 +201,18 @@ public class PlayerController : MonoBehaviour
         if (tag == "Pirate" || tag == "Monster")
         {
             var enemy = collision.gameObject.GetComponent<EnemyController>();
+            if (gameManager.chasingEnemy == enemy)
+            {
+                gameManager.playerCaughtWhileFleeing = true;
+
+                if (!string.IsNullOrEmpty(enemy.enemyId))
+                {
+                    gameManager.fleeDisabledEnemies.Add(enemy.enemyId);
+                }
+
+                gameManager.CancelChase();
+            }
+
             gameManager.StartBattle(this, enemy);
             return;
         }
