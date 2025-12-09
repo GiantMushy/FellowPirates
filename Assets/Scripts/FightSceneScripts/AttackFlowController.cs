@@ -106,6 +106,27 @@ public class AttackFlowController : MonoBehaviour
         buttonMiddleScreenText.gameObject.SetActive(false);
     }
 
+    public void ShowAttackMessage()
+    {
+        Debug.Log("ShowAttackMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text =
+               "<color=green>GREEN</color>:   2x Damage\n" +
+               "<color=yellow>YELLOW</color>  1x Damage\n" +
+               "<color=red>RED</color>        0x Damage\n" +
+               "\n<color=#00FFFF><b>[SPACE]</b></color>  to  Attack";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+    public void HideAttackMessage()
+    {
+        Debug.Log("HideAttackMessage");
+        if (buttonMiddleScreenText == null) return;
+        buttonMiddleScreenText.gameObject.SetActive(false);
+    }
+
     private void SetChooseActionText()
     {
         if (actionText != null)
