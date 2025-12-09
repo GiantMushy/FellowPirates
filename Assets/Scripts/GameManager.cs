@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public Vector3 lastEnemyPosition;
     public EnemyController currentEnemy;
     public int enemyBribeCost;
+    public int enemyRewardAmount;
 
     public Vector3 savedCameraOffset;
     public bool hasSavedCameraOffset;
@@ -50,6 +51,7 @@ public class GameManager : MonoBehaviour
 
     public string currentEnemyId;
 
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -61,7 +63,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         currentLevelName = SceneManager.GetActiveScene().name;
-
     }
 
     void OnEnable()
@@ -115,6 +116,7 @@ public class GameManager : MonoBehaviour
         preBattlePosition = player.transform.position;
 
         enemyBribeCost = enemy.bribeCost;
+        enemyRewardAmount = enemy.rewardMoney;
 
         if (!string.IsNullOrEmpty(currentEnemyId) &&
            enemyHealthById.TryGetValue(currentEnemyId, out var savedHp))
@@ -126,7 +128,9 @@ public class GameManager : MonoBehaviour
             enemyHealth = enemyMaxHealth; // first time fighting this enemy
         }
 
+        // playerController = player;
         player.PrepareForBattle();
+
 
         SceneManager.LoadScene("FightDemo");
     }
@@ -139,6 +143,8 @@ public class GameManager : MonoBehaviour
 
 
         fleeCooldownUntil = Time.time + 2f;
+
+        goldCoins += enemyRewardAmount;
 
         if (!string.IsNullOrEmpty(currentEnemyId))
         {

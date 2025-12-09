@@ -5,6 +5,38 @@ using UnityEngine.EventSystems;
 public class FleeButtonController : MonoBehaviour
 {
     [SerializeField] private Button fleeButton;
+    public AttackFlowController flow;
+    private bool isSelected = false;
+
+    void Update()
+    {
+        if (EventSystem.current == null || fleeButton == null || flow == null)
+        {
+            return;
+        }
+
+        if (!flow.buttonPanell.interactable)
+        {
+            if (isSelected)
+            {
+                isSelected = false;
+            }
+            return;
+        }
+
+
+        bool nowSelected = EventSystem.current.currentSelectedGameObject == fleeButton.gameObject;
+
+        if (nowSelected && !isSelected)
+        {
+            isSelected = true;
+            flow.ShowFleeMessage();
+        }
+        else if (!nowSelected && isSelected)
+        {
+            isSelected = false;
+        }
+    }
 
     public void Flee()
     {
@@ -14,6 +46,7 @@ public class FleeButtonController : MonoBehaviour
         var gameManager = GameManager.Instance;
         if (gameManager != null)
         {
+            flow.HideMiddleScreenMessage();
             gameManager.StartChase();
         }
         else

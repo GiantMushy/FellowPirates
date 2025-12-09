@@ -33,6 +33,9 @@ public class EnemyController : MonoBehaviour
 
     public ChaseTime chaseTimeController;
 
+    // reward money
+    public int rewardMoney = 10;
+
     // for bribe
     public int bribeCost = 1;
     private Collider2D enemyCollider;
@@ -73,7 +76,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void StartChasing(Transform target)
+    public void StartChasing(Transform target, bool fromBattle = true)
     {
         if (chasing || waiting_to_chase)
         {
@@ -88,17 +91,25 @@ public class EnemyController : MonoBehaviour
 
         player = target;
         waiting_to_chase = true;
-        StartCoroutine(Chase());
+        StartCoroutine(Chase(fromBattle));
     }
 
-    private IEnumerator Chase()
+    private IEnumerator Chase(bool fromBattle = true)
     {
-        chaseTimeController.startChaseCountodwn();
+        if (fromBattle)
+        {
+            // reset countdown each time we chase from battle
+            chaseTimeController.timeWait = chase_delay;
+            chaseTimeController.startChaseCountodwn();
 
+            // wait for the countdown UI
+            yield return new WaitForSeconds(chase_delay);
 
-        yield return new WaitForSeconds(chase_delay);
+            // now actually start the chase UI (bar + blinking time)
+            chaseTimeController.StartChase();
+        }
 
-        chaseTimeController.StartChase();
+        // chaseTimeController.StartChase(fromBattle);
 
         waiting_to_chase = false;
 
@@ -111,6 +122,7 @@ public class EnemyController : MonoBehaviour
         {
             Debug.LogWarning("Start or end outside of bounds");
             chasing = false;
+            chaseTimeController.ForceStopChaseUI();
             yield break;
         }
 
@@ -134,7 +146,7 @@ public class EnemyController : MonoBehaviour
         while (timer < chaseTime)
         {
             timer += Time.deltaTime;
-            yield return true;
+            yield return null;
         }
         StopChase();
     }
@@ -297,5 +309,22 @@ public class EnemyController : MonoBehaviour
         return !oceanTilemap.HasTile(cell);
     }
 
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player"))
+        {
+            return;
+        }
+
+        GameManager gameManager = GameManager.Instance;
+
+        if (gameManager != null && Time.time < gameManager.fleeCooldownUntil)
+        {
+            return;
+        }
+
+        StartChasing(other.transform, false);
+    }
 }
 
