@@ -2448,6 +2448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FleeButtonController
   fleeButton: {fileID: 1637390136}
+  flow: {fileID: 1128360401}
 --- !u!1 &992590931
 GameObject:
   m_ObjectHideFlags: 0

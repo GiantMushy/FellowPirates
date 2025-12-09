@@ -23,7 +23,6 @@ public class AttackButtonController : MonoBehaviour
             if (isSelected)
             {
                 isSelected = false;
-                flow.HideAttackMessage();
             }
             return;
         }
@@ -39,12 +38,12 @@ public class AttackButtonController : MonoBehaviour
         else if (!nowSelected && isSelected)
         {
             isSelected = false;
-            flow.HideAttackMessage();
         }
     }
 
     public void Attack()
     {
+        flow.HideMiddleScreenMessage();
         Debug.Log("Attack button pressed");
         flow.StartAttack();
     }

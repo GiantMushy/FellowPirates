@@ -31,7 +31,6 @@ public class AttackFlowController : MonoBehaviour
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
-
     public TextMeshProUGUI actionText;
 
     // healing
@@ -79,7 +78,7 @@ public class AttackFlowController : MonoBehaviour
         }
         SetChooseActionText();
         RefreshItemsUI();
-        HideBribeCost();
+        // HideBribeCost();
         bribeCostButtonText.text = $"{gameManager.enemyBribeCost} gold coins";
 
         UpdateFleeButtonState();
@@ -99,13 +98,6 @@ public class AttackFlowController : MonoBehaviour
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
-    public void HideBribeCost()
-    {
-        Debug.Log("HideBribeCost");
-        if (buttonMiddleScreenText == null) return;
-        buttonMiddleScreenText.gameObject.SetActive(false);
-    }
-
     public void ShowAttackMessage()
     {
         Debug.Log("ShowAttackMessage");
@@ -120,12 +112,48 @@ public class AttackFlowController : MonoBehaviour
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
-    public void HideAttackMessage()
+    public void ShowFleeMessage()
     {
-        Debug.Log("HideAttackMessage");
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "<color=red><b>Attempt to Flee?</b></color>\n" +
+                "You have <b>3 seconds</b>\n" +
+                "<size=90%>(Only one chance)</size>";
+
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+    public void ShowItemsMessageFullHealth()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "Full health";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+    public void ShowItemsMessage()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "[SPACE] to heal before next battle";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+
+
+
+    public void HideMiddleScreenMessage()
+    {
         if (buttonMiddleScreenText == null) return;
         buttonMiddleScreenText.gameObject.SetActive(false);
     }
+
 
     private void SetChooseActionText()
     {
