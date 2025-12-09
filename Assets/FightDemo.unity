@@ -1912,6 +1912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FleeButtonController
   fleeButton: {fileID: 1637390136}
+  flow: {fileID: 1128360401}
 --- !u!1 &992590931
 GameObject:
   m_ObjectHideFlags: 0
@@ -2093,6 +2094,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackButtonController
   flow: {fileID: 1128360401}
+  attackButton: {fileID: 0}
 --- !u!114 &1128360401 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
@@ -2155,6 +2157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BribeButtonController
   bribeButton: {fileID: 1589418774}
   flow: {fileID: 1128360401}
+  defaultButton: {fileID: 0}
 --- !u!1 &1350859425
 GameObject:
   m_ObjectHideFlags: 0
@@ -2201,6 +2204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemsButtonController
   itemsButton: {fileID: 672208298}
   attackButton: {fileID: 24634395}
+  attackFlow: {fileID: 0}
 --- !u!1 &1589418772
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,6 +6,8 @@ public class ItemsButtonController : MonoBehaviour
     [SerializeField] private Button itemsButton;
     [SerializeField] private Button attackButton;
     GameManager gameManager;
+    private bool isSelected = false;
+
 
     public AttackFlowController attackFlow;
 
@@ -37,12 +39,47 @@ public class ItemsButtonController : MonoBehaviour
         {
             itemsButton.interactable = true;
         }
+
+        if (EventSystem.current == null || itemsButton == null || attackFlow == null)
+        {
+            return;
+        }
+
+        if (!attackFlow.buttonPanell.interactable)
+        {
+            if (isSelected)
+            {
+                isSelected = false;
+            }
+            return;
+        }
+
+        bool nowSelected = EventSystem.current.currentSelectedGameObject == itemsButton.gameObject;
+
+        if (nowSelected && !isSelected)
+        {
+            isSelected = true;
+
+            if (gameManager.healthInventory <= 0 || gameManager.health > 2)
+            {
+                attackFlow.ShowItemsMessageFullHealth();
+            }
+            else
+            {
+                attackFlow.ShowItemsMessage();
+            }
+        }
+        else if (!nowSelected && isSelected)
+        {
+            isSelected = false;
+        }
     }
 
 
     public void Items()
     {
-        Debug.Log("Items button pressed");
+        attackFlow.HideMiddleScreenMessage();
+
         EventSystem.current.SetSelectedGameObject(itemsButton.gameObject);
 
         gameManager.UseHealthItem();
