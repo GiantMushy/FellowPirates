@@ -145,7 +145,7 @@ public class PlayerController : MonoBehaviour
         string tag = other.tag;
 
         if (tag == "Land")
-        {   
+        {
 
             Debug.Log("OnTriggerEnter2D: HIT LAND");
             TakeDamage();
@@ -164,7 +164,7 @@ public class PlayerController : MonoBehaviour
                 SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
-                {   
+                {
                     Debug.LogError("Activate autoheal");
                     StartCoroutine(AutoHealAfterDelay());
                 }
@@ -294,7 +294,7 @@ public class PlayerController : MonoBehaviour
                 shipController.Stop();
                 shipController.DisableControl();
             }
-            
+
             // Spawn explosion
             if (deathExplosionPrefab != null)
             {
@@ -478,6 +478,42 @@ public class PlayerController : MonoBehaviour
         else
         {
             Debug.LogWarning("VictoryPanelController is NOT assigned!");
+        }
+    }
+
+
+    public void OnBattleDeathReturn()
+    {
+        if (shipController != null)
+        {
+            shipController.Stop();
+            shipController.DisableControl();
+        }
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = false;
+        }
+
+        if (deathPanelController != null)
+        {
+            deathPanelController.Show();
+        }
+        else
+        {
+            var respawn = GetComponent<PlayerRespawn>();
+            if (respawn != null)
+            {
+                respawn.Respawn();
+            }
+
+            if (gameManager != null)
+            {
+                gameManager.health = gameManager.maxHealth;
+            }
+
+            UpdateSprite();
+            UpdateHeartsUI();
         }
     }
 

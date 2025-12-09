@@ -210,13 +210,13 @@ public class GameManager : MonoBehaviour
         {
             pendingDeathReturn = false;
 
-            var respawn = player.GetComponent<PlayerRespawn>();
-            if (respawn != null)
+            var playerController = player.GetComponent<PlayerController>();
+            if (playerController != null)
             {
-                respawn.Respawn();
+                playerController.OnBattleDeathReturn();
             }
 
-            health = maxHealth;
+            return;
         }
         else
         {
@@ -240,6 +240,8 @@ public class GameManager : MonoBehaviour
             StopAllCoroutines();
             player.StartCoroutine(StartChaseAfterReturn(player.transform));
         }
+
+
     }
 
 
