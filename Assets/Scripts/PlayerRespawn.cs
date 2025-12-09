@@ -7,6 +7,7 @@ public class PlayerRespawn : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private DamageTypeController damageTypeController;
     GameManager gameManager;
+    public TrailRenderer trail;
 
     void Awake()
     {
@@ -77,5 +78,6 @@ public class PlayerRespawn : MonoBehaviour
             playerController.UpdateHeartsUI();
         }
 
+        trail.Clear();
     }
 }

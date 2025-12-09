@@ -1,6 +1,9 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System.Collections;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerFightController : MonoBehaviour
 {
@@ -33,19 +36,24 @@ public class PlayerFightController : MonoBehaviour
             return;
         }
 
-        if (!defendResolved && timeBar.IsTimeOver)
+        if (!defendResolved && timeBar != null && timeBar.IsTimeOver)
         {
             defendResolved = true;
             gameOver = true;
-            StartCoroutine(FlashAnimation(damageSprite, wonHitColor, wonClearColor, false));
+
+            var spriteToUse = wonSprite != null ? wonSprite : damageSprite;
+            StartCoroutine(FlashAnimation(spriteToUse, wonHitColor, wonClearColor, false));
 
             Debug.Log("YOU WOOON!!");
             return;
         }
 
+
         Bounds b = minigameBackgroundSprite.bounds;
 
-        if (Input.GetKey(KeyCode.UpArrow))
+        var key = Keyboard.current;
+
+        if (key.upArrowKey.isPressed || key.wKey.isPressed)
         {
             float new_y = transform.position.y + speed * Time.deltaTime;
             if (new_y + SpriteSizeMargin.y < b.max.y)
@@ -53,8 +61,7 @@ public class PlayerFightController : MonoBehaviour
                 transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
             }
         }
-
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (key.downArrowKey.isPressed || key.sKey.isPressed)
         {
             float new_y = transform.position.y - speed * Time.deltaTime;
             if (new_y - SpriteSizeMargin.y > b.min.y)
@@ -62,7 +69,8 @@ public class PlayerFightController : MonoBehaviour
                 transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
             }
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+
+        if (key.rightArrowKey.isPressed || key.dKey.isPressed)
         {
             float new_x = transform.position.x + speed * Time.deltaTime;
             if (new_x + SpriteSizeMargin.x < b.max.x)
@@ -70,7 +78,7 @@ public class PlayerFightController : MonoBehaviour
                 transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
             }
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (key.leftArrowKey.isPressed || key.aKey.isPressed)
         {
             float new_x = transform.position.x - speed * Time.deltaTime;
             if (new_x - SpriteSizeMargin.x > b.min.x)
@@ -107,6 +115,11 @@ public class PlayerFightController : MonoBehaviour
 
     private IEnumerator FlashAnimation(SpriteRenderer sprite, Color hitColor, Color clearColor, bool tookDamage)
     {
+        if (sprite == null)
+        {
+            flow.OnDefendFinished(tookDamage);
+            yield break;
+        }
 
         sprite.color = hitColor;
 
@@ -123,13 +136,12 @@ public class PlayerFightController : MonoBehaviour
         gameOver = false;
 
         flow.OnDefendFinished(tookDamage);
-
     }
+
 
     public void ResetForNewDefend()
     {
         defendResolved = false;
         gameOver = false;
-        StopAllCoroutines();
     }
 }

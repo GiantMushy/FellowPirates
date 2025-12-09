@@ -42,6 +42,9 @@ public class GameManager : MonoBehaviour
 
 
 
+    public HashSet<string> fleeDisabledEnemies = new HashSet<string>();  // flee banned enemies
+    public bool playerCaughtWhileFleeing = false;
+
     public HashSet<string> defeatedEnemies = new HashSet<string>(); // to not render the dead dudes
     public Dictionary<string, int> enemyHealthById = new Dictionary<string, int>(); // to keep lives persistent per enemy
 
@@ -141,6 +144,7 @@ public class GameManager : MonoBehaviour
         {
             enemyHealthById.Remove(currentEnemyId);
             defeatedEnemies.Add(currentEnemyId);
+            fleeDisabledEnemies.Remove(currentEnemyId);
         }
 
         SceneManager.LoadScene(returnSceneName);
