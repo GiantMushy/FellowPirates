@@ -31,6 +31,7 @@ public class AttackFlowController : MonoBehaviour
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
+    public TextMeshProUGUI enemyGoldText;
     public TextMeshProUGUI actionText;
 
     // healing
@@ -71,6 +72,9 @@ public class AttackFlowController : MonoBehaviour
     {
         gameManager = GameManager.Instance;
 
+        enemyGoldText.text = gameManager.enemyRewardAmount.ToString();
+
+
         if (gameManager == null)
         {
             Debug.LogError("AttackFlowController: GameManager.Instance is null!");
@@ -78,7 +82,6 @@ public class AttackFlowController : MonoBehaviour
         }
         SetChooseActionText();
         RefreshItemsUI();
-        // HideBribeCost();
         bribeCostButtonText.text = $"{gameManager.enemyBribeCost} gold coins";
 
         UpdateFleeButtonState();

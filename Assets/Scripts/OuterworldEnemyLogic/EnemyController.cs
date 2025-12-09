@@ -33,6 +33,9 @@ public class EnemyController : MonoBehaviour
 
     public ChaseTime chaseTimeController;
 
+    // reward money
+    public int rewardMoney = 10;
+
     // for bribe
     public int bribeCost = 1;
     private Collider2D enemyCollider;
