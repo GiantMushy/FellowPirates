@@ -196,13 +196,13 @@ public class PlayerController : MonoBehaviour
                 gameManager.healthInventory++;
                 UpdateHealthItemUI();
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
             }
             else
             {
                 GainHealth();
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
 
                 StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
                 SpawnOrangeHealEffect();
@@ -405,7 +405,7 @@ public class PlayerController : MonoBehaviour
                 // Same SFX + pulse
                 if (healthPickupSound != null)
                 {
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
                 }
                 if (spriteRenderer != null)
                 {
