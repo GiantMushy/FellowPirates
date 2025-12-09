@@ -5,6 +5,7 @@ public class PlayerRespawn : MonoBehaviour
     public Vector2 respawnPoint;
     private PlayerController Player;
     GameManager gameManager;
+    public TrailRenderer trail;
 
     void Start()
     {
@@ -47,5 +48,6 @@ public class PlayerRespawn : MonoBehaviour
             gameManager.CancelChase();
         }
 
+        trail.Clear();
     }
 }
