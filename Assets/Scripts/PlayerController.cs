@@ -51,6 +51,11 @@ public class PlayerController : MonoBehaviour
     public float deathPanelDelay = 1f; // seconds before death panel appears
 
 
+    void Awake()
+    {
+        gameManager = GameManager.Instance;
+    }
+
     void Start()
     {
         gameManager = GameManager.Instance;
@@ -378,30 +383,34 @@ public class PlayerController : MonoBehaviour
         // Wait before healing
         yield return new WaitForSeconds(autoHealDelay);
 
-        // Conditions might have changed during the delay, so re-check
-        if (gameManager != null &&
-            gameManager.healthInventory > 0 &&
-            gameManager.health < gameManager.maxHealth)
+        while (gameManager != null &&
+                 gameManager.healthInventory > 0 &&
+                 gameManager.health < gameManager.maxHealth)
         {
-            UseHealthItem();
-
-            // Same SFX + pulse
-            if (healthPickupSound != null)
+            // Conditions might have changed during the delay, so re-check
+            if (gameManager != null &&
+                gameManager.healthInventory > 0 &&
+                gameManager.health < gameManager.maxHealth)
             {
-                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-            }
-            if (spriteRenderer != null)
-            {
-                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
-            }
+                UseHealthItem();
 
-            SpawnOrangeHealEffect();
+                // Same SFX + pulse
+                if (healthPickupSound != null)
+                {
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                }
+                if (spriteRenderer != null)
+                {
+                    StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+                }
+
+                SpawnOrangeHealEffect();
+
+            }
 
         }
-
         autoHealPending = false;
     }
-
     private void SpawnOrangeHealEffect()
     {
         if (orangeHealEffectPrefab == null)
@@ -517,5 +526,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    public void TryAutoHealFromBattle()
+    {
+        if (gameManager == null) return;
+
+        if (gameManager.healthInventory > 0 &&
+            gameManager.health < gameManager.maxHealth &&
+            !autoHealPending)
+        {
+            Debug.LogError("Activate autoheal AFTER BATTLE");
+            StartCoroutine(AutoHealAfterDelay());
+        }
+    }
 }
 

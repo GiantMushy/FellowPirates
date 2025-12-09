@@ -228,6 +228,14 @@ public class GameManager : MonoBehaviour
             Camera.main.transform.position = player.transform.position + savedCameraOffset;
         }
 
+        var playerController2 = player.GetComponent<PlayerController>();
+        if (playerController2 != null &&
+            health < maxHealth &&
+            healthInventory > 0)
+        {
+            playerController2.TryAutoHealFromBattle();
+        }
+
         if (pendingBribeReturn)
         {
             pendingBribeReturn = false;
