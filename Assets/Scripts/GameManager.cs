@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     private bool pendingChaseReturn = false;
     private bool pendingDeathReturn = false;
     private bool pendingBribeReturn = false;
+    private bool pendingGoldRewardPopup = false;
+
 
     public Vector3 spawnPoint;
     public bool hasSpawnPoint = false;
@@ -146,6 +148,8 @@ public class GameManager : MonoBehaviour
 
         goldCoins += enemyRewardAmount;
 
+        pendingGoldRewardPopup = true;
+
         if (!string.IsNullOrEmpty(currentEnemyId))
         {
             enemyHealthById.Remove(currentEnemyId);
@@ -195,7 +199,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(returnSceneName);
     }
 
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (!pendingBattleReturn) return;
@@ -228,13 +231,17 @@ public class GameManager : MonoBehaviour
             Camera.main.transform.position = player.transform.position + savedCameraOffset;
         }
 
-        var playerController2 = player.GetComponent<PlayerController>();
-        if (playerController2 != null &&
-            health < maxHealth &&
-            healthInventory > 0)
+        if (pendingGoldRewardPopup)
         {
-            playerController2.TryAutoHealFromBattle();
+            pendingGoldRewardPopup = false;
+            player.ShowBattleGoldReward();
         }
+
+        if (health < maxHealth && healthInventory > 0)
+        {
+            player.TryAutoHealFromBattle();
+        }
+
 
         if (pendingBribeReturn)
         {

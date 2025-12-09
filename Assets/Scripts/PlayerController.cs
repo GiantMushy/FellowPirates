@@ -34,6 +34,14 @@ public class PlayerController : MonoBehaviour
     public GameObject orangeHealEffectPrefab;
     public Vector3 orangeEffectOffset = new Vector3(0f, 0.5f, 0f);
 
+    [Header("Gold Effect")]
+    public GameObject goldPopupPrefab;
+    public Vector3 goldPopupOffset = new Vector3(0f, 0.5f, 0f);
+    public float goldPopupDuration = 1f;
+    public float goldPopupRiseDistance = 1f;
+    public float goldRewardDelay = 0.2f;
+
+
     [Header("Audio")]
     [SerializeField] private AudioClip healthPickupSound;
     [SerializeField] private AudioClip goldPickupSound;
@@ -419,6 +427,58 @@ public class PlayerController : MonoBehaviour
         Vector3 spawnPos = transform.position + orangeEffectOffset;
         Instantiate(orangeHealEffectPrefab, spawnPos, Quaternion.identity);
     }
+
+    public void ShowBattleGoldReward()
+    {
+        if (gameManager == null)
+            gameManager = GameManager.Instance;
+
+        if (gameManager == null) return;
+        if (goldPopupPrefab == null) return;
+
+        Vector3 spawnPos = gameManager.lastEnemyPosition + goldPopupOffset;
+
+        StartCoroutine(ShowBattleGoldRewardRoutine(spawnPos));
+    }
+
+    private IEnumerator ShowBattleGoldRewardRoutine(Vector3 spawnPos)
+    {
+        if (goldRewardDelay > 0f)
+            yield return new WaitForSeconds(goldRewardDelay);
+
+        GameObject popup = Instantiate(goldPopupPrefab, spawnPos, Quaternion.identity);
+
+        if (goldPickupSound != null)
+        {
+            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
+        }
+
+        SpriteRenderer sr = popup.GetComponent<SpriteRenderer>();
+        Vector3 startPos = popup.transform.position;
+        Vector3 endPos = startPos + Vector3.up * goldPopupRiseDistance;
+
+        float t = 0f;
+
+        while (t < goldPopupDuration)
+        {
+            t += Time.deltaTime;
+            float normalized = Mathf.Clamp01(t / goldPopupDuration);
+
+            popup.transform.position = Vector3.Lerp(startPos, endPos, normalized);
+
+            if (sr != null)
+            {
+                Color c = sr.color;
+                c.a = 1f - normalized;
+                sr.color = c;
+            }
+
+            yield return null;
+        }
+
+        Destroy(popup);
+    }
+
 
 
     public void UpdateHeartsUI()
