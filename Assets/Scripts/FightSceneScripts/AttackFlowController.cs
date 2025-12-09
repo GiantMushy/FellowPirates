@@ -31,14 +31,14 @@ public class AttackFlowController : MonoBehaviour
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
-
+    public TextMeshProUGUI enemyGoldText;
     public TextMeshProUGUI actionText;
 
     // healing
     public GameObject healEffect;
 
     //bribe stuff
-    public TextMeshProUGUI bribeMiddleScreenText;
+    public TextMeshProUGUI buttonMiddleScreenText;
     public TextMeshProUGUI bribeCostButtonText;
 
     // failed bribe
@@ -72,6 +72,9 @@ public class AttackFlowController : MonoBehaviour
     {
         gameManager = GameManager.Instance;
 
+        enemyGoldText.text = gameManager.enemyRewardAmount.ToString();
+
+
         if (gameManager == null)
         {
             Debug.LogError("AttackFlowController: GameManager.Instance is null!");
@@ -79,7 +82,6 @@ public class AttackFlowController : MonoBehaviour
         }
         SetChooseActionText();
         RefreshItemsUI();
-        HideBribeCost();
         bribeCostButtonText.text = $"{gameManager.enemyBribeCost} gold coins";
 
         UpdateFleeButtonState();
@@ -93,18 +95,68 @@ public class AttackFlowController : MonoBehaviour
     public void ShowBribeCost()
     {
         Debug.Log("ShowBribeCost");
-        if (bribeMiddleScreenText == null || gameManager == null) return;
+        if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        bribeMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
-        bribeMiddleScreenText.gameObject.SetActive(true);
+        buttonMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
+        buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
-    public void HideBribeCost()
+    public void ShowAttackMessage()
     {
-        Debug.Log("HideBribeCost");
-        if (bribeMiddleScreenText == null) return;
-        bribeMiddleScreenText.gameObject.SetActive(false);
+        Debug.Log("ShowAttackMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text =
+               "<color=green>GREEN</color>:   2x Damage\n" +
+               "<color=yellow>YELLOW</color>  1x Damage\n" +
+               "<color=red>RED</color>        0x Damage\n" +
+               "\n<color=#00FFFF><b>[SPACE]</b></color>  to  Attack";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
     }
+
+    public void ShowFleeMessage()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "<color=red><b>Attempt to Flee?</b></color>\n" +
+                "You have <b>3 seconds</b>\n" +
+                "<size=90%>(Only one chance)</size>";
+
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+    public void ShowItemsMessageFullHealth()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "Full health";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+    public void ShowItemsMessage()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "[SPACE] to heal before next battle";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+
+
+
+    public void HideMiddleScreenMessage()
+    {
+        if (buttonMiddleScreenText == null) return;
+        buttonMiddleScreenText.gameObject.SetActive(false);
+    }
+
 
     private void SetChooseActionText()
     {
