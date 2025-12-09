@@ -549,7 +549,7 @@ GameObject:
   - component: {fileID: 126716412}
   - component: {fileID: 126716411}
   m_Layer: 5
-  m_Name: bribeCostText
+  m_Name: middleScreenButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -666,11 +666,11 @@ RectTransform:
   m_LocalScale: {x: 1.1363636, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1589418773}
+  m_Father: {fileID: 1794675202}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -59, y: 406}
+  m_AnchoredPosition: {x: 59.99996, y: 411}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &227873291
@@ -3065,7 +3065,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 126716413}
   - {fileID: 815032303}
   - {fileID: 683824144}
   m_Father: {fileID: 1794675202}
@@ -3452,6 +3451,7 @@ RectTransform:
   m_LocalScale: {x: 0.88, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 126716413}
   - {fileID: 24634394}
   - {fileID: 672208297}
   - {fileID: 1589418773}

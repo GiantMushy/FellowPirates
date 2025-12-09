@@ -73,7 +73,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void StartChasing(Transform target)
+    public void StartChasing(Transform target, bool fromBattle = true)
     {
         if (chasing || waiting_to_chase)
         {
@@ -88,17 +88,19 @@ public class EnemyController : MonoBehaviour
 
         player = target;
         waiting_to_chase = true;
-        StartCoroutine(Chase());
+        StartCoroutine(Chase(fromBattle));
     }
 
-    private IEnumerator Chase()
+    private IEnumerator Chase(bool fromBattle = true)
     {
-        chaseTimeController.startChaseCountodwn();
+        if (fromBattle)
+        {
+            chaseTimeController.startChaseCountodwn();
 
+            yield return new WaitForSeconds(chase_delay);
 
-        yield return new WaitForSeconds(chase_delay);
-
-        chaseTimeController.StartChase();
+            chaseTimeController.StartChase();
+        }
 
         waiting_to_chase = false;
 
@@ -297,5 +299,11 @@ public class EnemyController : MonoBehaviour
         return !oceanTilemap.HasTile(cell);
     }
 
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+            StartChasing(other.transform, false);
+    }
 }
 

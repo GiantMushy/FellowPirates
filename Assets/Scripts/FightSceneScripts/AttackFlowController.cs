@@ -38,7 +38,7 @@ public class AttackFlowController : MonoBehaviour
     public GameObject healEffect;
 
     //bribe stuff
-    public TextMeshProUGUI bribeMiddleScreenText;
+    public TextMeshProUGUI buttonMiddleScreenText;
     public TextMeshProUGUI bribeCostButtonText;
 
     // failed bribe
@@ -93,17 +93,17 @@ public class AttackFlowController : MonoBehaviour
     public void ShowBribeCost()
     {
         Debug.Log("ShowBribeCost");
-        if (bribeMiddleScreenText == null || gameManager == null) return;
+        if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        bribeMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
-        bribeMiddleScreenText.gameObject.SetActive(true);
+        buttonMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
+        buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
     public void HideBribeCost()
     {
         Debug.Log("HideBribeCost");
-        if (bribeMiddleScreenText == null) return;
-        bribeMiddleScreenText.gameObject.SetActive(false);
+        if (buttonMiddleScreenText == null) return;
+        buttonMiddleScreenText.gameObject.SetActive(false);
     }
 
     private void SetChooseActionText()

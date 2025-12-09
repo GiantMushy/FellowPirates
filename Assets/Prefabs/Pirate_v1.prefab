@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5998851561116866059}
   - component: {fileID: 1948129961894596220}
   - component: {fileID: 2380871661128900429}
+  - component: {fileID: 351019148337438276}
   m_Layer: 0
   m_Name: Pirate_v1
   m_TagString: Pirate
@@ -108,8 +109,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShipController
   maxSpeed: 3
   turnSpeed: 180
-  acceleration: 1
-  deceleration: 1
+  acceleration: 2
+  deceleration: 2
+  maxHealth: 0
   health: 0
 --- !u!114 &5998851561116866059
 MonoBehaviour:
@@ -123,12 +125,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e64a984bc2df401595bac8bf80f7e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  enemyId: 1
   grid: {fileID: 0}
   player: {fileID: 0}
-  replan_interval: 0.5
+  replan_interval: 0.3
   chase_delay: 3
   turn_deadzone: 5
   turn_release_zone: 2
+  chaseTimeController: {fileID: 0}
+  bribeCost: 1
+  oceanTilemap: {fileID: 0}
 --- !u!70 &1948129961894596220
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -193,3 +199,39 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!58 &351019148337438276
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382280899873588863}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.000042915344, y: 0.0000014305115}
+  m_Radius: 1.5
