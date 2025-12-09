@@ -157,6 +157,12 @@ public class PlayerController : MonoBehaviour
 
         string tag = other.tag;
 
+
+        if (tag == "Monster")
+        {
+            HandleMonsterDamage(other);
+        }
+
         if (tag == "Land")
         {
 
@@ -231,13 +237,15 @@ public class PlayerController : MonoBehaviour
 
         string tag = collision.gameObject.tag;
 
-        if ((tag == "Pirate" || tag == "Monster") &&
+
+
+        if (tag == "Pirate" &&
             Time.time < gameManager.fleeCooldownUntil)
         {
             return;
         }
 
-        if (tag == "Pirate" || tag == "Monster")
+        if (tag == "Pirate")
         {
             var enemy = collision.gameObject.GetComponent<EnemyController>();
             if (gameManager.chasingEnemy == enemy)
@@ -598,5 +606,30 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(AutoHealAfterDelay());
         }
     }
+
+
+    private void HandleMonsterDamage(Collider2D other)
+    {
+        TakeDamage();
+
+        if (gameManager != null && gameManager.health > 0)
+        {
+            if (landHitParticle != null)
+            {
+                landHitParticle.transform.position = transform.position;
+                landHitParticle.Play();
+            }
+
+            if (damageTypeController != null)
+            {
+                Vector2 collisionPoint = other.ClosestPoint(transform.position);
+                Vector3 normal = (transform.position - (Vector3)collisionPoint).normalized;
+
+                StartCoroutine(damageTypeController.HandleLandCollision("Monster", normal));
+            }
+        }
+    }
+
+
 }
 
