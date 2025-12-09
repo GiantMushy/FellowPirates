@@ -42,13 +42,25 @@ public class EnemyController : MonoBehaviour
     private bool bribeFleeing = false;
     public Tilemap oceanTilemap;
 
+    [Header("Explosion")]
+    public GameObject deathExplosionPrefab;
+    public Vector3 deathExplosionOffset = Vector3.zero;
+
+
 
     void Start()
     {
         var gm = GameManager.Instance;
         if (gm != null && gm.defeatedEnemies.Contains(enemyId))
         {
-            Destroy(gameObject);
+            if (gm.currentEnemyId == enemyId)
+            {
+                StartCoroutine(PlayDeathExplosionAndDestroy(gm));
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
         else
         {
@@ -61,6 +73,22 @@ public class EnemyController : MonoBehaviour
 
             chaseTimeController.timeWait = chase_delay;
         }
+    }
+
+
+    private IEnumerator PlayDeathExplosionAndDestroy(GameManager gm)
+    {
+        yield return null;
+
+        if (deathExplosionPrefab != null)
+        {
+            Vector3 spawnPos = transform.position + deathExplosionOffset;
+            Instantiate(deathExplosionPrefab, spawnPos, Quaternion.identity);
+        }
+
+        gm.currentEnemyId = null;
+
+        Destroy(gameObject);
     }
 
     void Update()
@@ -98,18 +126,14 @@ public class EnemyController : MonoBehaviour
     {
         if (fromBattle)
         {
-            // reset countdown each time we chase from battle
             chaseTimeController.timeWait = chase_delay;
             chaseTimeController.startChaseCountodwn();
 
-            // wait for the countdown UI
             yield return new WaitForSeconds(chase_delay);
 
-            // now actually start the chase UI (bar + blinking time)
             chaseTimeController.StartChase();
         }
 
-        // chaseTimeController.StartChase(fromBattle);
 
         waiting_to_chase = false;
 
