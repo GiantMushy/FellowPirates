@@ -145,7 +145,9 @@ public class PlayerController : MonoBehaviour
         string tag = other.tag;
 
         if (tag == "Land")
-        {
+        {   
+
+            Debug.Log("OnTriggerEnter2D: HIT LAND");
             TakeDamage();
             if (landHitParticle != null)
             {
@@ -162,7 +164,8 @@ public class PlayerController : MonoBehaviour
                 SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
-                {
+                {   
+                    Debug.LogError("Activate autoheal");
                     StartCoroutine(AutoHealAfterDelay());
                 }
             }
