@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour
                 SpawnOrangeHealEffect();
 
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
 
                 StartCoroutine(PulseEffect.sprite_pulse(
                     spriteRenderer,
