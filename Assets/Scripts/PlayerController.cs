@@ -12,10 +12,11 @@ public class PlayerController : MonoBehaviour
     public Sprite fullHealthSprite;
     public Sprite damagedSprite;
     public Sprite heavilyDamagedSprite;
-    
+
     [Header("UI elements")]
     public PauseMenu pauseMenu;
     public Image[] heartImages;
+    public ParticleSystem landHitParticle;
 
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
@@ -36,10 +37,18 @@ public class PlayerController : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip healthPickupSound;
     [SerializeField] private AudioClip goldPickupSound;
+    [SerializeField] private AudioClip shipHittingLand;
 
     private ShipController shipController;
     private DamageTypeController damageTypeController;
     private SpriteRenderer spriteRenderer;
+
+    [Header("Explosion")]
+    public GameObject deathExplosionPrefab;
+    public Vector3 deathExplosionOffset = Vector3.zero;
+
+    [Header("Death")]
+    public float deathPanelDelay = 1f; // seconds before death panel appears
 
 
     void Start()
@@ -79,10 +88,12 @@ public class PlayerController : MonoBehaviour
     {
         var keyboard = Keyboard.current;
 
-        if (keyboard.escapeKey.wasPressedThisFrame)
-            SceneManager.LoadScene("MainMenu");
+        if (keyboard.escapeKey.wasPressedThisFrame && pauseMenu != null)
+        {
+            pauseMenu.TogglePause();
+        }
 
-        if (shipController != null)
+        if (shipController != null && (pauseMenu == null || !pauseMenu.IsPaused))
         {
             bool forward =
             keyboard.upArrowKey.isPressed ||
@@ -134,20 +145,32 @@ public class PlayerController : MonoBehaviour
         string tag = other.tag;
 
         if (tag == "Land")
-        {
+        {   
+
+            Debug.Log("OnTriggerEnter2D: HIT LAND");
             TakeDamage();
+            if (landHitParticle != null)
+            {
+                landHitParticle.transform.position = transform.position;
+                landHitParticle.Play();
+            }
+
             if (gameManager.health < gameManager.maxHealth)
             {
                 // Calculate normal direction away from the collision point
                 Vector2 collisionPoint = other.ClosestPoint(transform.position);
                 Vector3 normal = (transform.position - (Vector3)collisionPoint).normalized;
                 StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
+                SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
-                    {
-                        StartCoroutine(AutoHealAfterDelay());
-                    }
+                {   
+                    Debug.LogError("Activate autoheal");
+                    StartCoroutine(AutoHealAfterDelay());
+                }
             }
+            else
+                StartCoroutine(damageTypeController.HandleRespawn());
         }
         else if (tag == "Finish")
         {
@@ -204,6 +227,18 @@ public class PlayerController : MonoBehaviour
         if (tag == "Pirate" || tag == "Monster")
         {
             var enemy = collision.gameObject.GetComponent<EnemyController>();
+            if (gameManager.chasingEnemy == enemy)
+            {
+                gameManager.playerCaughtWhileFleeing = true;
+
+                if (!string.IsNullOrEmpty(enemy.enemyId))
+                {
+                    gameManager.fleeDisabledEnemies.Add(enemy.enemyId);
+                }
+
+                gameManager.CancelChase();
+            }
+
             gameManager.StartBattle(this, enemy);
             return;
         }
@@ -246,28 +281,68 @@ public class PlayerController : MonoBehaviour
         {
             gameManager.CancelChase();
 
+            // Stop any damage blink / other coroutines on the damage controller
+            if (damageTypeController != null)
+            {
+                damageTypeController.StopAllCoroutines();
+                damageTypeController.enabled = false; // optional: disable it while dead
+            }
+
             // Stop and disable ship controls
             if (shipController != null)
             {
                 shipController.Stop();
                 shipController.DisableControl();
             }
+            
+            // Spawn explosion
+            if (deathExplosionPrefab != null)
+            {
+                Vector3 spawnPos = transform.position + deathExplosionOffset;
+                Instantiate(deathExplosionPrefab, spawnPos, Quaternion.identity);
+            }
 
-            // Show the "You Died" overlay
-            if (deathPanelController != null)
+            // Hide the ship sprite
+            if (spriteRenderer != null)
             {
-                deathPanelController.Show();
+                spriteRenderer.enabled = false;
+                spriteRenderer.sprite = null;
             }
-            else
-            {
-                //if no panel is assigned, keep old behaviour
-                GetComponent<PlayerRespawn>().Respawn();
-                gameManager.health = gameManager.maxHealth;
-                UpdateSprite();
-                UpdateHeartsUI();
-            }
+
+            // Start delayed death-panel coroutine
+            StartCoroutine(ShowDeathPanelAfterDelay());
+
         }
     }
+
+    private System.Collections.IEnumerator ShowDeathPanelAfterDelay()
+    {
+        // Wait using game time
+        yield return new WaitForSeconds(deathPanelDelay);
+
+        if (deathPanelController != null)
+        {
+            deathPanelController.Show();
+        }
+        else
+        {
+            // Fallback: if no panel hooked up, do old behaviour
+            var respawn = GetComponent<PlayerRespawn>();
+            if (respawn != null)
+            {
+                respawn.Respawn();
+            }
+
+            if (gameManager != null)
+            {
+                gameManager.health = gameManager.maxHealth;
+            }
+
+            UpdateSprite();
+            UpdateHeartsUI();
+        }
+    }
+
 
     private void UseHealthItem()
     {

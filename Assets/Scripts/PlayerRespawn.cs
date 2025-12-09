@@ -1,10 +1,21 @@
 using UnityEngine;
 
 public class PlayerRespawn : MonoBehaviour
-{
+{   
     public Vector2 respawnPoint;
-    private PlayerController Player;
+    private PlayerController playerController;
+    private SpriteRenderer spriteRenderer;
+    private DamageTypeController damageTypeController;
     GameManager gameManager;
+    public TrailRenderer trail;
+
+    void Awake()
+    {
+        // Cache components on the same GameObject
+        playerController = GetComponent<PlayerController>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        damageTypeController = GetComponent<DamageTypeController>();
+    }
 
     void Start()
     {
@@ -40,12 +51,33 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
+        // Move player back to checkpoint
         transform.position = respawnPoint;
+
+        // Re-enable sprite
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+
+        // Re-enable damage controller if you disabled it on death
+        if (damageTypeController != null)
+        {
+            damageTypeController.enabled = true;
+        }
 
         if (gameManager != null)
         {
             gameManager.CancelChase();
+            gameManager.health = gameManager.maxHealth;
         }
 
+        if (playerController != null)
+        {
+            playerController.UpdateSprite();
+            playerController.UpdateHeartsUI();
+        }
+
+        trail.Clear();
     }
 }
