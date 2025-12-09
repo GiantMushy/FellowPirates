@@ -35,6 +35,7 @@ public class PlayerFightController : MonoBehaviour
         defendResolved = false;
         gameOver = false;
     }
+    
     void Update()
     {
         if (gameOver)
