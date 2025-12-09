@@ -297,12 +297,6 @@ public class AttackFlowController : MonoBehaviour
         isStartingDefend = false;
         isDefending = false;
 
-        // GameObject[] BulletSpawner = GameObject.FindGameObjectsWithTag("BulletSpawner");
-        // foreach (GameObject bullet in BulletSpawner)
-        // {
-        //     bullet.SetActive(false);
-        // }
-
 
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject bomb in bombs)
@@ -632,7 +626,6 @@ public class AttackFlowController : MonoBehaviour
 
     private IEnumerator ShowDamageAmountRoutine(int damage)
     {
-        // DamageText.enabled = true;
         DamageText.gameObject.SetActive(true);
         yield return new WaitForSeconds(1f);
         isAttacking = false;
@@ -640,25 +633,18 @@ public class AttackFlowController : MonoBehaviour
         StartDefend();
     }
 
+
     public void ShowDamageAmount(int damage)
     {
         UpdateDamageText(damage);
+
+        if (damage > 0)
+        {
+            StartCoroutine(EnemyHitFeedback(damage));
+        }
+
         StartCoroutine(ShowDamageAmountRoutine(damage));
-
-
-        // if (damage == 2)
-        // {
-        //     StartCoroutine(GreenHitEffects());
-        // }
-
     }
-
-
-    // private IEnumerator GreenHitEffects()
-    // {
-    //     yield return new WaitForSeconds(1);
-    //     // TODO: add something cool when winning
-    // }
 
     private IEnumerator CaughtAfterFleeRoutine()
     {
@@ -696,5 +682,45 @@ public class AttackFlowController : MonoBehaviour
         StartDefend();
     }
 
+
+    private IEnumerator EnemyHitFeedback(int damage)
+    {
+        if (enemyImage == null) yield break;
+
+        RectTransform rect = enemyImage.rectTransform;
+        if (rect == null) yield break;
+
+        Vector2 originalPos = rect.anchoredPosition;
+        Color originalColor = enemyImage.color;
+
+        Color hitColor = originalColor;
+        if (damage == 2)
+        {
+            hitColor = Color.red;
+        }
+        else if (damage == 1)
+        {
+            hitColor = Color.yellow;
+        }
+
+        enemyImage.color = hitColor;
+
+        float duration = 1f;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float x = Random.Range(-shakeStrength, shakeStrength);
+            float y = Random.Range(-shakeStrength, shakeStrength);
+            rect.anchoredPosition = originalPos + new Vector2(x, y);
+
+            yield return null;
+        }
+
+        rect.anchoredPosition = originalPos;
+        enemyImage.color = originalColor;
+    }
 
 }
