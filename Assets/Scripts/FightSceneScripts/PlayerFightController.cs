@@ -29,6 +29,12 @@ public class PlayerFightController : MonoBehaviour
     private bool gameOver = false;
     private bool defendResolved = false;
 
+
+    void OnEnable()   
+    {
+        defendResolved = false;
+        gameOver = false;
+    }
     void Update()
     {
         if (gameOver)
