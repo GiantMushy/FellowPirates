@@ -4,7 +4,6 @@ using System.Linq;
 
 public static class Heuristic
 {
-
     public static int ManhattanH(State a, State b)
     {
         // manhattan 
@@ -19,7 +18,7 @@ public static class Heuristic
         return Mathf.FloorToInt(Mathf.Sqrt(dx * dx + dy * dy));
     }
 }
-public static class AStar
+public class AStar
 {
 
     public static List<State> Search(State start, State goal)
