@@ -30,12 +30,12 @@ public class PlayerFightController : MonoBehaviour
     private bool defendResolved = false;
 
 
-    void OnEnable()   
+    void OnEnable()
     {
         defendResolved = false;
         gameOver = false;
     }
-    
+
     void Update()
     {
         if (gameOver)
@@ -116,6 +116,11 @@ public class PlayerFightController : MonoBehaviour
         defendResolved = true;
         gameOver = true;
         StopAllCoroutines();
+
+        if (flow != null)
+        {
+            flow.TriggerPlayerHitFeedback();   
+        }
 
         StartCoroutine(FlashAnimation(damageSprite, damageHitColor, damageClearColor, true));
     }

@@ -4289,6 +4289,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 9086638146327828285, guid: b1b4a626d48104ceba3a69139b58f4fc, type: 3}
   m_PrefabInstance: {fileID: 3940042891634212251}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3940042891634212253 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3949376011975815893, guid: b1b4a626d48104ceba3a69139b58f4fc, type: 3}
+  m_PrefabInstance: {fileID: 3940042891634212251}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &4304981862756908458
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4486,6 +4497,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: playerImage
+      value: 
+      objectReference: {fileID: 3940042891634212253}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: buttonPanell
       value: 
       objectReference: {fileID: 1794675205}
@@ -4497,6 +4512,10 @@ PrefabInstance:
       propertyPath: enemyGoldText
       value: 
       objectReference: {fileID: 810721470}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 519420032}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: middleScreenText
       value: 

@@ -49,8 +49,16 @@ public class AttackFlowController : MonoBehaviour
     public SpriteRenderer fightingWindowBackground;
 
     public TextMeshProUGUI DamageText;
-
     public Button fleeButton;
+    public float playerShakeStrength = 3f;
+
+    // for player too
+    public Image playerImage;
+
+    // to shake camera
+    public Transform cameraTransform;
+    private float cameraShakeDuration = 2f;
+    private float cameraShakeStrength = 0.2f;
 
     private void Awake()
     {
@@ -437,9 +445,8 @@ public class AttackFlowController : MonoBehaviour
     {
         gameManager.health--;
         RefreshItemsUI();
+        // StartCoroutine(PlayerHitFeedback());
     }
-
-
 
     private void DamageEnemy(int units)
     {
@@ -534,6 +541,13 @@ public class AttackFlowController : MonoBehaviour
     public void StartAngryAndDefend()
     {
         SetButtonsEnabled(false);
+
+        if (cameraTransform != null)
+        {
+            StartCoroutine(CameraShakeRoutine(cameraShakeDuration, cameraShakeStrength));
+        }
+
+
         StartCoroutine(AngryAndDefendRoutine());
     }
 
@@ -550,7 +564,7 @@ public class AttackFlowController : MonoBehaviour
         if (enemyImage != null)
         {
             originalEnemyColor = enemyImage.color;
-            enemyImage.color = Color.red;
+            enemyImage.color = Color.purple;
             rect = enemyImage.rectTransform;
         }
 
@@ -657,6 +671,13 @@ public class AttackFlowController : MonoBehaviour
 
         SetButtonsEnabled(false);
 
+
+        if (cameraTransform != null)
+        {
+            StartCoroutine(CameraShakeRoutine(cameraShakeDuration, cameraShakeStrength));
+        }
+
+
         if (redMiddleScreenMessage != null)
         {
             redMiddleScreenMessage.gameObject.SetActive(true);
@@ -722,5 +743,66 @@ public class AttackFlowController : MonoBehaviour
         rect.anchoredPosition = originalPos;
         enemyImage.color = originalColor;
     }
+
+    public void TriggerPlayerHitFeedback()
+    {
+        StartCoroutine(PlayerHitFeedback());
+    }
+
+
+    private IEnumerator PlayerHitFeedback()
+    {
+        if (playerImage == null) yield break;
+
+        RectTransform rect = playerImage.rectTransform;
+        if (rect == null) yield break;
+
+        Vector2 originalPos = rect.anchoredPosition;
+        Color originalColor = playerImage.color;
+
+        Color hitColor = Color.red;
+        playerImage.color = hitColor;
+
+        float t = 0f;
+        float duration = 1f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float x = Random.Range(-playerShakeStrength, playerShakeStrength);
+            float y = Random.Range(-playerShakeStrength, playerShakeStrength);
+            rect.anchoredPosition = originalPos + new Vector2(x, y);
+
+            yield return null;
+        }
+
+        rect.anchoredPosition = originalPos;
+        playerImage.color = originalColor;
+    }
+
+
+    private IEnumerator CameraShakeRoutine(float duration, float strength)
+    {
+        if (cameraTransform == null) yield break;
+
+        Vector3 originalPos = cameraTransform.position;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float x = Random.Range(-strength, strength);
+            float y = Random.Range(-strength, strength);
+
+            cameraTransform.position = originalPos + new Vector3(x, y, 0f);
+
+            yield return null;
+        }
+
+        cameraTransform.position = originalPos;
+    }
+
 
 }
