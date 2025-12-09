@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
 
         player.PrepareForBattle();
 
-        SceneManager.LoadScene("FightDemo");
+        SceneManager.LoadScene("Fight_1");
     }
 
     public void EndBattleWon()
