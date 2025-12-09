@@ -318,7 +318,9 @@ public class AttackFlowController : MonoBehaviour
             DamagePlayer();
         }
 
-        if (defend_index >= defendList.Length || gameManager.health == 0)
+        // if (defend_index >= defendList.Length || gameManager.health == 0)
+        if (defend_index >= defendList.Length)
+
         {
             BattleOver();
             return;
@@ -445,6 +447,12 @@ public class AttackFlowController : MonoBehaviour
     {
         gameManager.health--;
         RefreshItemsUI();
+
+        if (gameManager.health == 0)
+        {
+            BattleOver();
+            return;
+        }
         // StartCoroutine(PlayerHitFeedback());
     }
 
