@@ -170,7 +170,7 @@ public class PlayerController : MonoBehaviour
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
                 {
-                    Debug.LogError("Activate autoheal");
+                    // Debug.LogError("Activate autoheal");
                     StartCoroutine(AutoHealAfterDelay());
                 }
             }

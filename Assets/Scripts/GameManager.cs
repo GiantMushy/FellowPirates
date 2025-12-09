@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
         player.PrepareForBattle();
 
 
-        SceneManager.LoadScene("FightDemo");
+        SceneManager.LoadScene(enemy.battleSceneName);
     }
 
     public void EndBattleWon()

@@ -46,6 +46,9 @@ public class EnemyController : MonoBehaviour
     public GameObject deathExplosionPrefab;
     public Vector3 deathExplosionOffset = Vector3.zero;
 
+    [Header("Battle")]
+    public string battleSceneName = "FightDemo";
+
 
 
     void Start()
