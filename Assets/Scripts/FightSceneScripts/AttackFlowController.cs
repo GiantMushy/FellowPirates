@@ -269,6 +269,17 @@ public class AttackFlowController : MonoBehaviour
             Debug.Log("ResetForNewDefend on " + playerFight.name);
             playerFight.ResetForNewDefend();
         }
+
+
+        BulletSpawner[] spawners = pattern.GetComponentsInChildren<BulletSpawner>(true);
+        foreach (var sp in spawners)
+        {
+            sp.gameObject.SetActive(true);
+
+            sp.CaptureStartTransform();
+
+            sp.ResetSpawner();
+        }
     }
 
 
@@ -286,11 +297,11 @@ public class AttackFlowController : MonoBehaviour
         isStartingDefend = false;
         isDefending = false;
 
-        GameObject[] BulletSpawner = GameObject.FindGameObjectsWithTag("BulletSpawner");
-        foreach (GameObject bullet in BulletSpawner)
-        {
-            bullet.SetActive(false);
-        }
+        // GameObject[] BulletSpawner = GameObject.FindGameObjectsWithTag("BulletSpawner");
+        // foreach (GameObject bullet in BulletSpawner)
+        // {
+        //     bullet.SetActive(false);
+        // }
 
 
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
@@ -475,11 +486,6 @@ public class AttackFlowController : MonoBehaviour
                 defendList[i].SetActive(false);
         }
 
-        BulletSpawner[] spawners = FindObjectsOfType<BulletSpawner>(true);
-        foreach (var sp in spawners)
-        {
-            sp.ResetSpawner();
-        }
 
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject bomb in bombs)

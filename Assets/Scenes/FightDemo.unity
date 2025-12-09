@@ -1443,6 +1443,11 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!212 &561131913 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7831346371438746064, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+  m_PrefabInstance: {fileID: 4304981862756908458}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -4344,6 +4349,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 2.3
       objectReference: {fileID: 0}
+    - target: {fileID: 2079244110564501235, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_Name
+      value: WonOverlay
+      objectReference: {fileID: 0}
     - target: {fileID: 2093487833067233167, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.6666667
@@ -4436,6 +4445,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3255900227291920828, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: wonSprite
+      value: 
+      objectReference: {fileID: 561131913}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: goldText
       value: 
