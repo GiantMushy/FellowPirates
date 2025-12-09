@@ -4353,9 +4353,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: WonOverlay
       objectReference: {fileID: 0}
+    - target: {fileID: 2079244110564501235, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2093487833067233167, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.6666667
+      value: 2.3
       objectReference: {fileID: 0}
     - target: {fileID: 2292402162613797626, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_LocalScale.x
@@ -4687,6 +4691,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7462916432924581237, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_CompositeOperation
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7474866402743670523, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7831346371438746064, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7951605491785505805, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}

@@ -595,7 +595,6 @@ public class PlayerController : MonoBehaviour
             gameManager.health < gameManager.maxHealth &&
             !autoHealPending)
         {
-            Debug.LogError("Activate autoheal AFTER BATTLE");
             StartCoroutine(AutoHealAfterDelay());
         }
     }
