@@ -40,7 +40,6 @@ public class BulletSpawner : MonoBehaviour
     public float rotateSpeed = 90f;
 
 
-
     void Start()
     {
         startPos = transform.position;
@@ -49,6 +48,20 @@ public class BulletSpawner : MonoBehaviour
 
     void Update()
     {
+        if (minigameBackgroundSprite == null)
+        {
+            Debug.LogWarning("no minigame background set");
+            return;
+        }
+
+        Bounds b = minigameBackgroundSprite.bounds;
+        UnityEngine.Vector3 pos = transform.position;
+
+        if (!b.Contains(pos))
+        {
+            Destroy(gameObject);
+        }
+
         delayTimer += Time.deltaTime;
 
         if (delayTimer < startDelay)
@@ -93,15 +106,12 @@ public class BulletSpawner : MonoBehaviour
     {
         if (bullet)
         {
-
             spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
             spawnedBullet.layer = LayerMask.NameToLayer("OverlayLayer");
             spawnedBullet.GetComponent<Bullet>().speed = speed;
             spawnedBullet.GetComponent<Bullet>().bulletLife = bulletLife;
             spawnedBullet.GetComponent<Bullet>().minigameBackgroundSprite = minigameBackgroundSprite;
             spawnedBullet.transform.rotation = transform.rotation;
-
-
         }
     }
 

@@ -3,55 +3,49 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject pauseMenuUI;
-    public string mainMenuStringName = "MainMenu";
-    private bool isPaused = false;
+    public GameObject pausePanel;           // assign PausePanel here in the Inspector
+    public string mainMenuSceneName = "MainMenu";
 
-    void Update()
+    public bool IsPaused { get; private set; }
+
+    private void Start()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (isPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
-        }
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+
+        Time.timeScale = 1f;
+        IsPaused = false;
     }
 
     public void TogglePause()
     {
-        if (isPaused)
+        if (IsPaused)
             Resume();
         else
             Pause();
     }
 
+    public void Pause()
+    {
+        if (pausePanel != null)
+            pausePanel.SetActive(true);
+
+        Time.timeScale = 0f;
+        IsPaused = true;
+    }
+
     public void Resume()
     {
-        pauseMenuUI.SetActive(false);
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+
         Time.timeScale = 1f;
-        isPaused = false;
+        IsPaused = false;
     }
 
-    void Pause()
-    {
-        pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;
-        isPaused = true;
-    }
-
-    public void LoadMenu()
+    public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(mainMenuStringName);
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 }
