@@ -98,12 +98,18 @@ public class EnemyController : MonoBehaviour
     {
         if (fromBattle)
         {
+            // reset countdown each time we chase from battle
+            chaseTimeController.timeWait = chase_delay;
             chaseTimeController.startChaseCountodwn();
 
+            // wait for the countdown UI
             yield return new WaitForSeconds(chase_delay);
 
+            // now actually start the chase UI (bar + blinking time)
             chaseTimeController.StartChase();
         }
+
+        // chaseTimeController.StartChase(fromBattle);
 
         waiting_to_chase = false;
 
@@ -116,6 +122,7 @@ public class EnemyController : MonoBehaviour
         {
             Debug.LogWarning("Start or end outside of bounds");
             chasing = false;
+            chaseTimeController.ForceStopChaseUI();
             yield break;
         }
 
@@ -139,7 +146,7 @@ public class EnemyController : MonoBehaviour
         while (timer < chaseTime)
         {
             timer += Time.deltaTime;
-            yield return true;
+            yield return null;
         }
         StopChase();
     }
@@ -305,8 +312,19 @@ public class EnemyController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-            StartChasing(other.transform, false);
+        if (!other.CompareTag("Player"))
+        {
+            return;
+        }
+
+        GameManager gameManager = GameManager.Instance;
+
+        if (gameManager != null && Time.time < gameManager.fleeCooldownUntil)
+        {
+            return;
+        }
+
+        StartChasing(other.transform, false);
     }
 }
 

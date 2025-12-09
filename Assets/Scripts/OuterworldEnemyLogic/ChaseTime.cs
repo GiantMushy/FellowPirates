@@ -54,7 +54,7 @@ public class ChaseTime : MonoBehaviour
                 chaseTimerText.gameObject.SetActive(false);
                 chasingText.gameObject.SetActive(false);
                 chaseWait = false;
-                StartChase();
+                // StartChase();
             }
         }
 
@@ -99,15 +99,15 @@ public class ChaseTime : MonoBehaviour
     }
 
 
-    public void StartChase()
+    public void StartChase(bool fromBattle = true)
     {
         isChasing = true;
         chaseTimeLeft = chaseDuration;
         chaseTimeLeftText.gameObject.SetActive(true);
-        TimeRemaining.gameObject.SetActive(true);
         FullTime.gameObject.SetActive(true);
-
+        TimeRemaining.gameObject.SetActive(true);
         DisplayTime(chaseTimeLeft);
+
         ChaseTimeBar();
 
         blinkCoroutine = StartCoroutine(BlinkChaseTimeLeft());
