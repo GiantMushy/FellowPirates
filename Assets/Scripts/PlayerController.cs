@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     [Header("UI elements")]
     public PauseMenu pauseMenu;
     public Image[] heartImages;
+    public ParticleSystem landHitParticle;
 
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip healthPickupSound;
     [SerializeField] private AudioClip goldPickupSound;
+    [SerializeField] private AudioClip shipHittingLand;
 
     private ShipController shipController;
     private DamageTypeController damageTypeController;
@@ -136,18 +138,27 @@ public class PlayerController : MonoBehaviour
         if (tag == "Land")
         {
             TakeDamage();
+            if (landHitParticle != null)
+            {
+                landHitParticle.transform.position = transform.position;
+                landHitParticle.Play();
+            }
+
             if (gameManager.health < gameManager.maxHealth)
             {
                 // Calculate normal direction away from the collision point
                 Vector2 collisionPoint = other.ClosestPoint(transform.position);
                 Vector3 normal = (transform.position - (Vector3)collisionPoint).normalized;
                 StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
+                SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
                     {
                         StartCoroutine(AutoHealAfterDelay());
                     }
             }
+            else
+                StartCoroutine(damageTypeController.HandleRespawn());
         }
         else if (tag == "Finish")
         {
