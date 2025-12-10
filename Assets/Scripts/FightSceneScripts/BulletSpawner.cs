@@ -39,12 +39,17 @@ public class BulletSpawner : MonoBehaviour
     public bool rotate;
     public float rotateSpeed = 90f;
 
+    private bool hasStartTransform = false;
 
-    void Start()
+
+    public void CaptureStartTransform()
     {
-        startPos = transform.position;
-        startRot = transform.rotation;
+        if (hasStartTransform) return;
+        startPos = transform.localPosition;
+        startRot = transform.localRotation;
+        hasStartTransform = true;
     }
+
 
     void Update()
     {
@@ -55,12 +60,21 @@ public class BulletSpawner : MonoBehaviour
         }
 
         Bounds b = minigameBackgroundSprite.bounds;
-        UnityEngine.Vector3 pos = transform.position;
+        Vector3 pos = transform.position;
 
         if (!b.Contains(pos))
         {
-            Destroy(gameObject);
+            var sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sr.enabled = false;
         }
+        else
+        {
+            var sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sr.enabled = true;
+        }
+
 
         delayTimer += Time.deltaTime;
 
@@ -128,11 +142,24 @@ public class BulletSpawner : MonoBehaviour
 
     private void Duplicate()
     {
-        GameObject clone = Instantiate(gameObject, startPos, startRot);
+        // clone under same parent
+        GameObject clone = Instantiate(gameObject, transform.parent);
+
+        clone.transform.localPosition = startPos;
+        clone.transform.localRotation = startRot;
+
         BulletSpawner cloneSpawner = clone.GetComponent<BulletSpawner>();
-        cloneSpawner.duplicate = false;
-        cloneSpawner.delayTimer = 0f;
+        if (cloneSpawner != null)
+        {
+            cloneSpawner.duplicate = false;
+            cloneSpawner.delayTimer = 0f;
+            cloneSpawner.minigameBackgroundSprite = minigameBackgroundSprite;
+            cloneSpawner.hasStartTransform = true;
+            cloneSpawner.startPos = startPos;
+            cloneSpawner.startRot = startRot;
+        }
     }
+
 
 
     private void Rotate()
@@ -148,7 +175,13 @@ public class BulletSpawner : MonoBehaviour
         duplicateTimer = 0f;
         t = 0f;
 
-        transform.position = startPos;
-        transform.rotation = startRot;
+        if (hasStartTransform)
+        {
+            transform.localPosition = startPos;
+            transform.localRotation = startRot;
+        }
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null) sr.enabled = true;
     }
 }

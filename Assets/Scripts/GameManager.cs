@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     private bool pendingChaseReturn = false;
     private bool pendingDeathReturn = false;
     private bool pendingBribeReturn = false;
+    private bool pendingGoldRewardPopup = false;
+
 
     public Vector3 spawnPoint;
     public bool hasSpawnPoint = false;
@@ -132,7 +134,7 @@ public class GameManager : MonoBehaviour
         player.PrepareForBattle();
 
 
-        SceneManager.LoadScene("FightDemo");
+        SceneManager.LoadScene(enemy.battleSceneName);
     }
 
     public void EndBattleWon()
@@ -145,6 +147,8 @@ public class GameManager : MonoBehaviour
         fleeCooldownUntil = Time.time + 2f;
 
         goldCoins += enemyRewardAmount;
+
+        pendingGoldRewardPopup = true;
 
         if (!string.IsNullOrEmpty(currentEnemyId))
         {
@@ -195,7 +199,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(returnSceneName);
     }
 
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (!pendingBattleReturn) return;
@@ -210,13 +213,13 @@ public class GameManager : MonoBehaviour
         {
             pendingDeathReturn = false;
 
-            var respawn = player.GetComponent<PlayerRespawn>();
-            if (respawn != null)
+            var playerController = player.GetComponent<PlayerController>();
+            if (playerController != null)
             {
-                respawn.Respawn();
+                playerController.OnBattleDeathReturn();
             }
 
-            health = maxHealth;
+            return;
         }
         else
         {
@@ -227,6 +230,18 @@ public class GameManager : MonoBehaviour
         {
             Camera.main.transform.position = player.transform.position + savedCameraOffset;
         }
+
+        if (pendingGoldRewardPopup)
+        {
+            pendingGoldRewardPopup = false;
+            player.ShowBattleGoldReward();
+        }
+
+        if (health < maxHealth && healthInventory > 0)
+        {
+            player.TryAutoHealFromBattle();
+        }
+
 
         if (pendingBribeReturn)
         {
@@ -240,6 +255,8 @@ public class GameManager : MonoBehaviour
             StopAllCoroutines();
             player.StartCoroutine(StartChaseAfterReturn(player.transform));
         }
+
+
     }
 
 
