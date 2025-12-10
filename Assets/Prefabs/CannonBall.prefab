@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7202283952125616648}
   - component: {fileID: 2695390989294949396}
   - component: {fileID: 5119946846514650393}
-  - component: {fileID: 8232721703566626981}
+  - component: {fileID: 5281852385465459431}
   m_Layer: 0
-  m_Name: BombBullet
+  m_Name: CannonBall
   m_TagString: Bomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +29,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 925.6848, y: 506.82626, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   bulletLife: 1
-  rotation: 0
+  rotation: 0.7
   speed: 1
   minigameBackgroundSprite: {fileID: 0}
   usePhysics: 0
@@ -99,7 +99,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -4975520578640395922, guid: 8476e12166a1e4220a7ec0f3ee085b61, type: 3}
+  m_Sprite: {fileID: 495792724487310035, guid: dbba6b7473dd8db41b418ff40910710b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,8 +110,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &8232721703566626981
-CapsuleCollider2D:
+--- !u!58 &5281852385465459431
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -145,5 +145,4 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.22, y: 1.72}
-  m_Direction: 0
+  m_Radius: 3.77
