@@ -25,10 +25,13 @@ public class EnemyDialougeController : MonoBehaviour
     private Coroutine typingCoroutine;
     private TextMeshProUGUI textComponent;
 
+    public bool IsDialogueFinished { get; private set; }
+
     void Start()
     {
+        DisableAllDialogue();
         textComponent = EnemySpeakingText;
-        StartFirstEnemyDialouge();
+        // StartFirstEnemyDialouge();
     }
 
     void Update()
@@ -52,7 +55,7 @@ public class EnemyDialougeController : MonoBehaviour
         }
     }
 
-    void StartFirstEnemyDialouge()
+    public void StartFirstEnemyDialouge()
     {
         ShowOnlySprite(EnemyOneSprite);
 
@@ -70,7 +73,7 @@ public class EnemyDialougeController : MonoBehaviour
         StartDialouge();
     }
 
-    void StartSecondEnemyDialouge()
+    public void StartSecondEnemyDialouge()
     {
         ShowOnlySprite(EnemyTwoSprite);
 
@@ -85,7 +88,7 @@ public class EnemyDialougeController : MonoBehaviour
         StartDialouge();
     }
 
-    void StartThirdEnemyDialouge()
+    public void StartThirdEnemyDialouge()
     {
         ShowOnlySprite(EnemyThreeSprite);
 
@@ -100,7 +103,7 @@ public class EnemyDialougeController : MonoBehaviour
         StartDialouge();
     }
 
-    void StartBlackbeardEnemyDialouge()
+    public void StartBlackbeardEnemyDialouge()
     {
         ShowOnlySprite(EnemyFourSprite);
 
@@ -117,7 +120,7 @@ public class EnemyDialougeController : MonoBehaviour
         StartDialouge();
     }
 
-    void StartDialouge()
+    public void StartDialouge()
     {
         EnemyDialougeCanvas.gameObject.SetActive(true);
 
@@ -129,24 +132,26 @@ public class EnemyDialougeController : MonoBehaviour
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
+        IsDialogueFinished = false;
+
         typingCoroutine = StartCoroutine(TypeLine());
 
     }
 
     private IEnumerator TypeLine()
     {
-        // type each character 1 by 1
         isTyping = true;
         textComponent.text = string.Empty;
 
         foreach (char c in lines[index].ToCharArray())
         {
             textComponent.text += c;
-            yield return new WaitForSeconds(textSpeed);
+            yield return new WaitForSecondsRealtime(textSpeed);
         }
 
         isTyping = false;
     }
+
     private void NextLine()
     {
         if (index < lines.Length - 1)
@@ -183,6 +188,8 @@ public class EnemyDialougeController : MonoBehaviour
         EnemyTwoSprite.gameObject.SetActive(false);
         EnemyThreeSprite.gameObject.SetActive(false);
         EnemyFourSprite.gameObject.SetActive(false);
+
+        IsDialogueFinished = true;
     }
 
     Color Hex(string hex)

@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour
     public List<Vector3> collectedItemPositions = new List<Vector3>();
     public Dictionary<string, Vector3> enemyPositionBeforeBattle = new Dictionary<string, Vector3>();
 
+    public EnemyDialougeController enemyDialogueController;
+
 
     void Awake()
     {
@@ -111,6 +113,11 @@ public class GameManager : MonoBehaviour
 
     public void StartBattle(PlayerController player, EnemyController enemy)
     {
+        StartCoroutine(StartBattleWithDialogue(player, enemy));
+    }
+
+    private IEnumerator StartBattleWithDialogue(PlayerController player, EnemyController enemy)
+    {
         if (Camera.main != null)
         {
             savedCameraOffset = Camera.main.transform.position - player.transform.position;
@@ -128,13 +135,13 @@ public class GameManager : MonoBehaviour
         enemyRewardAmount = enemy.rewardMoney;
 
         if (!string.IsNullOrEmpty(currentEnemyId) &&
-           enemyHealthById.TryGetValue(currentEnemyId, out var savedHp))
+            enemyHealthById.TryGetValue(currentEnemyId, out var savedHp))
         {
             enemyHealth = Mathf.Clamp(savedHp, 0, enemyMaxHealth);
         }
         else
         {
-            enemyHealth = enemyMaxHealth; // first time fighting this enemy
+            enemyHealth = enemyMaxHealth;
         }
 
         player.PrepareForBattle();
@@ -149,9 +156,48 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        var dialogue = FindObjectOfType<EnemyDialougeController>();
+        if (dialogue != null)
+        {
+            // freeze gameplay
+            Time.timeScale = 0f;
+
+            Debug.Log("enemy.enemyId " + enemy.enemyId);
+
+            switch (enemy.enemyId)
+            {
+                case "1":
+                    Debug.Log("Starting dialouge 1");
+
+                    dialogue.StartFirstEnemyDialouge();
+                    break;
+                case "2":
+                    Debug.Log("Starting dialouge 2");
+
+                    dialogue.StartSecondEnemyDialouge();
+                    break;
+                case "3":
+                    Debug.Log("Starting dialouge 3");
+
+                    dialogue.StartThirdEnemyDialouge();
+                    break;
+                case "4":
+                    Debug.Log("Starting dialouge 4");
+                    dialogue.StartBlackbeardEnemyDialouge();
+                    break;
+                default:
+                    dialogue.DisableAllDialogue();
+                    break;
+            }
+
+            yield return new WaitUntil(() => dialogue.IsDialogueFinished);
+
+            Time.timeScale = 1f;
+        }
 
         SceneManager.LoadScene(enemy.battleSceneName);
     }
+
 
     public void EndBattleWon()
     {
