@@ -245,6 +245,7 @@ public class GameManager : MonoBehaviour
         pendingChaseReturn = false;
         pendingDeathReturn = true;
 
+        enemyHealthById.Remove(currentEnemyId);
         SceneManager.LoadScene(returnSceneName);
     }
 
