@@ -71,10 +71,10 @@ public class PlayerRespawn : MonoBehaviour
     {
         if (gameManager != null)
         {
+            gameManager.enemiesWithIntroDialogue.Clear();
             gameManager.CancelChase();
             gameManager.health = gameManager.maxHealth;
             gameManager.collectedItemPositions.Clear();
-
             gameManager.respawningFromCheckpoint = true;
         }
 

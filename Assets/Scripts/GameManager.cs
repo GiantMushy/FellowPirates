@@ -62,6 +62,9 @@ public class GameManager : MonoBehaviour
 
     public EnemyDialougeController enemyDialogueController;
 
+    public HashSet<string> enemiesWithIntroDialogue = new HashSet<string>();
+
+
 
     void Awake()
     {
@@ -156,12 +159,15 @@ public class GameManager : MonoBehaviour
             }
         }
 
+
         bool isFirstEncounter = !string.IsNullOrEmpty(currentEnemyId) &&
-                                !enemyHealthById.ContainsKey(currentEnemyId);
+                            !enemiesWithIntroDialogue.Contains(currentEnemyId);
 
         // var dialogue = FindObjectOfType<EnemyDialougeController>();
         if (isFirstEncounter)
         {
+            enemiesWithIntroDialogue.Add(currentEnemyId);
+
             if (enemyDialogueController != null)
             {
                 // freeze gameplay
