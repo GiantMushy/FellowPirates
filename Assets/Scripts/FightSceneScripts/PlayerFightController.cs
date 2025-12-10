@@ -29,6 +29,9 @@ public class PlayerFightController : MonoBehaviour
     private bool gameOver = false;
     private bool defendResolved = false;
 
+    public AudioSource audioSource;
+    public AudioClip hitSound;
+
 
     void OnEnable()
     {
@@ -101,6 +104,7 @@ public class PlayerFightController : MonoBehaviour
         if (other.CompareTag("Bomb"))
         {
             Debug.Log("collided with boooomb!!");
+            audioSource.PlayOneShot(hitSound);
             TakeDamage();
         }
     }

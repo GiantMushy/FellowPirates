@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: Tree
   m_EditorClassIdentifier: Unity.2D.Tilemap.Extras::UnityEngine.Tilemaps.AnimatedTile
   m_AnimatedSprites:
-  - {fileID: -2795693140052960006, guid: ac9d044b9f68d5d4d8178ffbceabc809, type: 3}
-  - {fileID: -2218256074830200584, guid: ac9d044b9f68d5d4d8178ffbceabc809, type: 3}
-  - {fileID: 1525444047010231923, guid: ac9d044b9f68d5d4d8178ffbceabc809, type: 3}
-  - {fileID: -4927054682061134635, guid: ac9d044b9f68d5d4d8178ffbceabc809, type: 3}
-  - {fileID: 1525444047010231923, guid: ac9d044b9f68d5d4d8178ffbceabc809, type: 3}
-  - {fileID: -2218256074830200584, guid: ac9d044b9f68d5d4d8178ffbceabc809, type: 3}
-  - {fileID: -2795693140052960006, guid: ac9d044b9f68d5d4d8178ffbceabc809, type: 3}
+  - {fileID: -5147423991132949138, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: -4245826459604513953, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: 7565197359009653665, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: 2477044488443586346, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: -6160188073192351262, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: 2570183650119164322, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: -2050390690960647687, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: 4724448657327975432, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
+  - {fileID: -1624272293300820347, guid: 5533158226a3b2d4bacb8dcb67035c81, type: 3}
   m_MinSpeed: 1
-  m_MaxSpeed: 1
+  m_MaxSpeed: 5
   m_AnimationStartTime: 0
   m_AnimationStartFrame: 0
   m_TileColliderType: 0
