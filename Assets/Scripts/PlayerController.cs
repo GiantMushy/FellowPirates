@@ -190,6 +190,7 @@ public class PlayerController : MonoBehaviour
             }
             else
                 StartCoroutine(damageTypeController.HandleRespawn());
+            SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
         }
         else if (tag == "Finish")
         {
