@@ -7,6 +7,8 @@ public class ItemsButtonController : MonoBehaviour
     [SerializeField] private Button attackButton;
     GameManager gameManager;
     private bool isSelected = false;
+    public AudioSource audioSource;
+    public AudioClip clickSound; 
 
 
     public AttackFlowController attackFlow;
@@ -83,6 +85,7 @@ public class ItemsButtonController : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(itemsButton.gameObject);
 
         gameManager.UseHealthItem();
+        audioSource.PlayOneShot(clickSound);
         attackFlow.RefreshItemsUI();
 
         if (gameManager.healthInventory < 0 || gameManager.health > 2)
