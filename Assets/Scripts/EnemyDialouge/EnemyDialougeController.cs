@@ -65,12 +65,12 @@ public class EnemyDialougeController : MonoBehaviour
 
         lines = new string[]
         {
-            "Hello fellow pirate! I am the **Flying Dutchman**, and today you lose a ship!",
+            "Hello fellow pirate! I am the Flying Dutchman, and today you will lose a ship!",
             "Please stand still while I sink you.",
             "This process will only take a moment."
         };
 
-
+        EnemyNameText.color = Color.black;
         StartDialouge();
     }
 
@@ -87,6 +87,8 @@ public class EnemyDialougeController : MonoBehaviour
             "Some of you will be… unexpectedly removed from duty.",
             "Your bravery will be briefly remembered."
          };
+
+        EnemyNameText.color = Color.white;
         StartDialouge();
     }
 
@@ -104,7 +106,7 @@ public class EnemyDialougeController : MonoBehaviour
             "are you here to flirt or are you here to fight?",
             "Either way, I like my odds."
         };
-
+        EnemyNameText.color = Color.white;
         StartDialouge();
     }
 
@@ -121,7 +123,7 @@ public class EnemyDialougeController : MonoBehaviour
             "Example text for the Blackbeard, line 1.",
             "Another Blackbeard line."
        };
-
+        EnemyNameText.color = Color.white;
         StartDialouge();
     }
 

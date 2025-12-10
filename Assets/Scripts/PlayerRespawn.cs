@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 
 public class PlayerRespawn : MonoBehaviour
@@ -36,6 +37,20 @@ public class PlayerRespawn : MonoBehaviour
         {
             respawnPoint = transform.position;
         }
+
+        if (trail != null)
+        {
+            trail.Clear();
+            trail.emitting = false;
+            StartCoroutine(EnableTrailNextFrame());
+        }
+    }
+
+    private IEnumerator EnableTrailNextFrame()
+    {
+        yield return null;
+        if (trail != null)
+            trail.emitting = true;
     }
 
     public void SetCheckpoint(Vector2 newPoint)

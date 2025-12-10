@@ -270,6 +270,8 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        enemyDialogueController = FindObjectOfType<EnemyDialougeController>();
+
         var player = FindObjectOfType<PlayerController>();
 
         if (respawningFromCheckpoint)
