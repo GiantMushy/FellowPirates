@@ -64,11 +64,12 @@ public class EnemyDialougeController : MonoBehaviour
         DialougeBox.color = Hex("#F1E0C4");
 
         lines = new string[]
-            {
-            "Example text for the Flying Dutchman - line 1.",
-            "Second line of dialogue for the Flying Dutchman.",
-            "Final line for the Flying Dutchman."
-            };
+        {
+            "Hello fellow pirate! I am the **Flying Dutchman**, and today you lose a ship!",
+            "Please stand still while I sink you.",
+            "This process will only take a moment."
+        };
+
 
         StartDialouge();
     }
@@ -82,8 +83,9 @@ public class EnemyDialougeController : MonoBehaviour
         DialougeBox.color = Hex("#66B2FF");
         lines = new string[]
          {
-        "Example text for the Comrade Murr - line 1.",
-        "Another Comrade Murr line."
+            "Crewmates, today we claim victory for the tides and for me.",
+            "Some of you will be… unexpectedly removed from duty.",
+            "Your bravery will be briefly remembered."
          };
         StartDialouge();
     }
@@ -96,10 +98,13 @@ public class EnemyDialougeController : MonoBehaviour
         NameUnderlayImage.color = Hex("#6A00CC");
         DialougeBox.color = Hex("#D6A3FF");
         lines = new string[]
-               {
-            "Example text for the Pegleg Pete - line 1.",
-            "Another Pegleg Pete line."
+        {
+            "Well hello there, handsome fellow pirate. I didn’t expect today to get this interesting.",
+            "So tell me,",
+            "are you here to flirt or are you here to fight?",
+            "Either way, I like my odds."
         };
+
         StartDialouge();
     }
 
@@ -113,7 +118,7 @@ public class EnemyDialougeController : MonoBehaviour
 
         lines = new string[]
               {
-            "Example text for the Blackbeard - line 1.",
+            "Example text for the Blackbeard, line 1.",
             "Another Blackbeard line."
        };
 
