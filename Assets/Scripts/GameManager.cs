@@ -56,8 +56,9 @@ public class GameManager : MonoBehaviour
 
     public string currentEnemyId;
 
-    // for items
+    // for persistence 
     public List<Vector3> collectedItemPositions = new List<Vector3>();
+    public Dictionary<string, Vector3> enemyPositionBeforeBattle = new Dictionary<string, Vector3>();
 
 
     void Awake()
@@ -136,8 +137,17 @@ public class GameManager : MonoBehaviour
             enemyHealth = enemyMaxHealth; // first time fighting this enemy
         }
 
-        // playerController = player;
         player.PrepareForBattle();
+
+        enemyPositionBeforeBattle.Clear();
+        var enemies = FindObjectsOfType<EnemyController>();
+        foreach (var e in enemies)
+        {
+            if (!string.IsNullOrEmpty(e.enemyId))
+            {
+                enemyPositionBeforeBattle[e.enemyId] = e.transform.position;
+            }
+        }
 
 
         SceneManager.LoadScene(enemy.battleSceneName);
@@ -273,6 +283,8 @@ public class GameManager : MonoBehaviour
             player.StartCoroutine(StartChaseAfterReturn(player.transform));
         }
 
+        RestoreEnemyPositionAfterBattle();
+
         CleanupCollectedItems(scene);
     }
 
@@ -398,6 +410,22 @@ public class GameManager : MonoBehaviour
     {
         goldCoins = checkpointGoldCoins;
         healthInventory = checkpointHealthInventory;
+    }
+
+    public void RestoreEnemyPositionAfterBattle()
+    {
+        var enemies = FindObjectsOfType<EnemyController>();
+        foreach (var e in enemies)
+        {
+            if (string.IsNullOrEmpty(e.enemyId))
+                continue;
+
+
+            if (enemyPositionBeforeBattle.TryGetValue(e.enemyId, out var pos))
+            {
+                e.transform.position = pos;
+            }
+        }
     }
 
 }

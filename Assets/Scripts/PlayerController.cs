@@ -165,6 +165,10 @@ public class PlayerController : MonoBehaviour
 
         if (tag == "Land")
         {
+            if (damageTypeController.takingDamage)
+            {
+                return;
+            }
 
             Debug.Log("OnTriggerEnter2D: HIT LAND");
             TakeDamage();
@@ -184,7 +188,6 @@ public class PlayerController : MonoBehaviour
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
                 {
-                    // Debug.LogError("Activate autoheal");
                     StartCoroutine(AutoHealAfterDelay());
                 }
             }
