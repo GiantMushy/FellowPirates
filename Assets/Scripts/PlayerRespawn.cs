@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
+
 
 public class PlayerRespawn : MonoBehaviour
-{   
+{
     public Vector2 respawnPoint;
     private PlayerController playerController;
     private SpriteRenderer spriteRenderer;
@@ -34,6 +37,20 @@ public class PlayerRespawn : MonoBehaviour
         {
             respawnPoint = transform.position;
         }
+
+        if (trail != null)
+        {
+            trail.Clear();
+            trail.emitting = false;
+            StartCoroutine(EnableTrailNextFrame());
+        }
+    }
+
+    private IEnumerator EnableTrailNextFrame()
+    {
+        yield return null;
+        if (trail != null)
+            trail.emitting = true;
     }
 
     public void SetCheckpoint(Vector2 newPoint)
@@ -44,6 +61,7 @@ public class PlayerRespawn : MonoBehaviour
         {
             gameManager.spawnPoint = newPoint;
             gameManager.hasSpawnPoint = true;
+            gameManager.SaveCheckpointState();
         }
 
         Debug.Log("Checkpoint updated: " + respawnPoint);
@@ -51,33 +69,16 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
-        // Move player back to checkpoint
-        transform.position = respawnPoint;
-
-        // Re-enable sprite
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = true;
-        }
-
-        // Re-enable damage controller if you disabled it on death
-        if (damageTypeController != null)
-        {
-            damageTypeController.enabled = true;
-        }
-
         if (gameManager != null)
         {
+            gameManager.enemiesWithIntroDialogue.Clear();
             gameManager.CancelChase();
             gameManager.health = gameManager.maxHealth;
+            gameManager.collectedItemPositions.Clear();
+            gameManager.respawningFromCheckpoint = true;
         }
 
-        if (playerController != null)
-        {
-            playerController.UpdateSprite();
-            playerController.UpdateHeartsUI();
-        }
 
-        trail.Clear();
+        SceneManager.LoadScene("Alpha_Test_Level");
     }
 }

@@ -142,12 +142,19 @@ public class AttackFlowController : MonoBehaviour
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
-    public void ShowItemsMessageFullHealth()
+    public void ShowItemsMessageDisabled()
     {
         Debug.Log("ShowFleeMessage");
         if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        buttonMiddleScreenText.text = "Full health";
+        if (gameManager.healthInventory <= 0)
+        {
+            buttonMiddleScreenText.text = "No oranges!";
+        }
+        else
+        {
+            buttonMiddleScreenText.text = "Full health";
+        }
 
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
