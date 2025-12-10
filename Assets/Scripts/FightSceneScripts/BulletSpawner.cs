@@ -28,7 +28,10 @@ public class BulletSpawner : MonoBehaviour
     public SpriteRenderer minigameBackgroundSprite;
 
     public bool slide;
+    public bool strafe;
+    public float strafeDistance;
     public Vector2 slideVector;
+    private Vector2 currSlideVector;
     public float slideDuration;
     public float slideSpeed;
     private float t;
@@ -53,6 +56,7 @@ public class BulletSpawner : MonoBehaviour
         startPos = transform.localPosition;
         startRot = transform.localRotation;
         hasStartTransform = true;
+        currSlideVector = slideVector;
     }
 
 
@@ -156,24 +160,21 @@ public class BulletSpawner : MonoBehaviour
                 Rigidbody2D rb = spawnedBullet.GetComponent<Rigidbody2D>();
                 if (rb != null && spawnerType == SpawnType.Targeted && player != null)
                 {
-                    // Simple trajectory calculation: aim upward based on distance
                     Vector2 toTarget = player.transform.position - transform.position;
                     float distance = toTarget.magnitude;
                     
                     // Normalize direction
                     Vector2 direction = toTarget.normalized;
-                    float upwardBoost = distance * Random.Range(0.4f, 0.9f);
+                    float upwardBoost = distance * Mathf.Lerp(0.2f, 1.1f, Mathf.PingPong(Time.time, 1f));
                     Vector2 launchVelocity = direction * speed + Vector2.up * upwardBoost;
                     
                     rb.linearVelocity = launchVelocity;
                     
-                    // Rotate bullet to initial launch direction
                     float angle = Mathf.Atan2(launchVelocity.y, launchVelocity.x) * Mathf.Rad2Deg;
                     spawnedBullet.transform.rotation = Quaternion.Euler(0f, 0f, angle);
                 }
                 else
                 {
-                    // Non-targeted gravity bullets
                     rb.linearVelocity = spawnedBullet.transform.right * speed;
                     spawnedBullet.transform.rotation = transform.rotation;
                 }
@@ -190,10 +191,21 @@ public class BulletSpawner : MonoBehaviour
     {
         t += Time.deltaTime;
 
+        if (strafe && t >= strafeDistance)
+        {
+            // if the spawner has reached strafe distance, reverse direction
+            t = 0f;
+            currSlideVector = -currSlideVector;
+        }
+        
         if (t < slideDuration)
         {
-            transform.position = new UnityEngine.Vector3(transform.position.x + (slideVector.x * slideSpeed * Time.deltaTime), transform.position.y + (slideVector.y * slideSpeed * Time.deltaTime), transform.position.z);
+            transform.position = new UnityEngine.Vector3(
+                transform.position.x + (currSlideVector.x * slideSpeed * Time.deltaTime),
+                transform.position.y + (currSlideVector.y * slideSpeed * Time.deltaTime),
+                transform.position.z);
         }
+
     }
 
 
@@ -230,6 +242,7 @@ public class BulletSpawner : MonoBehaviour
         delayTimer = 0f;
         timer = 0f;
         duplicateTimer = 0f;
+        currSlideVector = slideVector;
         t = 0f;
 
         if (hasStartTransform)
