@@ -760,6 +760,8 @@ public class AttackFlowController : MonoBehaviour
 
     private IEnumerator PlayerHitFeedback()
     {
+        StartCoroutine(CameraShakeRoutine(cameraShakeDuration, cameraShakeStrength));
+
         if (playerImage == null) yield break;
 
         RectTransform rect = playerImage.rectTransform;
