@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 5386317026907794041}
   - component: {fileID: 6512421363514621353}
   - component: {fileID: 371785499269661647}
-  - component: {fileID: 4901404487642660149}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -130,6 +129,9 @@ MonoBehaviour:
   healthPickupSound: {fileID: 8300000, guid: fdc7e9fb2c52c442ab3908fb01547091, type: 3}
   goldPickupSound: {fileID: 8300000, guid: 408c622dfb159174c8da0381a90cab08, type: 3}
   shipHittingLand: {fileID: 8300000, guid: 52ebb322ebd1c474f82b26134f2b90a8, type: 3}
+  deathExplosionPrefab: {fileID: 0}
+  deathExplosionOffset: {x: 0, y: 0, z: 0}
+  deathPanelDelay: 1
 --- !u!114 &8601562568040449846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,20 +364,6 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
---- !u!114 &4901404487642660149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1559953332707964179}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df8e5274351b4f34bbcef609d52cd7a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BoatParticle
-  wakeParticles: {fileID: 0}
-  rb: {fileID: 5386317026907794041}
 --- !u!1 &7592672986786980677
 GameObject:
   m_ObjectHideFlags: 0
