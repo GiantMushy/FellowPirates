@@ -4776,7 +4776,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: RedPart
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6509671683471277386, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+    - {fileID: 3111359649911733477, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2438819125935683118, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}

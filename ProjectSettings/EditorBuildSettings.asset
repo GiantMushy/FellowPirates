@@ -37,7 +37,7 @@ EditorBuildSettings:
     guid: b77de58076f94984bbca8f6b5f2d32af
   - enabled: 0
     path: Assets/Scenes/Alpha_Test_Level_EVA.unity
-    guid: a84037af9d9654aba9e55731b233533b
+    guid: ce82f6ca939724785b3a0083121cccc0
   - enabled: 1
     path: Assets/Scenes/FightDemo.unity
     guid: 0a1184ad70dca4b4db3d2bc5e0edb5d8
@@ -51,8 +51,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Alpha_Test_Level.unity
     guid: efb38d7e17d520a46be36af553ec8ac2
   - enabled: 1
-    path: Assets/Scenes/Fight_3.unity
-    guid: 355de8d77570f4b0a8e65c868c4ebb53
+    path: Assets/Scenes/Fight_1.unity
+    guid: 601a3481510d35b4f99ab5b89133cdb1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -32,9 +32,12 @@ public class GameManager : MonoBehaviour
     private bool pendingBribeReturn = false;
     private bool pendingGoldRewardPopup = false;
 
-
+    // respawn values
+    public bool respawningFromCheckpoint = false;
     public Vector3 spawnPoint;
     public bool hasSpawnPoint = false;
+    public int checkpointGoldCoins = 0;
+    public int checkpointHealthInventory = 0;
 
 
     public string currentLevelName;
@@ -52,6 +55,15 @@ public class GameManager : MonoBehaviour
     public Dictionary<string, int> enemyHealthById = new Dictionary<string, int>(); // to keep lives persistent per enemy
 
     public string currentEnemyId;
+
+    // for persistence 
+    public List<Vector3> collectedItemPositions = new List<Vector3>();
+    public Dictionary<string, Vector3> enemyPositionBeforeBattle = new Dictionary<string, Vector3>();
+
+    public EnemyDialougeController enemyDialogueController;
+
+    public HashSet<string> enemiesWithIntroDialogue = new HashSet<string>();
+
 
 
     void Awake()
@@ -104,6 +116,11 @@ public class GameManager : MonoBehaviour
 
     public void StartBattle(PlayerController player, EnemyController enemy)
     {
+        StartCoroutine(StartBattleWithDialogue(player, enemy));
+    }
+
+    private IEnumerator StartBattleWithDialogue(PlayerController player, EnemyController enemy)
+    {
         if (Camera.main != null)
         {
             savedCameraOffset = Camera.main.transform.position - player.transform.position;
@@ -121,21 +138,78 @@ public class GameManager : MonoBehaviour
         enemyRewardAmount = enemy.rewardMoney;
 
         if (!string.IsNullOrEmpty(currentEnemyId) &&
-           enemyHealthById.TryGetValue(currentEnemyId, out var savedHp))
+            enemyHealthById.TryGetValue(currentEnemyId, out var savedHp))
         {
             enemyHealth = Mathf.Clamp(savedHp, 0, enemyMaxHealth);
         }
         else
         {
-            enemyHealth = enemyMaxHealth; // first time fighting this enemy
+            enemyHealth = enemyMaxHealth;
         }
 
-        // playerController = player;
         player.PrepareForBattle();
 
+        enemyPositionBeforeBattle.Clear();
+        var enemies = FindObjectsOfType<EnemyController>();
+        foreach (var e in enemies)
+        {
+            if (!string.IsNullOrEmpty(e.enemyId))
+            {
+                enemyPositionBeforeBattle[e.enemyId] = e.transform.position;
+            }
+        }
+
+
+        bool isFirstEncounter = !string.IsNullOrEmpty(currentEnemyId) &&
+                            !enemiesWithIntroDialogue.Contains(currentEnemyId);
+
+        // var dialogue = FindObjectOfType<EnemyDialougeController>();
+        if (isFirstEncounter)
+        {
+            enemiesWithIntroDialogue.Add(currentEnemyId);
+
+            if (enemyDialogueController != null)
+            {
+                // freeze gameplay
+                Time.timeScale = 0f;
+
+                Debug.Log("enemy.enemyId " + enemy.enemyId);
+
+                switch (enemy.enemyId)
+                {
+                    case "1":
+                        Debug.Log("Starting dialouge 1");
+
+                        enemyDialogueController.StartFirstEnemyDialouge();
+                        break;
+                    case "2":
+                        Debug.Log("Starting dialouge 2");
+
+                        enemyDialogueController.StartSecondEnemyDialouge();
+                        break;
+                    case "3":
+                        Debug.Log("Starting dialouge 3");
+
+                        enemyDialogueController.StartThirdEnemyDialouge();
+                        break;
+                    case "4":
+                        Debug.Log("Starting dialouge 4");
+                        enemyDialogueController.StartBlackbeardEnemyDialouge();
+                        break;
+                    default:
+                        enemyDialogueController.DisableAllDialogue();
+                        break;
+                }
+
+                yield return new WaitUntil(() => enemyDialogueController.IsDialogueFinished);
+
+                Time.timeScale = 1f;
+            }
+        }
 
         SceneManager.LoadScene(enemy.battleSceneName);
     }
+
 
     public void EndBattleWon()
     {
@@ -177,6 +251,7 @@ public class GameManager : MonoBehaviour
         pendingChaseReturn = false;
         pendingDeathReturn = true;
 
+        enemyHealthById.Remove(currentEnemyId);
         SceneManager.LoadScene(returnSceneName);
     }
 
@@ -201,12 +276,25 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        enemyDialogueController = FindObjectOfType<EnemyDialougeController>();
+
+        var player = FindObjectOfType<PlayerController>();
+
+        if (respawningFromCheckpoint)
+        {
+            respawningFromCheckpoint = false;
+            RestoreCheckpointState();
+            player.transform.position = spawnPoint;
+            player.UpdateSprite();
+            player.UpdateHeartsUI();
+            return;
+        }
+
         if (!pendingBattleReturn) return;
         if (scene.name != returnSceneName) return;
 
         pendingBattleReturn = false;
 
-        var player = FindObjectOfType<PlayerController>();
         if (player == null) return;
 
         if (pendingDeathReturn)
@@ -256,8 +344,11 @@ public class GameManager : MonoBehaviour
             player.StartCoroutine(StartChaseAfterReturn(player.transform));
         }
 
+        RestoreEnemyPositionAfterBattle();
 
+        CleanupCollectedItems(scene);
     }
+
 
 
     private IEnumerator StartChaseAfterReturn(Transform playerTransform)
@@ -331,5 +422,71 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void AddCollectedItemPosition(Vector3 pos)
+    {
+        collectedItemPositions.Add(pos);
+    }
+
+    public bool WasItemCollected(Vector3 pos, float tolerance = 0.01f)
+    {
+        foreach (var p in collectedItemPositions)
+        {
+            if (Vector3.Distance(p, pos) <= tolerance)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void CleanupCollectedItems(Scene scene)
+    {
+        if (scene.name != "Alpha_Test_Level")
+        {
+            return;
+        }
+
+        string[] tags = { "GoldPickup", "HealthPickup" };
+
+        foreach (var tag in tags)
+        {
+            var items = GameObject.FindGameObjectsWithTag(tag);
+            foreach (var item in items)
+            {
+                if (WasItemCollected(item.transform.position))
+                {
+                    Destroy(item);
+                }
+            }
+        }
+    }
+
+    public void SaveCheckpointState()
+    {
+        checkpointGoldCoins = goldCoins;
+        checkpointHealthInventory = healthInventory;
+    }
+
+    public void RestoreCheckpointState()
+    {
+        goldCoins = checkpointGoldCoins;
+        healthInventory = checkpointHealthInventory;
+    }
+
+    public void RestoreEnemyPositionAfterBattle()
+    {
+        var enemies = FindObjectsOfType<EnemyController>();
+        foreach (var e in enemies)
+        {
+            if (string.IsNullOrEmpty(e.enemyId))
+                continue;
+
+
+            if (enemyPositionBeforeBattle.TryGetValue(e.enemyId, out var pos))
+            {
+                e.transform.position = pos;
+            }
+        }
+    }
 
 }

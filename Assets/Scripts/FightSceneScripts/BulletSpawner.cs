@@ -226,6 +226,7 @@ public class BulletSpawner : MonoBehaviour
             cloneSpawner.hasStartTransform = true;
             cloneSpawner.startPos = startPos;
             cloneSpawner.startRot = startRot;
+            cloneSpawner.currSlideVector = slideVector;
         }
     }
 

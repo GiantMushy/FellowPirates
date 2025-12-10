@@ -5,6 +5,10 @@ using UnityEngine.EventSystems;
 public class ButtonSelectorController : MonoBehaviour
 {
     private RectTransform selectorRect;
+    private GameObject lastSelected;
+
+    public AudioSource audioSource;
+    public AudioClip moveSound;
 
     void Awake()
     {
@@ -18,6 +22,14 @@ public class ButtonSelectorController : MonoBehaviour
         if (selected == null)
         {
             return;
+        }
+
+        if (selected != lastSelected)
+        {
+            if (audioSource != null && moveSound != null)
+                audioSource.PlayOneShot(moveSound);
+
+            lastSelected = selected;
         }
 
         RectTransform btnRect = selected.GetComponent<RectTransform>();
