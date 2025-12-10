@@ -16,7 +16,8 @@ public class Bullet : MonoBehaviour
     private float timer = 0f;
 
     public SpriteRenderer minigameBackgroundSprite;
-
+    public bool usePhysics = false; // When true, bullet uses rigidbody physics (gravity), when false uses direct movement
+    public bool destroyOutOfBounds = true;
     void Update()
     {
 
@@ -27,7 +28,11 @@ public class Bullet : MonoBehaviour
 
         timer += Time.deltaTime;
 
-        transform.position += transform.right * speed * Time.deltaTime;
+        // Only move directly if NOT using physics
+        if (!usePhysics)
+        {
+            transform.position += transform.right * speed * Time.deltaTime;
+        }
 
 
 
@@ -40,7 +45,7 @@ public class Bullet : MonoBehaviour
         Bounds b = minigameBackgroundSprite.bounds;
         UnityEngine.Vector3 pos = transform.position;
 
-        if (!b.Contains(pos))
+        if (!b.Contains(pos) && destroyOutOfBounds)
         {
             Destroy(gameObject);
         }
