@@ -46,10 +46,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletSpawner
   bullet: {fileID: 4788280500938896382, guid: d87047df9c5a24a91bc25c3a028a5ab8, type: 3}
+  bulletList: []
+  player: {fileID: 0}
+  startDelay: 0
   firingRate: 0.6
   speed: 3
   bulletLife: 10
   spawnerType: 0
+  useGravity: 0
+  minigameBackgroundSprite: {fileID: 0}
+  slide: 0
+  slideVector: {x: 0, y: 0}
+  slideDuration: 0
+  slideSpeed: 0
+  duplicate: 0
+  duplicate_frequence: 3
+  rotate: 0
+  rotateSpeed: 90
 --- !u!212 &4143620898694812751
 SpriteRenderer:
   m_ObjectHideFlags: 0
