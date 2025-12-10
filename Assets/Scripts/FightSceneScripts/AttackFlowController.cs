@@ -31,14 +31,14 @@ public class AttackFlowController : MonoBehaviour
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
     public TextMeshProUGUI goldText;
-
+    public TextMeshProUGUI enemyGoldText;
     public TextMeshProUGUI actionText;
 
     // healing
     public GameObject healEffect;
 
     //bribe stuff
-    public TextMeshProUGUI bribeMiddleScreenText;
+    public TextMeshProUGUI buttonMiddleScreenText;
     public TextMeshProUGUI bribeCostButtonText;
 
     // failed bribe
@@ -49,8 +49,16 @@ public class AttackFlowController : MonoBehaviour
     public SpriteRenderer fightingWindowBackground;
 
     public TextMeshProUGUI DamageText;
-
     public Button fleeButton;
+    public float playerShakeStrength = 3f;
+
+    // for player too
+    public Image playerImage;
+
+    // to shake camera
+    public Transform cameraTransform;
+    private float cameraShakeDuration = 2f;
+    private float cameraShakeStrength = 0.2f;
 
     private void Awake()
     {
@@ -72,6 +80,9 @@ public class AttackFlowController : MonoBehaviour
     {
         gameManager = GameManager.Instance;
 
+        enemyGoldText.text = gameManager.enemyRewardAmount.ToString();
+
+
         if (gameManager == null)
         {
             Debug.LogError("AttackFlowController: GameManager.Instance is null!");
@@ -79,7 +90,6 @@ public class AttackFlowController : MonoBehaviour
         }
         SetChooseActionText();
         RefreshItemsUI();
-        HideBribeCost();
         bribeCostButtonText.text = $"{gameManager.enemyBribeCost} gold coins";
 
         UpdateFleeButtonState();
@@ -93,18 +103,68 @@ public class AttackFlowController : MonoBehaviour
     public void ShowBribeCost()
     {
         Debug.Log("ShowBribeCost");
-        if (bribeMiddleScreenText == null || gameManager == null) return;
+        if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        bribeMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
-        bribeMiddleScreenText.gameObject.SetActive(true);
+        buttonMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
+        buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
-    public void HideBribeCost()
+    public void ShowAttackMessage()
     {
-        Debug.Log("HideBribeCost");
-        if (bribeMiddleScreenText == null) return;
-        bribeMiddleScreenText.gameObject.SetActive(false);
+        Debug.Log("ShowAttackMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text =
+               "<color=green>GREEN</color>:   2x Damage\n" +
+               "<color=yellow>YELLOW</color>  1x Damage\n" +
+               "<color=red>RED</color>        0x Damage\n" +
+               "\n<color=#00FFFF><b>[SPACE]</b></color>  to  Attack";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
     }
+
+    public void ShowFleeMessage()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "<color=red><b>Attempt to Flee?</b></color>\n" +
+                "You have <b>3 seconds</b>\n" +
+                "<size=90%>(Only one chance)</size>";
+
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+    public void ShowItemsMessageFullHealth()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "Full health";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+    public void ShowItemsMessage()
+    {
+        Debug.Log("ShowFleeMessage");
+        if (buttonMiddleScreenText == null || gameManager == null) return;
+
+        buttonMiddleScreenText.text = "[SPACE] to heal before next battle";
+
+        buttonMiddleScreenText.gameObject.SetActive(true);
+    }
+
+
+
+
+    public void HideMiddleScreenMessage()
+    {
+        if (buttonMiddleScreenText == null) return;
+        buttonMiddleScreenText.gameObject.SetActive(false);
+    }
+
 
     private void SetChooseActionText()
     {
@@ -217,6 +277,17 @@ public class AttackFlowController : MonoBehaviour
             Debug.Log("ResetForNewDefend on " + playerFight.name);
             playerFight.ResetForNewDefend();
         }
+
+
+        BulletSpawner[] spawners = pattern.GetComponentsInChildren<BulletSpawner>(true);
+        foreach (var sp in spawners)
+        {
+            sp.gameObject.SetActive(true);
+
+            sp.CaptureStartTransform();
+
+            sp.ResetSpawner();
+        }
     }
 
 
@@ -234,12 +305,6 @@ public class AttackFlowController : MonoBehaviour
         isStartingDefend = false;
         isDefending = false;
 
-        GameObject[] BulletSpawner = GameObject.FindGameObjectsWithTag("BulletSpawner");
-        foreach (GameObject bullet in BulletSpawner)
-        {
-            bullet.SetActive(false);
-        }
-
 
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject bomb in bombs)
@@ -253,7 +318,9 @@ public class AttackFlowController : MonoBehaviour
             DamagePlayer();
         }
 
-        if (defend_index >= defendList.Length || gameManager.health == 0)
+        // if (defend_index >= defendList.Length || gameManager.health == 0)
+        if (defend_index >= defendList.Length)
+
         {
             BattleOver();
             return;
@@ -380,9 +447,14 @@ public class AttackFlowController : MonoBehaviour
     {
         gameManager.health--;
         RefreshItemsUI();
+
+        if (gameManager.health == 0)
+        {
+            BattleOver();
+            return;
+        }
+        // StartCoroutine(PlayerHitFeedback());
     }
-
-
 
     private void DamageEnemy(int units)
     {
@@ -423,11 +495,6 @@ public class AttackFlowController : MonoBehaviour
                 defendList[i].SetActive(false);
         }
 
-        BulletSpawner[] spawners = FindObjectsOfType<BulletSpawner>(true);
-        foreach (var sp in spawners)
-        {
-            sp.ResetSpawner();
-        }
 
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject bomb in bombs)
@@ -482,6 +549,13 @@ public class AttackFlowController : MonoBehaviour
     public void StartAngryAndDefend()
     {
         SetButtonsEnabled(false);
+
+        if (cameraTransform != null)
+        {
+            StartCoroutine(CameraShakeRoutine(cameraShakeDuration, cameraShakeStrength));
+        }
+
+
         StartCoroutine(AngryAndDefendRoutine());
     }
 
@@ -498,7 +572,7 @@ public class AttackFlowController : MonoBehaviour
         if (enemyImage != null)
         {
             originalEnemyColor = enemyImage.color;
-            enemyImage.color = Color.red;
+            enemyImage.color = Color.purple;
             rect = enemyImage.rectTransform;
         }
 
@@ -574,7 +648,6 @@ public class AttackFlowController : MonoBehaviour
 
     private IEnumerator ShowDamageAmountRoutine(int damage)
     {
-        // DamageText.enabled = true;
         DamageText.gameObject.SetActive(true);
         yield return new WaitForSeconds(1f);
         isAttacking = false;
@@ -582,25 +655,18 @@ public class AttackFlowController : MonoBehaviour
         StartDefend();
     }
 
+
     public void ShowDamageAmount(int damage)
     {
         UpdateDamageText(damage);
+
+        if (damage > 0)
+        {
+            StartCoroutine(EnemyHitFeedback(damage));
+        }
+
         StartCoroutine(ShowDamageAmountRoutine(damage));
-
-
-        // if (damage == 2)
-        // {
-        //     StartCoroutine(GreenHitEffects());
-        // }
-
     }
-
-
-    // private IEnumerator GreenHitEffects()
-    // {
-    //     yield return new WaitForSeconds(1);
-    //     // TODO: add something cool when winning
-    // }
 
     private IEnumerator CaughtAfterFleeRoutine()
     {
@@ -612,6 +678,13 @@ public class AttackFlowController : MonoBehaviour
         }
 
         SetButtonsEnabled(false);
+
+
+        if (cameraTransform != null)
+        {
+            StartCoroutine(CameraShakeRoutine(cameraShakeDuration, cameraShakeStrength));
+        }
+
 
         if (redMiddleScreenMessage != null)
         {
@@ -636,6 +709,109 @@ public class AttackFlowController : MonoBehaviour
         redMiddleScreenMessage.text = "YOU CANNOT AFFORD THAT!";
 
         StartDefend();
+    }
+
+
+    private IEnumerator EnemyHitFeedback(int damage)
+    {
+        if (enemyImage == null) yield break;
+
+        RectTransform rect = enemyImage.rectTransform;
+        if (rect == null) yield break;
+
+        Vector2 originalPos = rect.anchoredPosition;
+        Color originalColor = enemyImage.color;
+
+        Color hitColor = originalColor;
+        if (damage == 2)
+        {
+            hitColor = Color.red;
+        }
+        else if (damage == 1)
+        {
+            hitColor = Color.yellow;
+        }
+
+        enemyImage.color = hitColor;
+
+        float duration = 1f;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float x = Random.Range(-shakeStrength, shakeStrength);
+            float y = Random.Range(-shakeStrength, shakeStrength);
+            rect.anchoredPosition = originalPos + new Vector2(x, y);
+
+            yield return null;
+        }
+
+        rect.anchoredPosition = originalPos;
+        enemyImage.color = originalColor;
+    }
+
+    public void TriggerPlayerHitFeedback()
+    {
+        StartCoroutine(PlayerHitFeedback());
+    }
+
+
+    private IEnumerator PlayerHitFeedback()
+    {
+        StartCoroutine(CameraShakeRoutine(cameraShakeDuration, cameraShakeStrength));
+
+        if (playerImage == null) yield break;
+
+        RectTransform rect = playerImage.rectTransform;
+        if (rect == null) yield break;
+
+        Vector2 originalPos = rect.anchoredPosition;
+        Color originalColor = playerImage.color;
+
+        Color hitColor = Color.red;
+        playerImage.color = hitColor;
+
+        float t = 0f;
+        float duration = 1f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float x = Random.Range(-playerShakeStrength, playerShakeStrength);
+            float y = Random.Range(-playerShakeStrength, playerShakeStrength);
+            rect.anchoredPosition = originalPos + new Vector2(x, y);
+
+            yield return null;
+        }
+
+        rect.anchoredPosition = originalPos;
+        playerImage.color = originalColor;
+    }
+
+
+    private IEnumerator CameraShakeRoutine(float duration, float strength)
+    {
+        if (cameraTransform == null) yield break;
+
+        Vector3 originalPos = cameraTransform.position;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float x = Random.Range(-strength, strength);
+            float y = Random.Range(-strength, strength);
+
+            cameraTransform.position = originalPos + new Vector3(x, y, 0f);
+
+            yield return null;
+        }
+
+        cameraTransform.position = originalPos;
     }
 
 
