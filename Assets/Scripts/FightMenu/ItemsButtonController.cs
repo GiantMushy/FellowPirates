@@ -62,7 +62,7 @@ public class ItemsButtonController : MonoBehaviour
 
             if (gameManager.healthInventory <= 0 || gameManager.health > 2)
             {
-                attackFlow.ShowItemsMessageFullHealth();
+                attackFlow.ShowItemsMessageDisabled();
             }
             else
             {
