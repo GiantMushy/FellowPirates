@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerRespawn : MonoBehaviour
-{   
+{
     public Vector2 respawnPoint;
     private PlayerController playerController;
     private SpriteRenderer spriteRenderer;
@@ -51,33 +53,46 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
-        // Move player back to checkpoint
-        transform.position = respawnPoint;
+        // // Move player back to checkpoint
+        // transform.position = respawnPoint;
 
-        // Re-enable sprite
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = true;
-        }
+        // // Re-enable sprite
+        // if (spriteRenderer != null)
+        // {
+        //     spriteRenderer.enabled = true;
+        // }
 
-        // Re-enable damage controller if you disabled it on death
-        if (damageTypeController != null)
-        {
-            damageTypeController.enabled = true;
-        }
+        // // Re-enable damage controller if you disabled it on death
+        // if (damageTypeController != null)
+        // {
+        //     damageTypeController.enabled = true;
+        // }
+
+        // if (gameManager != null)
+        // {
+        //     gameManager.CancelChase();
+        //     gameManager.health = gameManager.maxHealth;
+        // }
+
+        // if (playerController != null)
+        // {
+        //     playerController.UpdateSprite();
+        //     playerController.UpdateHeartsUI();
+        // }
+
+        // trail.Clear();
+
 
         if (gameManager != null)
         {
             gameManager.CancelChase();
             gameManager.health = gameManager.maxHealth;
+            gameManager.collectedItemPositions.Clear();
+           
+            gameManager.respawningFromCheckpoint = true;
         }
 
-        if (playerController != null)
-        {
-            playerController.UpdateSprite();
-            playerController.UpdateHeartsUI();
-        }
 
-        trail.Clear();
+        SceneManager.LoadScene("Alpha_Test_Level");
     }
 }

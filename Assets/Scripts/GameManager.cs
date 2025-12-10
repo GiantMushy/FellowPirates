@@ -32,9 +32,12 @@ public class GameManager : MonoBehaviour
     private bool pendingBribeReturn = false;
     private bool pendingGoldRewardPopup = false;
 
-
+    // respawn values
+    public bool respawningFromCheckpoint = false;
     public Vector3 spawnPoint;
     public bool hasSpawnPoint = false;
+    public int checkpointGoldCoins = 0;
+    public int checkpointHealthInventor = 0;
 
 
     public string currentLevelName;
@@ -52,6 +55,9 @@ public class GameManager : MonoBehaviour
     public Dictionary<string, int> enemyHealthById = new Dictionary<string, int>(); // to keep lives persistent per enemy
 
     public string currentEnemyId;
+
+    // for items
+    public List<Vector3> collectedItemPositions = new List<Vector3>();
 
 
     void Awake()
@@ -201,62 +207,74 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (!pendingBattleReturn) return;
-        if (scene.name != returnSceneName) return;
-
-        pendingBattleReturn = false;
-
         var player = FindObjectOfType<PlayerController>();
-        if (player == null) return;
-
-        if (pendingDeathReturn)
+        if (respawningFromCheckpoint)
         {
-            pendingDeathReturn = false;
-
-            var playerController = player.GetComponent<PlayerController>();
-            if (playerController != null)
-            {
-                playerController.OnBattleDeathReturn();
-            }
-
-            return;
+            respawningFromCheckpoint = false;
+            player.transform.position = spawnPoint;
+            player.UpdateSprite();
+            player.UpdateHeartsUI();
+            RestoreCheckpointState();
         }
         else
         {
-            player.transform.position = preBattlePosition;
+
+            if (!pendingBattleReturn) return;
+            if (scene.name != returnSceneName) return;
+
+            pendingBattleReturn = false;
+
+            if (player == null) return;
+
+            if (pendingDeathReturn)
+            {
+                pendingDeathReturn = false;
+
+                var playerController = player.GetComponent<PlayerController>();
+                if (playerController != null)
+                {
+                    playerController.OnBattleDeathReturn();
+                }
+
+                return;
+            }
+            else
+            {
+                player.transform.position = preBattlePosition;
+            }
+
+            if (hasSavedCameraOffset && Camera.main != null)
+            {
+                Camera.main.transform.position = player.transform.position + savedCameraOffset;
+            }
+
+            if (pendingGoldRewardPopup)
+            {
+                pendingGoldRewardPopup = false;
+                player.ShowBattleGoldReward();
+            }
+
+            if (health < maxHealth && healthInventory > 0)
+            {
+                player.TryAutoHealFromBattle();
+            }
+
+
+            if (pendingBribeReturn)
+            {
+                pendingBribeReturn = false;
+                player.StartCoroutine(HandleBribedEnemyReturn(player.transform));
+            }
+
+            if (pendingChaseReturn)
+            {
+                pendingChaseReturn = false;
+                StopAllCoroutines();
+                player.StartCoroutine(StartChaseAfterReturn(player.transform));
+            }
+
+            CleanupCollectedItems(scene);
         }
-
-        if (hasSavedCameraOffset && Camera.main != null)
-        {
-            Camera.main.transform.position = player.transform.position + savedCameraOffset;
-        }
-
-        if (pendingGoldRewardPopup)
-        {
-            pendingGoldRewardPopup = false;
-            player.ShowBattleGoldReward();
-        }
-
-        if (health < maxHealth && healthInventory > 0)
-        {
-            player.TryAutoHealFromBattle();
-        }
-
-
-        if (pendingBribeReturn)
-        {
-            pendingBribeReturn = false;
-            player.StartCoroutine(HandleBribedEnemyReturn(player.transform));
-        }
-
-        if (pendingChaseReturn)
-        {
-            pendingChaseReturn = false;
-            StopAllCoroutines();
-            player.StartCoroutine(StartChaseAfterReturn(player.transform));
-        }
-
-
     }
 
 
@@ -331,5 +349,56 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void AddCollectedItemPosition(Vector3 pos)
+    {
+        collectedItemPositions.Add(pos);
+    }
+
+    public bool WasItemCollected(Vector3 pos, float tolerance = 0.01f)
+    {
+        foreach (var p in collectedItemPositions)
+        {
+            if (Vector3.Distance(p, pos) <= tolerance)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void CleanupCollectedItems(Scene scene)
+    {
+        if (scene.name != "Alpha_Test_Level")
+        {
+            return;
+        }
+
+        string[] tags = { "GoldPickup", "HealthPickup" };
+
+        foreach (var tag in tags)
+        {
+            var items = GameObject.FindGameObjectsWithTag(tag);
+            foreach (var item in items)
+            {
+                if (WasItemCollected(item.transform.position))
+                {
+                    Destroy(item);
+                }
+            }
+        }
+    }
+
+    public void SaveCheckpointState()
+    {
+        checkpointGoldCoins = goldCoins;
+        checkpointHealthInventory = healthInventory;
+        checkpointGoldCoins = goldCoins;
+    }
+
+    public void RestoreCheckpointState()
+    {
+        goldCoins = checkpointGoldCoins;
+        healthInventory = checkpointHealthInventory;
+    }
 
 }

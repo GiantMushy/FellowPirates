@@ -214,6 +214,7 @@ public class PlayerController : MonoBehaviour
                 SpawnOrangeHealEffect();
             }
 
+            gameManager.AddCollectedItemPosition(other.transform.position);
             other.gameObject.SetActive(false);
         }
         else if (tag == "GoldPickup")
@@ -223,7 +224,9 @@ public class PlayerController : MonoBehaviour
             if (goldPickupSound != null)
                 SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
 
+            gameManager.AddCollectedItemPosition(other.transform.position);
             other.gameObject.SetActive(false);
+
         }
     }
 
