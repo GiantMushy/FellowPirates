@@ -11,6 +11,8 @@ public class BribeButtonController : MonoBehaviour
     private int bribeCost;
     private bool isSelected = false;
     public Button defaultButton;
+    public AudioSource audioSource;
+    public AudioClip clickSound;
 
     void Start()
     {
@@ -58,6 +60,7 @@ public class BribeButtonController : MonoBehaviour
     {
         flow.HideMiddleScreenMessage();
         Debug.Log("Bribe button pressed");
+        audioSource.PlayOneShot(clickSound);
         EventSystem.current.SetSelectedGameObject(bribeButton.gameObject);
 
         if (gameManager.goldCoins < bribeCost)
