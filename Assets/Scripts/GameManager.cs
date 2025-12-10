@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     public Vector3 spawnPoint;
     public bool hasSpawnPoint = false;
     public int checkpointGoldCoins = 0;
-    public int checkpointHealthInventor = 0;
+    public int checkpointHealthInventory = 0;
 
 
     public string currentLevelName;
@@ -208,74 +208,74 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         var player = FindObjectOfType<PlayerController>();
+
         if (respawningFromCheckpoint)
         {
             respawningFromCheckpoint = false;
+            RestoreCheckpointState();
             player.transform.position = spawnPoint;
             player.UpdateSprite();
             player.UpdateHeartsUI();
-            RestoreCheckpointState();
+            return;
+        }
+
+        if (!pendingBattleReturn) return;
+        if (scene.name != returnSceneName) return;
+
+        pendingBattleReturn = false;
+
+        if (player == null) return;
+
+        if (pendingDeathReturn)
+        {
+            pendingDeathReturn = false;
+
+            var playerController = player.GetComponent<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.OnBattleDeathReturn();
+            }
+
+            return;
         }
         else
         {
-
-            if (!pendingBattleReturn) return;
-            if (scene.name != returnSceneName) return;
-
-            pendingBattleReturn = false;
-
-            if (player == null) return;
-
-            if (pendingDeathReturn)
-            {
-                pendingDeathReturn = false;
-
-                var playerController = player.GetComponent<PlayerController>();
-                if (playerController != null)
-                {
-                    playerController.OnBattleDeathReturn();
-                }
-
-                return;
-            }
-            else
-            {
-                player.transform.position = preBattlePosition;
-            }
-
-            if (hasSavedCameraOffset && Camera.main != null)
-            {
-                Camera.main.transform.position = player.transform.position + savedCameraOffset;
-            }
-
-            if (pendingGoldRewardPopup)
-            {
-                pendingGoldRewardPopup = false;
-                player.ShowBattleGoldReward();
-            }
-
-            if (health < maxHealth && healthInventory > 0)
-            {
-                player.TryAutoHealFromBattle();
-            }
-
-
-            if (pendingBribeReturn)
-            {
-                pendingBribeReturn = false;
-                player.StartCoroutine(HandleBribedEnemyReturn(player.transform));
-            }
-
-            if (pendingChaseReturn)
-            {
-                pendingChaseReturn = false;
-                StopAllCoroutines();
-                player.StartCoroutine(StartChaseAfterReturn(player.transform));
-            }
-
-            CleanupCollectedItems(scene);
+            player.transform.position = preBattlePosition;
         }
+
+        if (hasSavedCameraOffset && Camera.main != null)
+        {
+            Camera.main.transform.position = player.transform.position + savedCameraOffset;
+        }
+
+        if (pendingGoldRewardPopup)
+        {
+            pendingGoldRewardPopup = false;
+            player.ShowBattleGoldReward();
+        }
+
+        if (health < maxHealth && healthInventory > 0)
+        {
+            player.TryAutoHealFromBattle();
+        }
+
+
+        if (pendingBribeReturn)
+        {
+            pendingBribeReturn = false;
+            player.StartCoroutine(HandleBribedEnemyReturn(player.transform));
+        }
+
+        if (pendingChaseReturn)
+        {
+            pendingChaseReturn = false;
+            StopAllCoroutines();
+            player.StartCoroutine(StartChaseAfterReturn(player.transform));
+        }
+
+        CleanupCollectedItems(scene);
     }
+
 
 
     private IEnumerator StartChaseAfterReturn(Transform playerTransform)
@@ -392,7 +392,6 @@ public class GameManager : MonoBehaviour
     {
         checkpointGoldCoins = goldCoins;
         checkpointHealthInventory = healthInventory;
-        checkpointGoldCoins = goldCoins;
     }
 
     public void RestoreCheckpointState()

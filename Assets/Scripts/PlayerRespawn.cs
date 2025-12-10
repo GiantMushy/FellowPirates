@@ -46,6 +46,7 @@ public class PlayerRespawn : MonoBehaviour
         {
             gameManager.spawnPoint = newPoint;
             gameManager.hasSpawnPoint = true;
+            gameManager.SaveCheckpointState();
         }
 
         Debug.Log("Checkpoint updated: " + respawnPoint);
@@ -53,42 +54,12 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
-        // // Move player back to checkpoint
-        // transform.position = respawnPoint;
-
-        // // Re-enable sprite
-        // if (spriteRenderer != null)
-        // {
-        //     spriteRenderer.enabled = true;
-        // }
-
-        // // Re-enable damage controller if you disabled it on death
-        // if (damageTypeController != null)
-        // {
-        //     damageTypeController.enabled = true;
-        // }
-
-        // if (gameManager != null)
-        // {
-        //     gameManager.CancelChase();
-        //     gameManager.health = gameManager.maxHealth;
-        // }
-
-        // if (playerController != null)
-        // {
-        //     playerController.UpdateSprite();
-        //     playerController.UpdateHeartsUI();
-        // }
-
-        // trail.Clear();
-
-
         if (gameManager != null)
         {
             gameManager.CancelChase();
             gameManager.health = gameManager.maxHealth;
             gameManager.collectedItemPositions.Clear();
-           
+
             gameManager.respawningFromCheckpoint = true;
         }
 
