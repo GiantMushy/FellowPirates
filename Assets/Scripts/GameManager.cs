@@ -156,43 +156,49 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        var dialogue = FindObjectOfType<EnemyDialougeController>();
-        if (dialogue != null)
+        bool isFirstEncounter = !string.IsNullOrEmpty(currentEnemyId) &&
+                                !enemyHealthById.ContainsKey(currentEnemyId);
+
+        // var dialogue = FindObjectOfType<EnemyDialougeController>();
+        if (isFirstEncounter)
         {
-            // freeze gameplay
-            Time.timeScale = 0f;
-
-            Debug.Log("enemy.enemyId " + enemy.enemyId);
-
-            switch (enemy.enemyId)
+            if (enemyDialogueController != null)
             {
-                case "1":
-                    Debug.Log("Starting dialouge 1");
+                // freeze gameplay
+                Time.timeScale = 0f;
 
-                    dialogue.StartFirstEnemyDialouge();
-                    break;
-                case "2":
-                    Debug.Log("Starting dialouge 2");
+                Debug.Log("enemy.enemyId " + enemy.enemyId);
 
-                    dialogue.StartSecondEnemyDialouge();
-                    break;
-                case "3":
-                    Debug.Log("Starting dialouge 3");
+                switch (enemy.enemyId)
+                {
+                    case "1":
+                        Debug.Log("Starting dialouge 1");
 
-                    dialogue.StartThirdEnemyDialouge();
-                    break;
-                case "4":
-                    Debug.Log("Starting dialouge 4");
-                    dialogue.StartBlackbeardEnemyDialouge();
-                    break;
-                default:
-                    dialogue.DisableAllDialogue();
-                    break;
+                        enemyDialogueController.StartFirstEnemyDialouge();
+                        break;
+                    case "2":
+                        Debug.Log("Starting dialouge 2");
+
+                        enemyDialogueController.StartSecondEnemyDialouge();
+                        break;
+                    case "3":
+                        Debug.Log("Starting dialouge 3");
+
+                        enemyDialogueController.StartThirdEnemyDialouge();
+                        break;
+                    case "4":
+                        Debug.Log("Starting dialouge 4");
+                        enemyDialogueController.StartBlackbeardEnemyDialouge();
+                        break;
+                    default:
+                        enemyDialogueController.DisableAllDialogue();
+                        break;
+                }
+
+                yield return new WaitUntil(() => enemyDialogueController.IsDialogueFinished);
+
+                Time.timeScale = 1f;
             }
-
-            yield return new WaitUntil(() => dialogue.IsDialogueFinished);
-
-            Time.timeScale = 1f;
         }
 
         SceneManager.LoadScene(enemy.battleSceneName);
