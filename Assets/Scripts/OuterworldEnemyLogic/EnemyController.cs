@@ -42,13 +42,28 @@ public class EnemyController : MonoBehaviour
     private bool bribeFleeing = false;
     public Tilemap oceanTilemap;
 
+    [Header("Explosion")]
+    public GameObject deathExplosionPrefab;
+    public Vector3 deathExplosionOffset = Vector3.zero;
+
+    [Header("Battle")]
+    public string battleSceneName = "FightDemo";
+
+
 
     void Start()
     {
         var gm = GameManager.Instance;
         if (gm != null && gm.defeatedEnemies.Contains(enemyId))
         {
-            Destroy(gameObject);
+            if (gm.currentEnemyId == enemyId)
+            {
+                StartCoroutine(PlayDeathExplosionAndDestroy(gm));
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
         else
         {
@@ -61,6 +76,22 @@ public class EnemyController : MonoBehaviour
 
             chaseTimeController.timeWait = chase_delay;
         }
+    }
+
+
+    private IEnumerator PlayDeathExplosionAndDestroy(GameManager gm)
+    {
+        yield return null;
+
+        if (deathExplosionPrefab != null)
+        {
+            Vector3 spawnPos = transform.position + deathExplosionOffset;
+            Instantiate(deathExplosionPrefab, spawnPos, Quaternion.identity);
+        }
+
+        gm.currentEnemyId = null;
+
+        Destroy(gameObject);
     }
 
     void Update()
@@ -98,18 +129,14 @@ public class EnemyController : MonoBehaviour
     {
         if (fromBattle)
         {
-            // reset countdown each time we chase from battle
             chaseTimeController.timeWait = chase_delay;
             chaseTimeController.startChaseCountodwn();
 
-            // wait for the countdown UI
             yield return new WaitForSeconds(chase_delay);
 
-            // now actually start the chase UI (bar + blinking time)
             chaseTimeController.StartChase();
         }
 
-        // chaseTimeController.StartChase(fromBattle);
 
         waiting_to_chase = false;
 
@@ -270,17 +297,195 @@ public class EnemyController : MonoBehaviour
             }
         }
     }
-
     public void StartBribeFlee(Transform playerTransform)
     {
+        if (bribeFleeing)
+            return;
 
+        chasing = false;
+        waiting_to_chase = false;
+        StopAllCoroutines();
+        if (chaseTimeController != null)
+        {
+            chaseTimeController.ForceStopChaseUI();
+        }
+
+        player = playerTransform;
+
+        State start = grid.GetStateFromWorldPos(transform.position);
+        State playerState = grid.GetStateFromWorldPos(player.position);
+
+        if (start == null || playerState == null)
+        {
+            Debug.LogWarning("Bribe flee: start or player state invalid");
+            return;
+        }
+
+        State fleeGoal = FindFleeGoal(start, playerState);
+        if (fleeGoal == null)
+        {
+            Debug.LogWarning("Bribe flee: no flee goal found");
+            return;
+        }
+
+        path = AStar.Search(start, fleeGoal);
+        path_index = 0;
+
+        if (path == null || path.Count == 0)
+        {
+            Debug.Log("Bribe flee: A* found no path");
+            return;
+        }
+
+        bribeFleeing = true;
+        SetIgnoreWorldBorders(true);
+
+        shipController.SetAccelerate(true);
+        shipController.SetDecelerate(false);
+        shipController.SetTurnPort(false);
+        shipController.SetTurnStarboard(false);
     }
+
+
+
+    private State FindFleeGoal(State start, State playerState)
+    {
+        if (grid == null || grid.grid == null)
+            return null;
+
+        int width = grid.grid.GetLength(0);
+        int height = grid.grid.GetLength(1);
+
+        int fleeX;
+        int dirX;
+        if (playerState.grid_x <= start.grid_x)
+        {
+            fleeX = width - 1;
+            dirX = 1;
+        }
+        else
+        {
+            fleeX = 0;
+            dirX = -1;
+        }
+
+        State best = null;
+        int bestScore = int.MinValue;
+
+        for (int y = 0; y < height; y++)
+        {
+            if (!IsGoodFleeCandidate(fleeX, y, dirX))
+                continue;
+
+            State s = grid.grid[fleeX, y];
+
+            Vector3 worldPos = grid.GetWorldPosFromState(s);
+
+            if (grid.land_tilemap != null)
+            {
+                Vector3 offset = new Vector3(dirX * grid.land_tilemap.cellSize.x, 0f, 0f);
+                Vector3Int outsideCell = grid.land_tilemap.WorldToCell(worldPos + offset);
+
+                if (grid.land_tilemap.HasTile(outsideCell))
+                {
+                    continue;
+                }
+            }
+
+            int dx = s.grid_x - start.grid_x;
+            int dy = s.grid_y - start.grid_y;
+            int dist = dx * dx + dy * dy;
+
+            int score = -dist;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = s;
+            }
+        }
+
+        return best;
+    }
+
 
 
     private void FollowBribeFleePath()
     {
+        if (IsOutsideOcean())
+        {
+            SetIgnoreWorldBorders(false);
+            Destroy(gameObject);
+            return;
+        }
 
+        if (path == null || path_index >= path.Count)
+        {
+            shipController.SetTurnPort(false);
+            shipController.SetTurnStarboard(false);
+            shipController.SetAccelerate(true);
+            shipController.SetDecelerate(false);
+            return;
+        }
+
+        State current_state = path[path_index];
+        Vector3 targetPos = grid.GetWorldPosFromState(current_state);
+
+        Vector3 distVec = targetPos - transform.position;
+        distVec.z = 0f;
+
+        float dist = distVec.magnitude;
+
+        if (dist < 1f)
+        {
+            path_index++;
+            return;
+        }
+
+        Vector3 forward = transform.up;
+        Vector3 dir = distVec.normalized;
+
+        float angle = Vector3.SignedAngle(forward, dir, Vector3.forward);
+        float angle_abs = Mathf.Abs(angle);
+
+        shipController.SetTurnPort(false);
+        shipController.SetTurnStarboard(false);
+
+        if (angle_abs > turn_deadzone)
+        {
+            if (angle > 0f)
+            {
+                shipController.SetTurnPort(true);
+                last_turn_dir = 1f;
+            }
+            else
+            {
+                shipController.SetTurnStarboard(true);
+                last_turn_dir = -1f;
+            }
+        }
+        else if (angle_abs > turn_release_zone)
+        {
+            if (last_turn_dir > 0f)
+            {
+                shipController.SetTurnPort(true);
+            }
+            else if (last_turn_dir < 0f)
+            {
+                shipController.SetTurnStarboard(true);
+            }
+        }
+        else
+        {
+            last_turn_dir = 0f;
+        }
+
+        shipController.SetAccelerate(true);
+        shipController.SetDecelerate(false);
     }
+
+
+
 
 
     private void SetIgnoreWorldBorders(bool ignore)
@@ -290,13 +495,17 @@ public class EnemyController : MonoBehaviour
         GameObject[] borders = GameObject.FindGameObjectsWithTag("WorldBorders");
         foreach (var go in borders)
         {
-            Collider2D borderCol = go.GetComponent<Collider2D>();
-            if (borderCol != null)
+            var borderColliders = go.GetComponentsInChildren<Collider2D>();
+            foreach (var borderCol in borderColliders)
             {
-                Physics2D.IgnoreCollision(enemyCollider, borderCol, ignore);
+                if (borderCol != null && borderCol != enemyCollider)
+                {
+                    Physics2D.IgnoreCollision(enemyCollider, borderCol, ignore);
+                }
             }
         }
     }
+
 
     private bool IsOutsideOcean()
     {
@@ -309,9 +518,23 @@ public class EnemyController : MonoBehaviour
         return !oceanTilemap.HasTile(cell);
     }
 
+    private bool IsOceanState(int x, int y)
+    {
+        if (grid == null || grid.grid == null) return false;
+
+        int width = grid.grid.GetLength(0);
+        int height = grid.grid.GetLength(1);
+
+        if (x < 0 || x >= width || y < 0 || y >= height)
+            return false;
+
+        return grid.grid[x, y] != null;
+    }
+
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (bribeFleeing) return;
         if (!other.CompareTag("Player"))
         {
             return;
@@ -326,5 +549,23 @@ public class EnemyController : MonoBehaviour
 
         StartChasing(other.transform, false);
     }
+
+    private bool IsGoodFleeCandidate(int x, int y, int dirX)
+    {
+        if (!IsOceanState(x, y))
+            return false;
+
+        if (!IsOceanState(x, y - 1) || !IsOceanState(x, y + 1))
+            return false;
+
+        int innerX = x - dirX;
+
+        if (!IsOceanState(innerX, y)) return false;
+        if (!IsOceanState(innerX, y - 1)) return false;
+        if (!IsOceanState(innerX, y + 1)) return false;
+
+        return true;
+    }
+
 }
 

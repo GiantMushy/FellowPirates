@@ -34,6 +34,14 @@ public class PlayerController : MonoBehaviour
     public GameObject orangeHealEffectPrefab;
     public Vector3 orangeEffectOffset = new Vector3(0f, 0.5f, 0f);
 
+    [Header("Gold Effect")]
+    public GameObject goldPopupPrefab;
+    public Vector3 goldPopupOffset = new Vector3(0f, 0.5f, 0f);
+    public float goldPopupDuration = 1f;
+    public float goldPopupRiseDistance = 1f;
+    public float goldRewardDelay = 0.2f;
+
+
     [Header("Audio")]
     [SerializeField] private AudioClip healthPickupSound;
     [SerializeField] private AudioClip goldPickupSound;
@@ -50,6 +58,11 @@ public class PlayerController : MonoBehaviour
     [Header("Death")]
     public float deathPanelDelay = 1f; // seconds before death panel appears
 
+
+    void Awake()
+    {
+        gameManager = GameManager.Instance;
+    }
 
     void Start()
     {
@@ -126,7 +139,7 @@ public class PlayerController : MonoBehaviour
                 SpawnOrangeHealEffect();
 
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
 
                 StartCoroutine(PulseEffect.sprite_pulse(
                     spriteRenderer,
@@ -144,8 +157,14 @@ public class PlayerController : MonoBehaviour
 
         string tag = other.tag;
 
+
+        if (tag == "Monster")
+        {
+            HandleMonsterDamage(other);
+        }
+
         if (tag == "Land")
-        {   
+        {
 
             Debug.Log("OnTriggerEnter2D: HIT LAND");
             TakeDamage();
@@ -164,8 +183,8 @@ public class PlayerController : MonoBehaviour
                 SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
-                {   
-                    Debug.LogError("Activate autoheal");
+                {
+                    // Debug.LogError("Activate autoheal");
                     StartCoroutine(AutoHealAfterDelay());
                 }
             }
@@ -183,13 +202,13 @@ public class PlayerController : MonoBehaviour
                 gameManager.healthInventory++;
                 UpdateHealthItemUI();
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
             }
             else
             {
                 GainHealth();
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
 
                 StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
                 SpawnOrangeHealEffect();
@@ -218,13 +237,15 @@ public class PlayerController : MonoBehaviour
 
         string tag = collision.gameObject.tag;
 
-        if ((tag == "Pirate" || tag == "Monster") &&
+
+
+        if (tag == "Pirate" &&
             Time.time < gameManager.fleeCooldownUntil)
         {
             return;
         }
 
-        if (tag == "Pirate" || tag == "Monster")
+        if (tag == "Pirate")
         {
             var enemy = collision.gameObject.GetComponent<EnemyController>();
             if (gameManager.chasingEnemy == enemy)
@@ -294,7 +315,7 @@ public class PlayerController : MonoBehaviour
                 shipController.Stop();
                 shipController.DisableControl();
             }
-            
+
             // Spawn explosion
             if (deathExplosionPrefab != null)
             {
@@ -378,30 +399,34 @@ public class PlayerController : MonoBehaviour
         // Wait before healing
         yield return new WaitForSeconds(autoHealDelay);
 
-        // Conditions might have changed during the delay, so re-check
-        if (gameManager != null &&
-            gameManager.healthInventory > 0 &&
-            gameManager.health < gameManager.maxHealth)
+        while (gameManager != null &&
+                 gameManager.healthInventory > 0 &&
+                 gameManager.health < gameManager.maxHealth)
         {
-            UseHealthItem();
-
-            // Same SFX + pulse
-            if (healthPickupSound != null)
+            // Conditions might have changed during the delay, so re-check
+            if (gameManager != null &&
+                gameManager.healthInventory > 0 &&
+                gameManager.health < gameManager.maxHealth)
             {
-                SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
-            }
-            if (spriteRenderer != null)
-            {
-                StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
-            }
+                UseHealthItem();
 
-            SpawnOrangeHealEffect();
+                // Same SFX + pulse
+                if (healthPickupSound != null)
+                {
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
+                }
+                if (spriteRenderer != null)
+                {
+                    StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
+                }
+
+                SpawnOrangeHealEffect();
+
+            }
 
         }
-
         autoHealPending = false;
     }
-
     private void SpawnOrangeHealEffect()
     {
         if (orangeHealEffectPrefab == null)
@@ -410,6 +435,58 @@ public class PlayerController : MonoBehaviour
         Vector3 spawnPos = transform.position + orangeEffectOffset;
         Instantiate(orangeHealEffectPrefab, spawnPos, Quaternion.identity);
     }
+
+    public void ShowBattleGoldReward()
+    {
+        if (gameManager == null)
+            gameManager = GameManager.Instance;
+
+        if (gameManager == null) return;
+        if (goldPopupPrefab == null) return;
+
+        Vector3 spawnPos = gameManager.lastEnemyPosition + goldPopupOffset;
+
+        StartCoroutine(ShowBattleGoldRewardRoutine(spawnPos));
+    }
+
+    private IEnumerator ShowBattleGoldRewardRoutine(Vector3 spawnPos)
+    {
+        if (goldRewardDelay > 0f)
+            yield return new WaitForSeconds(goldRewardDelay);
+
+        GameObject popup = Instantiate(goldPopupPrefab, spawnPos, Quaternion.identity);
+
+        if (goldPickupSound != null)
+        {
+            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
+        }
+
+        SpriteRenderer sr = popup.GetComponent<SpriteRenderer>();
+        Vector3 startPos = popup.transform.position;
+        Vector3 endPos = startPos + Vector3.up * goldPopupRiseDistance;
+
+        float t = 0f;
+
+        while (t < goldPopupDuration)
+        {
+            t += Time.deltaTime;
+            float normalized = Mathf.Clamp01(t / goldPopupDuration);
+
+            popup.transform.position = Vector3.Lerp(startPos, endPos, normalized);
+
+            if (sr != null)
+            {
+                Color c = sr.color;
+                c.a = 1f - normalized;
+                sr.color = c;
+            }
+
+            yield return null;
+        }
+
+        Destroy(popup);
+    }
+
 
 
     public void UpdateHeartsUI()
@@ -480,6 +557,79 @@ public class PlayerController : MonoBehaviour
             Debug.LogWarning("VictoryPanelController is NOT assigned!");
         }
     }
+
+
+    public void OnBattleDeathReturn()
+    {
+        if (shipController != null)
+        {
+            shipController.Stop();
+            shipController.DisableControl();
+        }
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = false;
+        }
+
+        if (deathPanelController != null)
+        {
+            deathPanelController.Show();
+        }
+        else
+        {
+            var respawn = GetComponent<PlayerRespawn>();
+            if (respawn != null)
+            {
+                respawn.Respawn();
+            }
+
+            if (gameManager != null)
+            {
+                gameManager.health = gameManager.maxHealth;
+            }
+
+            UpdateSprite();
+            UpdateHeartsUI();
+        }
+    }
+
+
+    public void TryAutoHealFromBattle()
+    {
+        if (gameManager == null) return;
+
+        if (gameManager.healthInventory > 0 &&
+            gameManager.health < gameManager.maxHealth &&
+            !autoHealPending)
+        {
+            StartCoroutine(AutoHealAfterDelay());
+        }
+    }
+
+
+    private void HandleMonsterDamage(Collider2D other)
+    {
+        TakeDamage();
+
+        if (gameManager != null && gameManager.health > 0)
+        {
+            if (landHitParticle != null)
+            {
+                landHitParticle.transform.position = transform.position;
+                landHitParticle.Play();
+            }
+
+            if (damageTypeController != null)
+            {
+                Vector2 collisionPoint = other.ClosestPoint(transform.position);
+                Vector3 normal = (transform.position - (Vector3)collisionPoint).normalized;
+
+                StartCoroutine(damageTypeController.HandleLandCollision("Monster", normal));
+            }
+        }
+    }
+
 
 }
 

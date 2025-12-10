@@ -53,6 +53,9 @@ public class TimingBar : MonoBehaviour
             return;
         }
 
+        speed += speedIncrease * Time.deltaTime;
+        speed = Mathf.Min(speed, maxSpeed);
+
         currPos += Time.deltaTime * speed;
 
         float ping = Mathf.PingPong(currPos, 1f);
