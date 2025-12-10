@@ -4251,6 +4251,14 @@ PrefabInstance:
       propertyPath: 'enemyHeartImages.Array.data[2]'
       value: 
       objectReference: {fileID: 23694460}
+    - target: {fileID: 4079752996104129337, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_Color.b
+      value: 0.048005104
+      objectReference: {fileID: 0}
+    - target: {fileID: 4079752996104129337, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4985009373116657056, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -4405,15 +4413,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8706707883308567895, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Color.b
-      value: 0.6377357
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8706707883308567895, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Color.g
-      value: 0.24907789
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8706707883308567895, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Color.r
-      value: 0.57537687
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9034535182675642527, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Sprite
