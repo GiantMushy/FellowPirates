@@ -17,6 +17,7 @@ public class MainMenu : MonoBehaviour
             gm.enemyHealthById.Clear();
             gm.currentEnemyId = null;
             gm.fleeCooldownUntil = 0f;
+            gm.activatedCheckpoints.Clear();
             gm.CancelChase();
         }
 
