@@ -29,6 +29,12 @@ public class BulletSpawner : MonoBehaviour
     private GameObject spawnedBullet;
     private float timer = 0f;
 
+    [Header("Flame / Fire Trail Settings")]
+    public bool enableFireTrail = false;        
+    public GameObject fireTrailPrefab;          
+    public float fireTrailInterval = 0.15f;
+
+
     public SpriteRenderer minigameBackgroundSprite;
 
     public bool slide;
@@ -173,6 +179,11 @@ public class BulletSpawner : MonoBehaviour
             bulletScript.bulletLife = bulletLife;
             bulletScript.minigameBackgroundSprite = minigameBackgroundSprite;
             bulletScript.usePhysics = useGravity;
+
+            // Fire trail
+            bulletScript.enableFireTrail   = enableFireTrail;
+            bulletScript.fireTrailPrefab   = fireTrailPrefab;
+            bulletScript.fireTrailInterval = fireTrailInterval;
             
             // If using gravity-based physics
             if (useGravity)
@@ -203,7 +214,10 @@ public class BulletSpawner : MonoBehaviour
             {
                 // Original non-physics behavior
                 spawnedBullet.transform.rotation = transform.rotation;
-            }
+
+                // Lock movement direction so rotation doesn't curve path
+                bulletScript.moveDirection = spawnedBullet.transform.right;
+            }   
         }
     }
 
