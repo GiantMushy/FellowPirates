@@ -154,7 +154,7 @@ public class PlayerFightController : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Bomb"))
+        if (other.CompareTag("Bomb") || other.CompareTag("BulletSpawner"))
         {
             Debug.Log("collided with boooomb!!");
             audioSource.PlayOneShot(hitSound);
