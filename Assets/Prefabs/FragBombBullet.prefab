@@ -55,6 +55,7 @@ MonoBehaviour:
   bullet: {fileID: 4788280500938896382, guid: 0bca5c7ac96b34f58a4c6b0296ea9b1a, type: 3}
   spawnedBullet: {fileID: 0}
   spawnedBulletCount: 10
+  spawnOnDeath: 1
 --- !u!212 &5119946846514650393
 SpriteRenderer:
   m_ObjectHideFlags: 0

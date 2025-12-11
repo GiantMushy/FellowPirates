@@ -34,12 +34,14 @@ public class Bullet : MonoBehaviour
     public GameObject bullet;
     public GameObject spawnedBullet;
     public int spawnedBulletCount = 0;
+    public bool spawnOnDeath = false;
+
     void Update()
     {
 
         if (timer > bulletLife)
         {
-            Destroy(this.gameObject);
+            KillBullet();
         }
 
         timer += Time.deltaTime;
@@ -65,18 +67,28 @@ public class Bullet : MonoBehaviour
 
         if (!b.Contains(pos) && destroyOutOfBounds)
         {
-            Destroy(gameObject);
+            KillBullet();
         }
     }
 
-    private void OnDestroy()
+    private void KillBullet()
+    {
+        if (spawnOnDeath)
+            SpawnSplitBullets();
+
+        Destroy(gameObject);
+    }
+
+
+
+    private void SpawnSplitBullets()
     {
         if (bullet != null && spawnedBulletCount > 0)
         {
             int bulletCount = spawnedBulletCount;
             float angleStep = 360f / bulletCount; // Divide circle into equal angles
             float angleOffset = UnityEngine.Random.Range(0f, angleStep); // Start at a random angle offset
-            
+
             for (int i = 0; i < bulletCount; i++)
             {
                 float angle = (i * angleStep) + angleOffset; // Calculate angle for this bullet
