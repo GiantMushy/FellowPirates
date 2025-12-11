@@ -59,7 +59,7 @@ public class EnemyDialougeController : MonoBehaviour
     {
         ShowOnlySprite(EnemyOneSprite);
 
-        EnemyNameText.text = "FLying Dutchman";
+        EnemyNameText.text = "Flying Dutchman";
         NameUnderlayImage.color = Hex("#FF9B04");
         DialougeBox.color = Hex("#F1E0C4");
 
