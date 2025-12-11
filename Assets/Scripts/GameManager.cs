@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     public HashSet<string> enemiesWithIntroDialogue = new HashSet<string>();
 
+    public HashSet<string> activatedCheckpoints = new HashSet<string>();
 
 
     void Awake()

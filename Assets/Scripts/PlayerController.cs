@@ -59,6 +59,9 @@ public class PlayerController : MonoBehaviour
     public float deathPanelDelay = 1f; // seconds before death panel appears
 
 
+    [SerializeField] private AudioSource monsterHitSound;
+    private float monsterDamageCooldownUntil = 0;
+
     void Awake()
     {
         gameManager = GameManager.Instance;
@@ -160,6 +163,8 @@ public class PlayerController : MonoBehaviour
 
         if (tag == "Monster")
         {
+            if (Time.time < monsterDamageCooldownUntil)
+                return;
             HandleMonsterDamage(other);
         }
 
@@ -263,7 +268,7 @@ public class PlayerController : MonoBehaviour
             if (gameManager.health < gameManager.maxHealth)
             {
                 // Calculate normal direction away from the collision point
-            
+
                 Vector3 normal = collision.GetContact(0).normal;
 
                 StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
@@ -622,6 +627,20 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMonsterDamage(Collider2D other)
     {
+
+        var monster = other.GetComponent<SeaMonster>();
+
+        if (monster != null)
+        {
+            monsterDamageCooldownUntil = Time.time + 1f;
+            monster.Stun();
+            monster.ReverseDirection();
+        }
+        if (monsterHitSound != null)
+        {
+            monsterHitSound.time = 0.1f;
+            monsterHitSound.Play();
+        }
         TakeDamage();
 
         if (gameManager != null && gameManager.health > 0)
@@ -640,6 +659,15 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(damageTypeController.HandleLandCollision("Monster", normal));
             }
         }
+
+
+        if (gameManager.healthInventory > 0 &&
+                    gameManager.health < gameManager.maxHealth &&
+                    !autoHealPending)
+        {
+            StartCoroutine(AutoHealAfterDelay());
+        }
+
     }
 
 
