@@ -120,8 +120,8 @@ public class EnemyDialougeController : MonoBehaviour
 
         lines = new string[]
               {
-            "Example text for the Blackbeard, line 1.",
-            "Another Blackbeard line."
+            "Ye dare distrub me on my rum break!",
+            "Your gold is mine landlubber!"
        };
         EnemyNameText.color = Color.white;
         StartDialouge();
