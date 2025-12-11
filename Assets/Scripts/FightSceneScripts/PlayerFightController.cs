@@ -28,6 +28,13 @@ public class PlayerFightController : MonoBehaviour
 
     private bool gameOver = false;
     private bool defendResolved = false;
+    
+    private bool isMovingLeft = false;
+    private bool isMovingRight = false;
+    private bool isMovingUp = false;
+    private bool isMovingDown = false;
+    private float maxRotationAngle = 50f;
+    private float rotationSpeed = 180f;
 
     public AudioSource audioSource;
     public AudioClip hitSound;
@@ -50,6 +57,10 @@ public class PlayerFightController : MonoBehaviour
         {
             defendResolved = true;
             gameOver = true;
+            isMovingDown = false;
+            isMovingUp = false;
+            isMovingRight = false;
+            isMovingLeft = false;
 
             var spriteToUse = wonSprite != null ? wonSprite : damageSprite;
             StartCoroutine(FlashAnimation(spriteToUse, wonHitColor, wonClearColor, false));
@@ -58,50 +69,92 @@ public class PlayerFightController : MonoBehaviour
             return;
         }
 
-
-        Bounds b = minigameBackgroundSprite.bounds;
-
         var key = Keyboard.current;
 
-        if (key.upArrowKey.isPressed || key.wKey.isPressed)
-        {
-            float new_y = transform.position.y + speed * Time.deltaTime;
-            if (new_y + SpriteSizeMargin.y < b.max.y)
-            {
-                transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
-            }
-        }
-        if (key.downArrowKey.isPressed || key.sKey.isPressed)
-        {
-            float new_y = transform.position.y - speed * Time.deltaTime;
-            if (new_y - SpriteSizeMargin.y > b.min.y)
-            {
-                transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
-            }
-        }
+        // Reset movement flags
+        isMovingLeft = false;
+        isMovingRight = false;
+        isMovingUp = false;
+        isMovingDown = false;
 
-        if (key.rightArrowKey.isPressed || key.dKey.isPressed)
+        if (key.upArrowKey.isPressed    || key.wKey.isPressed)  { isMovingUp = true;    }
+        if (key.downArrowKey.isPressed  || key.sKey.isPressed)  { isMovingDown = true;  }
+        if (key.rightArrowKey.isPressed || key.dKey.isPressed)  { isMovingRight = true; }
+        if (key.leftArrowKey.isPressed  || key.aKey.isPressed)  { isMovingLeft = true;  }
+    }
+
+    void FixedUpdate()
+    {
+        if (isMovingUp)     MoveUp();
+        if (isMovingDown)   MoveDown();
+        if (isMovingRight)  MoveRight();
+        if (isMovingLeft)   MoveLeft();
+
+        RotateSprite();
+    }
+
+    private void MoveUp()
+    {
+        Bounds b = minigameBackgroundSprite.bounds;
+        float new_y = transform.position.y + speed * Time.deltaTime;
+        if (new_y + SpriteSizeMargin.y < b.max.y)
         {
-            float new_x = transform.position.x + speed * Time.deltaTime;
-            if (new_x + SpriteSizeMargin.x < b.max.x)
-            {
-                transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
-            }
-        }
-        if (key.leftArrowKey.isPressed || key.aKey.isPressed)
-        {
-            float new_x = transform.position.x - speed * Time.deltaTime;
-            if (new_x - SpriteSizeMargin.x > b.min.x)
-            {
-                transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
-            }
+            transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
         }
     }
 
+    private void MoveDown()
+    {
+        Bounds b = minigameBackgroundSprite.bounds;
+        float new_y = transform.position.y - speed * Time.deltaTime;
+        if (new_y - SpriteSizeMargin.y > b.min.y)
+        {
+            transform.position = new UnityEngine.Vector3(transform.position.x, new_y, transform.position.z);
+        }
+    }
 
+    private void MoveLeft()
+    {
+        Bounds b = minigameBackgroundSprite.bounds;
+        float new_x = transform.position.x - speed * Time.deltaTime;
+        if (new_x - SpriteSizeMargin.x > b.min.x)
+        {
+            transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
+        }
+    }
+
+    private void MoveRight()
+    {
+        Bounds b = minigameBackgroundSprite.bounds;
+        float new_x = transform.position.x + speed * Time.deltaTime;
+        if (new_x + SpriteSizeMargin.x < b.max.x)
+        {
+            transform.position = new UnityEngine.Vector3(new_x, transform.position.y, transform.position.z);
+        }
+    }
+
+    private void RotateSprite()
+    {
+        float targetRotation = 0f;
+        float currentMaxRotation = maxRotationAngle;
+
+        if (isMovingUp)         currentMaxRotation = 20f;
+        else if (isMovingDown)  currentMaxRotation = 90f;
+        
+        if (isMovingLeft)       targetRotation = currentMaxRotation;
+        else if (isMovingRight) targetRotation = -currentMaxRotation;
+        
+        float currentZ = transform.eulerAngles.z;
+
+        if (currentZ > 180f) currentZ -= 360f;
+        
+        float newZ = Mathf.MoveTowards(currentZ, targetRotation, rotationSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Euler(0f, 0f, newZ);
+    }
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Bomb"))
+        if (other.CompareTag("Bomb") || other.CompareTag("BulletSpawner"))
         {
             Debug.Log("collided with boooomb!!");
             audioSource.PlayOneShot(hitSound);
