@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.Intrinsics;
 using System.Security.Cryptography;
+using System;
 
 
 public class Bullet : MonoBehaviour
@@ -29,6 +30,10 @@ public class Bullet : MonoBehaviour
             moveDirection = transform.right;
     }
 
+    [Header("Spawner Settings")]
+    public GameObject bullet;
+    public GameObject spawnedBullet;
+    public int spawnedBulletCount = 0;
     void Update()
     {
 
@@ -64,4 +69,22 @@ public class Bullet : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (bullet != null && spawnedBulletCount > 0)
+        {
+            int bulletCount = spawnedBulletCount;
+            float angleStep = 360f / bulletCount; // Divide circle into equal angles
+            float angleOffset = UnityEngine.Random.Range(0f, angleStep); // Start at a random angle offset
+            
+            for (int i = 0; i < bulletCount; i++)
+            {
+                float angle = (i * angleStep) + angleOffset; // Calculate angle for this bullet
+                Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+
+                spawnedBullet = Instantiate(bullet, transform.position, rotation);
+                spawnedBullet.layer = LayerMask.NameToLayer("OverlayLayer");
+            }
+        }
+    }
 }

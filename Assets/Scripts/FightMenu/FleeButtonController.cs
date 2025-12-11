@@ -7,6 +7,8 @@ public class FleeButtonController : MonoBehaviour
     [SerializeField] private Button fleeButton;
     public AttackFlowController flow;
     private bool isSelected = false;
+    public AudioSource audioSource;
+    public AudioClip clickSound;
 
     void Update()
     {
@@ -41,6 +43,7 @@ public class FleeButtonController : MonoBehaviour
     public void Flee()
     {
         Debug.Log("Flee button pressed");
+        audioSource.PlayOneShot(clickSound);
         EventSystem.current.SetSelectedGameObject(fleeButton.gameObject);
 
         var gameManager = GameManager.Instance;

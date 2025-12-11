@@ -52,6 +52,7 @@ MonoBehaviour:
   minigameBackgroundSprite: {fileID: 0}
   usePhysics: 0
   destroyOutOfBounds: 1
+  spawnedBulletsOnDestroy: []
 --- !u!212 &5119946846514650393
 SpriteRenderer:
   m_ObjectHideFlags: 0

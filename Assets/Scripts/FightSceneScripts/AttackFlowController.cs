@@ -60,6 +60,12 @@ public class AttackFlowController : MonoBehaviour
     private float cameraShakeDuration = 2f;
     private float cameraShakeStrength = 0.2f;
 
+    // audio 
+    public AudioSource audioSource;
+    public AudioClip twoDamageSound;
+    public AudioClip oneDamageSound;
+    public AudioClip zeroDamageSound;
+
     private void Awake()
     {
         Attack = TimingBarCanvas.GetComponentInChildren<TimingBar>(true);
@@ -136,12 +142,19 @@ public class AttackFlowController : MonoBehaviour
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
-    public void ShowItemsMessageFullHealth()
+    public void ShowItemsMessageDisabled()
     {
         Debug.Log("ShowFleeMessage");
         if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        buttonMiddleScreenText.text = "Full health";
+        if (gameManager.healthInventory <= 0)
+        {
+            buttonMiddleScreenText.text = "No oranges!";
+        }
+        else
+        {
+            buttonMiddleScreenText.text = "Full health";
+        }
 
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
@@ -630,14 +643,17 @@ public class AttackFlowController : MonoBehaviour
         if (damage == 2)
         {
             DamageText.text = "2X DAMAGE";
+            audioSource.PlayOneShot(twoDamageSound);
         }
         else if (damage == 1)
         {
             DamageText.text = "1X DAMAGE";
+            audioSource.PlayOneShot(oneDamageSound);
         }
         else if (damage == 0)
         {
             DamageText.text = "0X DAMAGE";
+            audioSource.PlayOneShot(zeroDamageSound);
         }
         else
         {

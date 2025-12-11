@@ -165,6 +165,10 @@ public class PlayerController : MonoBehaviour
 
         if (tag == "Land")
         {
+            if (damageTypeController.takingDamage)
+            {
+                return;
+            }
 
             Debug.Log("OnTriggerEnter2D: HIT LAND");
             TakeDamage();
@@ -184,12 +188,12 @@ public class PlayerController : MonoBehaviour
 
                 if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
                 {
-                    // Debug.LogError("Activate autoheal");
                     StartCoroutine(AutoHealAfterDelay());
                 }
             }
             else
                 StartCoroutine(damageTypeController.HandleRespawn());
+            SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
         }
         else if (tag == "Finish")
         {
@@ -214,6 +218,7 @@ public class PlayerController : MonoBehaviour
                 SpawnOrangeHealEffect();
             }
 
+            gameManager.AddCollectedItemPosition(other.transform.position);
             other.gameObject.SetActive(false);
         }
         else if (tag == "GoldPickup")
@@ -223,7 +228,9 @@ public class PlayerController : MonoBehaviour
             if (goldPickupSound != null)
                 SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
 
+            gameManager.AddCollectedItemPosition(other.transform.position);
             other.gameObject.SetActive(false);
+
         }
     }
 

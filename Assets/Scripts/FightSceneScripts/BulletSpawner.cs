@@ -19,6 +19,10 @@ public class BulletSpawner : MonoBehaviour
     public float firingRate = 1f;
     public float speed = 1f;
     public float bulletLife = 1f;
+    public enum bulletLifeVariable { Constant, RandomBetweenTwoValues, LerpBetweenTwoValues }
+    public bulletLifeVariable lifeVariable = bulletLifeVariable.Constant;
+    public float minBulletLife = 0.5f;
+    public float maxBulletLife = 2f;
 
     [SerializeField] private SpawnType spawnerType;
     public bool useGravity = false; // Enable physics-based projectile motion with gravity
@@ -142,6 +146,14 @@ public class BulletSpawner : MonoBehaviour
             else if (bulletIndex < 9) bullet = bulletList[1];
             else bullet = bulletList[2];
             bulletIndex = (bulletIndex + 1) % 10;
+        }
+        if (lifeVariable == bulletLifeVariable.RandomBetweenTwoValues)
+        {
+            bulletLife = Random.Range(minBulletLife, maxBulletLife);
+        }
+        else if (lifeVariable == bulletLifeVariable.LerpBetweenTwoValues)
+        {
+            bulletLife = Mathf.Lerp(minBulletLife, maxBulletLife, 0.5f);
         }
         if (bullet)
         {
