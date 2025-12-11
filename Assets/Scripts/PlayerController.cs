@@ -163,38 +163,6 @@ public class PlayerController : MonoBehaviour
             HandleMonsterDamage(other);
         }
 
-        if (tag == "Land")
-        {
-            if (damageTypeController.takingDamage)
-            {
-                return;
-            }
-
-            Debug.Log("OnTriggerEnter2D: HIT LAND");
-            TakeDamage();
-            if (landHitParticle != null)
-            {
-                landHitParticle.transform.position = transform.position;
-                landHitParticle.Play();
-            }
-
-            if (gameManager.health < gameManager.maxHealth)
-            {
-                // Calculate normal direction away from the collision point
-                Vector2 collisionPoint = other.ClosestPoint(transform.position);
-                Vector3 normal = (transform.position - (Vector3)collisionPoint).normalized;
-                StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
-                SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
-
-                if (gameManager.healthInventory > 0 && gameManager.health < gameManager.maxHealth && !autoHealPending)
-                {
-                    StartCoroutine(AutoHealAfterDelay());
-                }
-            }
-            else
-                StartCoroutine(damageTypeController.HandleRespawn());
-            SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
-        }
         else if (tag == "Finish")
         {
             ShowVictoryScreen();
@@ -276,6 +244,43 @@ public class PlayerController : MonoBehaviour
             // Get the collision normal from the contact point
             Vector3 normal = collision.GetContact(0).normal;
             StartCoroutine(damageTypeController.HandleLandCollision(tag, normal));
+        }
+
+        if (tag == "Land")
+        {
+            if (damageTypeController.takingDamage)
+            {
+                return;
+            }
+            Debug.Log("OnTriggerEnter2D: HIT LAND");
+            TakeDamage();
+            if (landHitParticle != null)
+            {
+                landHitParticle.transform.position = transform.position;
+                landHitParticle.Play();
+            }
+
+            if (gameManager.health < gameManager.maxHealth)
+            {
+                // Calculate normal direction away from the collision point
+            
+                Vector3 normal = collision.GetContact(0).normal;
+
+                StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
+
+                if (shipHittingLand != null)
+                    SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
+
+                if (gameManager.healthInventory > 0 &&
+                    gameManager.health < gameManager.maxHealth &&
+                    !autoHealPending)
+                {
+                    StartCoroutine(AutoHealAfterDelay());
+                }
+            }
+            else
+                StartCoroutine(damageTypeController.HandleRespawn());
+            SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
         }
     }
 
