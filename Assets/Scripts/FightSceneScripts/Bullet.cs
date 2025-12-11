@@ -23,6 +23,13 @@ public class Bullet : MonoBehaviour
     // direction is captured once and never changed
     [HideInInspector] public Vector2 moveDirection;
 
+    // Fire trail toggle
+    public bool enableFireTrail = false;
+    public GameObject fireTrailPrefab;
+    public float fireTrailInterval = 0.15f;
+    private float fireTrailTimer = 0f;
+
+
     void Start()
     {
         // If spawner didn't set it, default to current right direction
@@ -55,6 +62,15 @@ public class Bullet : MonoBehaviour
         // Visual spin – this can rotate freely now
         transform.Rotate(0f, 0f, rotation * Time.deltaTime);
 
+        if (enableFireTrail && fireTrailPrefab != null)
+        {
+            fireTrailTimer += Time.deltaTime;
+            if (fireTrailTimer >= fireTrailInterval)
+            {
+                fireTrailTimer = 0f;
+                Instantiate(fireTrailPrefab, transform.position, Quaternion.identity);
+            }
+        }
 
         if (minigameBackgroundSprite == null)
         {

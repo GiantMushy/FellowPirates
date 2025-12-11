@@ -514,6 +514,15 @@ public class AttackFlowController : MonoBehaviour
         {
             bomb.SetActive(false);
         }
+
+        // Destroy fire trails
+        FireTrail[] fireTrails = FindObjectsOfType<FireTrail>(true);
+        foreach (var fire in fireTrails)
+        {
+            Destroy(fire.gameObject);
+        }
+
+
     }
     public void StartHealVisualAndDefend()
     {
