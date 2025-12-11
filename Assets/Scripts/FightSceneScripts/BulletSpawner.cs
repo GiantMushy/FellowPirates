@@ -43,6 +43,7 @@ public class BulletSpawner : MonoBehaviour
 
     public bool duplicate;
     public float duplicate_frequence = 3f;
+    public float offsetSpawnPos = 0f;
     private float duplicateTimer = 0f;
     private Vector3 startPos;
     private Quaternion startRot;
@@ -157,7 +158,14 @@ public class BulletSpawner : MonoBehaviour
         }
         if (bullet)
         {
-            spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
+            Vector3 spawnPosition = transform.position;
+            if (offsetSpawnPos != 0f)
+            {
+                // Offset the spawn position in the direction the spawner is facing
+                spawnPosition = transform.position + (transform.right * offsetSpawnPos);
+            }
+
+            spawnedBullet = Instantiate(bullet, spawnPosition, Quaternion.identity);
             spawnedBullet.layer = LayerMask.NameToLayer("OverlayLayer");
             
             Bullet bulletScript = spawnedBullet.GetComponent<Bullet>();
