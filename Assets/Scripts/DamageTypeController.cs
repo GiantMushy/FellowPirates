@@ -11,13 +11,12 @@ public class DamageTypeController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private ShipController shipController;
 
-    private Rigidbody2D rb;
+    // private Rigidbody2D rb;
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         shipController = GetComponent<ShipController>();
-        rb = GetComponent<Rigidbody2D>();
     }
 
     public IEnumerator HandleLandCollision(string collisionTag, Vector3 normal)
@@ -37,8 +36,7 @@ public class DamageTypeController : MonoBehaviour
         {
             knockbackSpeed = Mathf.Lerp(knockbackForce, 0, knockbackTimer / knockbackDuration);
             Vector2 displacement = (Vector2)knockbackDirection * knockbackSpeed * Time.fixedDeltaTime;
-            rb.MovePosition(rb.position + displacement);
-            // transform.Translate(knockbackDirection * knockbackSpeed * Time.deltaTime, Space.World);
+            transform.Translate(knockbackDirection * knockbackSpeed * Time.deltaTime, Space.World);
             knockbackTimer += Time.deltaTime;
             yield return null;
 
