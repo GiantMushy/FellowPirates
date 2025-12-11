@@ -18,6 +18,17 @@ public class Bullet : MonoBehaviour
     public SpriteRenderer minigameBackgroundSprite;
     public bool usePhysics = false; // When true, bullet uses rigidbody physics (gravity), when false uses direct movement
     public bool destroyOutOfBounds = true;
+
+    // direction is captured once and never changed
+    [HideInInspector] public Vector2 moveDirection;
+
+    void Start()
+    {
+        // If spawner didn't set it, default to current right direction
+        if (moveDirection == Vector2.zero)
+            moveDirection = transform.right;
+    }
+
     void Update()
     {
 
@@ -28,12 +39,14 @@ public class Bullet : MonoBehaviour
 
         timer += Time.deltaTime;
 
-        // Only move directly if NOT using physics
+        // Movement uses the stored direction
         if (!usePhysics)
         {
-            transform.position += transform.right * speed * Time.deltaTime;
+            transform.position += (Vector3)moveDirection * speed * Time.deltaTime;
         }
 
+        // Visual spin – this can rotate freely now
+        transform.Rotate(0f, 0f, rotation * Time.deltaTime);
 
 
         if (minigameBackgroundSprite == null)

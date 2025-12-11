@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 925.6848, y: 506.82626, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0}
+  m_LocalScale: {x: 0.35, y: 0.35, z: 0}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -47,11 +47,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   bulletLife: 1
-  rotation: 0.7
+  rotation: 300
   speed: 1
   minigameBackgroundSprite: {fileID: 0}
   usePhysics: 0
   destroyOutOfBounds: 1
+  moveDirection: {x: 0, y: 0}
 --- !u!212 &5119946846514650393
 SpriteRenderer:
   m_ObjectHideFlags: 0
