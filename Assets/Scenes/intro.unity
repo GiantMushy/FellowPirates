@@ -637,6 +637,11 @@ MonoBehaviour:
   - {fileID: -9078492102563083385, guid: 8145e1f6544cc734fb60932ec6a762c0, type: 3}
   - {fileID: -3799412685443230532, guid: d534ac1c67222024e8cae9a632067315, type: 3}
   - {fileID: -3857721300500993817, guid: d7c5c9de4037f62408598cbc1e8f9aba, type: 3}
+  - {fileID: -3447716626586691194, guid: c5687222468a7954299b9ceaceaeffb3, type: 3}
+  - {fileID: 3283039776504364361, guid: 8c41837ec9c90d34a95adbc5b46efe2b, type: 3}
+  - {fileID: 1070061477789117699, guid: cd4e00175820c6c4e864e2046363d21a, type: 3}
+  - {fileID: 5834969181986114101, guid: d8a344afb67dd9247a0bd70ec464eea2, type: 3}
+  - {fileID: 1389306969887666267, guid: 50d84c74b07e9a340bba51442db20f15, type: 3}
   displayTime: 2
   fadeDuration: 1
   menuSceneName: MainMenu
@@ -651,6 +656,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2fad93b83d043214b8f468db6ce60e4f, type: 3}
   - {fileID: 8300000, guid: 478adc201dcfcb945a6da87614fcceaa, type: 3}
   - {fileID: 8300000, guid: 106adec1c404e8b41b2ca66d2a122c8a, type: 3}
+  - {fileID: 8300000, guid: 7b63ab3a297b9044c8a8b299ca46ce21, type: 3}
+  - {fileID: 8300000, guid: 03d876cb14aca7b47bbfc704a29fe1d0, type: 3}
+  - {fileID: 8300000, guid: 1d0b4694d1e251949ab93acfad3204b2, type: 3}
+  - {fileID: 8300000, guid: 59ed73be752d2ca4eadb3c2866554891, type: 3}
+  - {fileID: 8300000, guid: 4a7718b9e37eb6b4a9c5e5d62e4ed8a3, type: 3}
   audioVolume: 1
 --- !u!225 &2082325881
 CanvasGroup:
