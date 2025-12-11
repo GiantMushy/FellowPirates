@@ -263,7 +263,7 @@ public class PlayerController : MonoBehaviour
             if (gameManager.health < gameManager.maxHealth)
             {
                 // Calculate normal direction away from the collision point
-            
+
                 Vector3 normal = collision.GetContact(0).normal;
 
                 StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
@@ -583,7 +583,7 @@ public class PlayerController : MonoBehaviour
         {
             spriteRenderer.enabled = false;
         }
-
+        
         if (deathPanelController != null)
         {
             deathPanelController.Show();
