@@ -583,7 +583,7 @@ public class PlayerController : MonoBehaviour
         {
             spriteRenderer.enabled = false;
         }
-        
+
         if (deathPanelController != null)
         {
             deathPanelController.Show();
@@ -622,6 +622,12 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMonsterDamage(Collider2D other)
     {
+        var monster = other.GetComponent<SeaMonster>();
+        if (monster != null)
+        {
+            monster.ReverseDirection();
+        }
+
         TakeDamage();
 
         if (gameManager != null && gameManager.health > 0)
@@ -640,6 +646,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(damageTypeController.HandleLandCollision("Monster", normal));
             }
         }
+
     }
 
 

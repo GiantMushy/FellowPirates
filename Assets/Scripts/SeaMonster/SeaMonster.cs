@@ -6,6 +6,7 @@ public class SeaMonster : MonoBehaviour
     public float speed = 2f;
 
     int currentIndex = 0;
+    private bool forwards = true;
 
     void Start()
     {
@@ -25,11 +26,26 @@ public class SeaMonster : MonoBehaviour
         if (toTarget.magnitude <= step)
         {
             transform.position = target.position;
-            currentIndex = (currentIndex + 1) % pathPoints.Length;
+
+            if (forwards)
+                currentIndex++;
+            else
+                currentIndex--;
+
+            if (currentIndex >= pathPoints.Length)
+                currentIndex = 0;
+            else if (currentIndex < 0)
+                currentIndex = pathPoints.Length - 1;
         }
         else
         {
             transform.position += toTarget.normalized * step;
         }
+    }
+
+
+    public void ReverseDirection()
+    {
+        forwards = !forwards;
     }
 }
