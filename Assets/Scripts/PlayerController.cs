@@ -104,7 +104,10 @@ public class PlayerController : MonoBehaviour
     {
         var keyboard = Keyboard.current;
 
-        if (keyboard.escapeKey.wasPressedThisFrame && pauseMenu != null)
+        if (
+            (keyboard.escapeKey.wasPressedThisFrame || keyboard.pKey.wasPressedThisFrame)
+            && pauseMenu != null
+        )
         {
             pauseMenu.TogglePause();
         }
