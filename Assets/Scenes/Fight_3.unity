@@ -151,7 +151,7 @@ MonoBehaviour:
   bribeButton: {fileID: 1429723635}
   flow: {fileID: 754483575}
   defaultButton: {fileID: 1568406964}
-  clickSound: {fileID: 0}
+  clickSound: {fileID: 8300000, guid: f59cf1b8061e876459d4f531387e5ce3, type: 3}
 --- !u!4 &14401290
 Transform:
   m_ObjectHideFlags: 0
@@ -5130,6 +5130,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1001 &1841526091
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1047979717216036645, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_Name
+      value: BackGroundSong
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1233.8088
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 645.25146
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
 --- !u!4 &1861225418 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1370095852648722493, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
@@ -6218,9 +6275,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 620174515}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: oneDamageSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ea5f7fbc466405348b8134300992b249, type: 3}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: twoDamageSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ff81a94d2fd0e4f4a9bf10f2856ca7e8, type: 3}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 519420032}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: zeroDamageSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8a1835fd885c8fe43bf90d32fdb264b2, type: 3}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: middleScreenText
       value: 
@@ -6595,3 +6664,4 @@ SceneRoots:
   - {fileID: 690074003}
   - {fileID: 420989323}
   - {fileID: 2003450689}
+  - {fileID: 1841526091}
