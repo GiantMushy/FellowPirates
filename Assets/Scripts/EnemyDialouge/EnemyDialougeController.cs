@@ -119,10 +119,10 @@ public class EnemyDialougeController : MonoBehaviour
         DialougeBox.color = Hex("#FF7A7A");
 
         lines = new string[]
-              {
-            "Ye dare distrub me on my rum break!",
+        {
+            "Ye dare disturb me on my rum break!",
             "Your gold is mine landlubber!"
-       };
+        };
         EnemyNameText.color = Color.white;
         StartDialouge();
     }
