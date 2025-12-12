@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -65,6 +66,9 @@ public class GameManager : MonoBehaviour
     public HashSet<string> enemiesWithIntroDialogue = new HashSet<string>();
 
     public HashSet<string> activatedCheckpoints = new HashSet<string>();
+
+
+    public GameObject itemsCanvas;
 
 
     void Awake()
@@ -347,6 +351,9 @@ public class GameManager : MonoBehaviour
 
         RestoreEnemyPositionAfterBattle();
 
+        if (itemsCanvas == null)
+            itemsCanvas = GameObject.Find("ItemsCanvas");
+
         CleanupCollectedItems(scene);
     }
 
@@ -490,4 +497,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SetItemsCanvasActive(bool active)
+    {
+        if (itemsCanvas != null)
+            itemsCanvas.SetActive(active);
+    }
 }
