@@ -8,10 +8,13 @@ public class ItemsButtonController : MonoBehaviour
     GameManager gameManager;
     private bool isSelected = false;
     public AudioSource audioSource;
-    public AudioClip clickSound; 
+    public AudioClip clickSound;
 
 
     public AttackFlowController attackFlow;
+
+    private const int MaxHealth = 3;
+
 
     void Start()
     {
@@ -26,6 +29,8 @@ public class ItemsButtonController : MonoBehaviour
 
     void Update()
     {
+        int healAmount = GetHealAmount();
+
 
         if (gameManager == null)
         {
@@ -68,7 +73,7 @@ public class ItemsButtonController : MonoBehaviour
             }
             else
             {
-                attackFlow.ShowItemsMessage();
+                attackFlow.ShowItemsMessage(healAmount);
             }
         }
         else if (!nowSelected && isSelected)
@@ -77,22 +82,41 @@ public class ItemsButtonController : MonoBehaviour
         }
     }
 
-
     public void Items()
     {
         attackFlow.HideMiddleScreenMessage();
 
         EventSystem.current.SetSelectedGameObject(itemsButton.gameObject);
 
-        gameManager.UseHealthItem();
+        int healAmount = GetHealAmount();
+        if (healAmount <= 0)
+        {
+            EventSystem.current.SetSelectedGameObject(attackButton.gameObject);
+            return;
+        }
+
+        for (int i = 0; i < healAmount; i++)
+        {
+            gameManager.UseHealthItem();
+        }
+
         audioSource.PlayOneShot(clickSound);
         attackFlow.RefreshItemsUI();
 
-        if (gameManager.healthInventory < 0 || gameManager.health > 2)
+        if (GetHealAmount() <= 0)
         {
             EventSystem.current.SetSelectedGameObject(attackButton.gameObject);
         }
 
         attackFlow.StartHealVisualAndDefend();
     }
+
+    private int GetHealAmount()
+    {
+        if (gameManager == null) return 0;
+        int missing = MaxHealth - gameManager.health;
+        if (missing <= 0) return 0;
+        return Mathf.Min(missing, gameManager.healthInventory);
+    }
+
 }
