@@ -36,7 +36,7 @@ public class EnemyDialougeController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return))
         {
             if (lines == null || lines.Length == 0) return;
 

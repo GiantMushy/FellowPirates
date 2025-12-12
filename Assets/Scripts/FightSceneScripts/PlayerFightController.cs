@@ -33,7 +33,7 @@ public class PlayerFightController : MonoBehaviour
     private bool isMovingRight = false;
     private bool isMovingUp = false;
     private bool isMovingDown = false;
-    private float maxRotationAngle = 50f;
+    private float maxRotationAngle = 20f;
     private float rotationSpeed = 240f; // Increased for snappier feel
     private float lastHorizontalDirection = 0f; // -1 for left, 1 for right, 0 for none
 
@@ -140,8 +140,8 @@ public class PlayerFightController : MonoBehaviour
         float currentMaxRotation = maxRotationAngle;
         float currentHorizontalDirection = 0f;
 
-        if (isMovingUp)         currentMaxRotation = 20f;
-        else if (isMovingDown)  currentMaxRotation = 90f;
+        if (isMovingUp)         currentMaxRotation = 5f;
+        else if (isMovingDown)  currentMaxRotation = 30f;
         
         if (isMovingLeft)       currentHorizontalDirection = -1f;
         else if (isMovingRight) currentHorizontalDirection = 1f;
@@ -180,6 +180,10 @@ public class PlayerFightController : MonoBehaviour
         {
             Debug.Log("collided with boooomb!!");
             audioSource.PlayOneShot(hitSound);
+            isMovingDown = false;
+            isMovingUp = false;
+            isMovingRight = false;
+            isMovingLeft = false;
             TakeDamage();
         }
     }

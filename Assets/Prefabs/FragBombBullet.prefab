@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 925.6848, y: 506.82626, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0}
+  m_LocalScale: {x: 4, y: 4, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -52,6 +52,10 @@ MonoBehaviour:
   minigameBackgroundSprite: {fileID: 0}
   usePhysics: 0
   destroyOutOfBounds: 0
+  moveDirection: {x: 0, y: 0}
+  enableFireTrail: 0
+  fireTrailPrefab: {fileID: 0}
+  fireTrailInterval: 0.15
   bullet: {fileID: 4788280500938896382, guid: 0bca5c7ac96b34f58a4c6b0296ea9b1a, type: 3}
   spawnedBullet: {fileID: 0}
   spawnedBulletCount: 10
@@ -103,7 +107,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 372870313170725863, guid: c91575b5ffef935479e42d6480239950, type: 3}
+  m_Sprite: {fileID: 416336361162494640, guid: 8793639565ef7e24a80a0661a70ab60b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -149,4 +153,4 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 3.5
+  m_Radius: 0.35
