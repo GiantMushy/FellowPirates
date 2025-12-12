@@ -59,7 +59,7 @@ public class EnemyDialougeController : MonoBehaviour
     {
         ShowOnlySprite(EnemyOneSprite);
 
-        EnemyNameText.text = "FLying Dutchman";
+        EnemyNameText.text = "Flying Dutchman";
         NameUnderlayImage.color = Hex("#FF9B04");
         DialougeBox.color = Hex("#F1E0C4");
 
@@ -120,8 +120,8 @@ public class EnemyDialougeController : MonoBehaviour
 
         lines = new string[]
               {
-            "Example text for the Blackbeard, line 1.",
-            "Another Blackbeard line."
+            "Ye dare distrub me on my rum break!",
+            "Your gold is mine landlubber!"
        };
         EnemyNameText.color = Color.white;
         StartDialouge();

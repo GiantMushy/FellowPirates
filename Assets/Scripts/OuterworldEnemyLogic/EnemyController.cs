@@ -180,12 +180,25 @@ public class EnemyController : MonoBehaviour
 
     public void StopChase()
     {
+        var gameManager = GameManager.Instance;
+
         Debug.Log("Stopped chasing");
         chasing = false;
         shipController.SetAccelerate(false);
         shipController.SetDecelerate(true);
         shipController.SetTurnPort(false);
         shipController.SetTurnStarboard(false);
+
+
+        // testing
+        float dist = Vector3.Distance(transform.position, player.position);
+        Debug.Log("dist: " + dist);
+        if (dist <= 1.5f)
+        {
+            Debug.Log("started battle from stop chase");
+            var playerController = player.GetComponent<PlayerController>();
+            gameManager.StartBattle(playerController, this);
+        }
     }
 
     private void FollowPath()
@@ -209,9 +222,7 @@ public class EnemyController : MonoBehaviour
             path_index++;
             if (path_index >= path.Count)
             {
-                Debug.Log("would have stopped");
                 ReplanIfNeeded();
-                // StopChase();
             }
             return;
         }

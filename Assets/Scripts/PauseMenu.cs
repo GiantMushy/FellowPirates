@@ -13,7 +13,6 @@ public class PauseMenu : MonoBehaviour
         if (pausePanel != null)
             pausePanel.SetActive(false);
 
-        Time.timeScale = 1f;
         IsPaused = false;
     }
 
