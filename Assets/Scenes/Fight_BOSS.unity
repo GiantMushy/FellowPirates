@@ -840,7 +840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 694247718807b4cc28c1622e8bcb6a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonSelectorController
-  moveSound: {fileID: 0}
+  moveSound: {fileID: 8300000, guid: f59cf1b8061e876459d4f531387e5ce3, type: 3}
 --- !u!114 &82171763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2299,6 +2299,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 502167853}
   m_CullTransparentMesh: 1
+--- !u!1001 &513739544
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1047979717216036645, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_Name
+      value: BackGroundSong
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1233.8088
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 645.25146
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913400158034773179, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e35aaec33c73d412d8ab029d01a36ada, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -4648,7 +4705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FleeButtonController
   fleeButton: {fileID: 1637390136}
   flow: {fileID: 1128360401}
-  clickSound: {fileID: 0}
+  clickSound: {fileID: 8300000, guid: f59cf1b8061e876459d4f531387e5ce3, type: 3}
 --- !u!1 &992590931
 GameObject:
   m_ObjectHideFlags: 0
@@ -5481,7 +5538,7 @@ MonoBehaviour:
   bribeButton: {fileID: 1589418774}
   flow: {fileID: 1128360401}
   defaultButton: {fileID: 24634395}
-  clickSound: {fileID: 0}
+  clickSound: {fileID: 8300000, guid: f59cf1b8061e876459d4f531387e5ce3, type: 3}
 --- !u!1 &1350856690
 GameObject:
   m_ObjectHideFlags: 0
@@ -5606,7 +5663,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemsButtonController
   itemsButton: {fileID: 672208298}
   attackButton: {fileID: 24634395}
-  clickSound: {fileID: 0}
+  clickSound: {fileID: 8300000, guid: f59cf1b8061e876459d4f531387e5ce3, type: 3}
   attackFlow: {fileID: 1128360401}
 --- !u!1001 &1416714570
 PrefabInstance:
@@ -8593,3 +8650,4 @@ SceneRoots:
   - {fileID: 690074003}
   - {fileID: 420989323}
   - {fileID: 2003450689}
+  - {fileID: 513739544}
