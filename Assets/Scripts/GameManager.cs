@@ -499,7 +499,11 @@ public class GameManager : MonoBehaviour
 
     public void SetItemsCanvasActive(bool active)
     {
+        if (itemsCanvas == null)
+            itemsCanvas = GameObject.Find("ItemsCanvas");
+
         if (itemsCanvas != null)
             itemsCanvas.SetActive(active);
     }
+
 }
