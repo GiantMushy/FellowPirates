@@ -34,7 +34,8 @@ public class PlayerFightController : MonoBehaviour
     private bool isMovingUp = false;
     private bool isMovingDown = false;
     private float maxRotationAngle = 50f;
-    private float rotationSpeed = 180f;
+    private float rotationSpeed = 240f; // Increased for snappier feel
+    private float lastHorizontalDirection = 0f; // -1 for left, 1 for right, 0 for none
 
     public AudioSource audioSource;
     public AudioClip hitSound;
@@ -137,19 +138,40 @@ public class PlayerFightController : MonoBehaviour
     {
         float targetRotation = 0f;
         float currentMaxRotation = maxRotationAngle;
+        float currentHorizontalDirection = 0f;
 
         if (isMovingUp)         currentMaxRotation = 20f;
         else if (isMovingDown)  currentMaxRotation = 90f;
         
-        if (isMovingLeft)       targetRotation = currentMaxRotation;
-        else if (isMovingRight) targetRotation = -currentMaxRotation;
+        if (isMovingLeft)       currentHorizontalDirection = -1f;
+        else if (isMovingRight) currentHorizontalDirection = 1f;
+        
+        if (currentHorizontalDirection != 0f)
+        {
+            targetRotation = currentHorizontalDirection * -currentMaxRotation;
+        }
         
         float currentZ = transform.eulerAngles.z;
-
         if (currentZ > 180f) currentZ -= 360f;
+        float currentRotationSpeed = rotationSpeed;
         
-        float newZ = Mathf.MoveTowards(currentZ, targetRotation, rotationSpeed * Time.deltaTime);
+        if (lastHorizontalDirection != 0f && currentHorizontalDirection != 0f && 
+            lastHorizontalDirection != currentHorizontalDirection)
+        {
+            currentRotationSpeed = rotationSpeed * 2f;
+        }
+        else if (currentHorizontalDirection == 0f)
+        {
+            currentRotationSpeed = rotationSpeed * 0.7f;
+        }
+        
+        float newZ = Mathf.MoveTowards(currentZ, targetRotation, currentRotationSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Euler(0f, 0f, newZ);
+        
+        if (currentHorizontalDirection != 0f)
+        {
+            lastHorizontalDirection = currentHorizontalDirection;
+        }
     }
     
     private void OnTriggerEnter2D(Collider2D other)
