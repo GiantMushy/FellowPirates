@@ -5,7 +5,7 @@ public class SeaMonster : MonoBehaviour
     public Transform[] pathPoints;
     public float speed = 2f;
     int currentIndex = 0;
-    private bool forwards = true;
+    private bool forwards = false;
     private bool stunned = false;
     private float originalSpeed;
     private Color originalColor;
