@@ -11,45 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 8dfda2eef133f408fa8104345c1ce751
-  - enabled: 0
-    path: Assets/Scenes/Level_1.unity
-    guid: dfca9abbac1f33e47a0d2cbd9f4e49f5
-  - enabled: 0
-    path: Assets/Scenes/Level_2.unity
-    guid: 1195b86bf206044a79298d99036d4176
-  - enabled: 0
-    path: Assets/Scenes/Level_3.unity
-    guid: 9ecad46d4d6ef48639a2b40577c8624f
-  - enabled: 0
-    path: Assets/Scenes/Level_4.unity
-    guid: 9665b1da02f8140588aa0cff0e4988f6
-  - enabled: 0
-    path: Assets/Scenes/FightDemo_Eva.unity
-    guid: 05e2c42def20544cfa8732b05794f44d
-  - enabled: 0
-    path: Assets/Scenes/AttackScene.unity
-    guid: 5c71136ad7af14ce6a9faca305e0ed22
-  - enabled: 0
-    path: Assets/Scenes/DefendScene.unity
-    guid: 430b1c5e70a124f59be98e9ef8612380
-  - enabled: 0
-    path: Assets/Scenes/FightDemo_Eva.unity
-    guid: 05e2c42def20544cfa8732b05794f44d
-  - enabled: 0
-    path: Assets/Scenes/Alpha_Test_Level_OLD.unity
-    guid: b77de58076f94984bbca8f6b5f2d32af
-  - enabled: 0
-    path: Assets/Scenes/Alpha_Test_Level_EVA.unity
-    guid: ce82f6ca939724785b3a0083121cccc0
-  - enabled: 1
-    path: Assets/Scenes/FightDemo.unity
-    guid: 0a1184ad70dca4b4db3d2bc5e0edb5d8
-  - enabled: 0
-    path: Assets/Scenes/Alpha_Test_Level___.unity
-    guid: 4b6781699bdd5b144bd964df1515162c
-  - enabled: 1
-    path: Assets/Scenes/Fight_2.unity
-    guid: 82537601ab1464990ad16f2f43d53b71
   - enabled: 1
     path: Assets/Scenes/Alpha_Test_Level.unity
     guid: efb38d7e17d520a46be36af553ec8ac2
@@ -57,11 +18,14 @@ EditorBuildSettings:
     path: Assets/Scenes/Fight_1.unity
     guid: 601a3481510d35b4f99ab5b89133cdb1
   - enabled: 1
-    path: Assets/Scenes/Fight_BOSS.unity
-    guid: a716883f6f775734486f788b861b6bb8
+    path: Assets/Scenes/Fight_2.unity
+    guid: 82537601ab1464990ad16f2f43d53b71
   - enabled: 1
     path: Assets/Scenes/Fight_3.unity
     guid: 355de8d77570f4b0a8e65c868c4ebb53
+  - enabled: 1
+    path: Assets/Scenes/Fight_BOSS.unity
+    guid: a716883f6f775734486f788b861b6bb8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
