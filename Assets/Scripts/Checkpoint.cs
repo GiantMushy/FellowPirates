@@ -14,9 +14,17 @@ public class Checkpoint : MonoBehaviour
 
     void Start()
     {
+        var gm = GameManager.Instance;
+
+        bool alreadyActivated =
+            gm != null &&
+            !string.IsNullOrEmpty(checkpointId) &&
+            gm.activatedCheckpoints.Contains(checkpointId);
+
         if (bridge != null) bridge.SetActive(false);
         if (popupText != null) popupText.gameObject.SetActive(false);
     }
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
