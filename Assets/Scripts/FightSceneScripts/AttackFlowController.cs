@@ -61,7 +61,6 @@ public class AttackFlowController : MonoBehaviour
     private float cameraShakeStrength = 0.2f;
 
     // audio 
-    public AudioSource audioSource;
     public AudioClip twoDamageSound;
     public AudioClip oneDamageSound;
     public AudioClip zeroDamageSound;
@@ -653,17 +652,20 @@ public class AttackFlowController : MonoBehaviour
         if (damage == 2)
         {
             DamageText.text = "2X DAMAGE";
-            audioSource.PlayOneShot(twoDamageSound);
+            if (twoDamageSound != null && SoundEffectManager.instance != null)
+                SoundEffectManager.instance.PlaySoundClip(twoDamageSound, transform, 0.7f);
         }
         else if (damage == 1)
         {
             DamageText.text = "1X DAMAGE";
-            audioSource.PlayOneShot(oneDamageSound);
+            if (oneDamageSound != null && SoundEffectManager.instance != null)
+                SoundEffectManager.instance.PlaySoundClip(oneDamageSound, transform, 1f);
         }
         else if (damage == 0)
         {
             DamageText.text = "0X DAMAGE";
-            audioSource.PlayOneShot(zeroDamageSound);
+            if (zeroDamageSound != null && SoundEffectManager.instance != null)
+                SoundEffectManager.instance.PlaySoundClip(zeroDamageSound, transform, 1f);
         }
         else
         {

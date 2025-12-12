@@ -28,7 +28,7 @@ public class PlayerFightController : MonoBehaviour
 
     private bool gameOver = false;
     private bool defendResolved = false;
-    
+
     private bool isMovingLeft = false;
     private bool isMovingRight = false;
     private bool isMovingUp = false;
@@ -37,7 +37,6 @@ public class PlayerFightController : MonoBehaviour
     private float rotationSpeed = 240f; // Increased for snappier feel
     private float lastHorizontalDirection = 0f; // -1 for left, 1 for right, 0 for none
 
-    public AudioSource audioSource;
     public AudioClip hitSound;
 
 
@@ -78,18 +77,18 @@ public class PlayerFightController : MonoBehaviour
         isMovingUp = false;
         isMovingDown = false;
 
-        if (key.upArrowKey.isPressed    || key.wKey.isPressed)  { isMovingUp = true;    }
-        if (key.downArrowKey.isPressed  || key.sKey.isPressed)  { isMovingDown = true;  }
-        if (key.rightArrowKey.isPressed || key.dKey.isPressed)  { isMovingRight = true; }
-        if (key.leftArrowKey.isPressed  || key.aKey.isPressed)  { isMovingLeft = true;  }
+        if (key.upArrowKey.isPressed || key.wKey.isPressed) { isMovingUp = true; }
+        if (key.downArrowKey.isPressed || key.sKey.isPressed) { isMovingDown = true; }
+        if (key.rightArrowKey.isPressed || key.dKey.isPressed) { isMovingRight = true; }
+        if (key.leftArrowKey.isPressed || key.aKey.isPressed) { isMovingLeft = true; }
     }
 
     void FixedUpdate()
     {
-        if (isMovingUp)     MoveUp();
-        if (isMovingDown)   MoveDown();
-        if (isMovingRight)  MoveRight();
-        if (isMovingLeft)   MoveLeft();
+        if (isMovingUp) MoveUp();
+        if (isMovingDown) MoveDown();
+        if (isMovingRight) MoveRight();
+        if (isMovingLeft) MoveLeft();
 
         RotateSprite();
     }
@@ -140,22 +139,22 @@ public class PlayerFightController : MonoBehaviour
         float currentMaxRotation = maxRotationAngle;
         float currentHorizontalDirection = 0f;
 
-        if (isMovingUp)         currentMaxRotation = 5f;
-        else if (isMovingDown)  currentMaxRotation = 30f;
-        
-        if (isMovingLeft)       currentHorizontalDirection = -1f;
+        if (isMovingUp) currentMaxRotation = 5f;
+        else if (isMovingDown) currentMaxRotation = 30f;
+
+        if (isMovingLeft) currentHorizontalDirection = -1f;
         else if (isMovingRight) currentHorizontalDirection = 1f;
-        
+
         if (currentHorizontalDirection != 0f)
         {
             targetRotation = currentHorizontalDirection * -currentMaxRotation;
         }
-        
+
         float currentZ = transform.eulerAngles.z;
         if (currentZ > 180f) currentZ -= 360f;
         float currentRotationSpeed = rotationSpeed;
-        
-        if (lastHorizontalDirection != 0f && currentHorizontalDirection != 0f && 
+
+        if (lastHorizontalDirection != 0f && currentHorizontalDirection != 0f &&
             lastHorizontalDirection != currentHorizontalDirection)
         {
             currentRotationSpeed = rotationSpeed * 2f;
@@ -164,22 +163,23 @@ public class PlayerFightController : MonoBehaviour
         {
             currentRotationSpeed = rotationSpeed * 0.7f;
         }
-        
+
         float newZ = Mathf.MoveTowards(currentZ, targetRotation, currentRotationSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Euler(0f, 0f, newZ);
-        
+
         if (currentHorizontalDirection != 0f)
         {
             lastHorizontalDirection = currentHorizontalDirection;
         }
     }
-    
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Bomb") || other.CompareTag("BulletSpawner"))
         {
             Debug.Log("collided with boooomb!!");
-            audioSource.PlayOneShot(hitSound);
+            if (hitSound != null && SoundEffectManager.instance != null)
+                SoundEffectManager.instance.PlaySoundClip(hitSound, transform, 1f);
             isMovingDown = false;
             isMovingUp = false;
             isMovingRight = false;
@@ -202,7 +202,7 @@ public class PlayerFightController : MonoBehaviour
 
         if (flow != null)
         {
-            flow.TriggerPlayerHitFeedback();   
+            flow.TriggerPlayerHitFeedback();
         }
 
         StartCoroutine(FlashAnimation(damageSprite, damageHitColor, damageClearColor, true));

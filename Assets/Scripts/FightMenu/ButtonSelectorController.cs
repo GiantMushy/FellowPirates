@@ -7,7 +7,6 @@ public class ButtonSelectorController : MonoBehaviour
     private RectTransform selectorRect;
     private GameObject lastSelected;
 
-    public AudioSource audioSource;
     public AudioClip moveSound;
 
     void Awake()
@@ -26,8 +25,8 @@ public class ButtonSelectorController : MonoBehaviour
 
         if (selected != lastSelected)
         {
-            if (audioSource != null && moveSound != null)
-                audioSource.PlayOneShot(moveSound);
+            if (moveSound != null && SoundEffectManager.instance != null)
+                SoundEffectManager.instance.PlaySoundClip(moveSound, transform, 1f);
 
             lastSelected = selected;
         }
