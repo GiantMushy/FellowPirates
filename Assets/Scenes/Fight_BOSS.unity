@@ -1988,7 +1988,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.70625293, w: 0.70795965}
   m_LocalPosition: {x: -2.3, y: -0, z: 0}
-  m_LocalScale: {x: 1.3619237, y: 0.7977528, z: 0.7977528}
+  m_LocalScale: {x: 8.432086, y: 8.432086, z: 8.432086}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1416714571}
@@ -2040,7 +2040,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7557261177316549740, guid: 0e46eb7471255bf41a7cea76dbd3e124, type: 3}
+  m_Sprite: {fileID: -7287093844989853670, guid: 50a1ff760c99257449a0ca38b1504657, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5950,9 +5950,9 @@ Transform:
   m_GameObject: {fileID: 1454284951}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.70625293, w: 0.70795965}
-  m_LocalPosition: {x: -2.3, y: -0, z: 0}
-  m_LocalScale: {x: 1.3619237, y: 0.7977528, z: 0.7977528}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: -3.4, y: -0.2, z: 0}
+  m_LocalScale: {x: 8.432086, y: 8.432086, z: 8.432086}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1814240988}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -89.862}
@@ -6003,7 +6003,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7557261177316549740, guid: 0e46eb7471255bf41a7cea76dbd3e124, type: 3}
+  m_Sprite: {fileID: -7287093844989853670, guid: 50a1ff760c99257449a0ca38b1504657, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -7706,13 +7706,17 @@ PrefabInstance:
       propertyPath: useRandomFiringRate
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 544297120139626978, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 932475994442554428, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.39
       objectReference: {fileID: 0}
     - target: {fileID: 1028481789166766234, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1122105278714500778, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: speed
