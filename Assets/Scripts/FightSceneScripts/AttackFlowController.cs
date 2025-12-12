@@ -159,12 +159,13 @@ public class AttackFlowController : MonoBehaviour
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
-    public void ShowItemsMessage()
+    public void ShowItemsMessage(int healAmount)
     {
         Debug.Log("ShowFleeMessage");
         if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        buttonMiddleScreenText.text = "[SPACE] to heal before next battle";
+        buttonMiddleScreenText.text = string.Format("[SPACE] to heal +{0} before next battle", healAmount);
+
 
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
