@@ -8,9 +8,9 @@ public class Checkpoint : MonoBehaviour
     public GameObject bridge;
     public TextMeshProUGUI popupText;
     public float popupDuration = 2f;
-    public AudioSource audioSource;
-
     public string checkpointId;
+    public AudioClip checkpointSound;
+
 
     void Start()
     {
@@ -69,7 +69,7 @@ public class Checkpoint : MonoBehaviour
 
     private void PlaySound()
     {
-        if (audioSource != null)
-            audioSource.Play();
+        if (checkpointSound != null && SoundEffectManager.instance != null)
+            SoundEffectManager.instance.PlaySoundClip(checkpointSound, transform, 0.7f);
     }
 }

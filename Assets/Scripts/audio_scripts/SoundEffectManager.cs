@@ -15,7 +15,7 @@ public class SoundEffectManager : MonoBehaviour
         }
     }
 
-    public void PlaySoundClip(AudioClip audioClip, Transform spawnTransform, float volume)
+    public void PlaySoundClip(AudioClip audioClip, Transform spawnTransform, float volume, float startTime = 0f)
     {
         // spawn in gameObject
         AudioSource audioSource = Instantiate(soundEffectObject, spawnTransform.position, Quaternion.identity);

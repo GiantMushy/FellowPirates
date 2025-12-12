@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
     public float deathPanelDelay = 1f; // seconds before death panel appears
 
 
-    [SerializeField] private AudioSource monsterHitSound;
+    [SerializeField] private AudioClip monsterHitSound;
     private float monsterDamageCooldownUntil = 0;
 
     void Awake()
@@ -142,7 +142,7 @@ public class PlayerController : MonoBehaviour
                 SpawnOrangeHealEffect();
 
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
 
                 StartCoroutine(PulseEffect.sprite_pulse(
                     spriteRenderer,
@@ -179,13 +179,13 @@ public class PlayerController : MonoBehaviour
                 gameManager.healthInventory++;
                 UpdateHealthItemUI();
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
             }
             else
             {
                 GainHealth();
                 if (healthPickupSound != null)
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
 
                 StartCoroutine(PulseEffect.sprite_pulse(spriteRenderer, num_pulses: 3, intensity: 1.2f, speed: 5f));
                 SpawnOrangeHealEffect();
@@ -199,7 +199,7 @@ public class PlayerController : MonoBehaviour
             gameManager.goldCoins++;
             UpdateGoldUI();
             if (goldPickupSound != null)
-                SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
+                SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 0.7f);
 
             gameManager.AddCollectedItemPosition(other.transform.position);
             other.gameObject.SetActive(false);
@@ -273,8 +273,8 @@ public class PlayerController : MonoBehaviour
 
                 StartCoroutine(damageTypeController.HandleLandCollision("Land", normal));
 
-                if (shipHittingLand != null)
-                    SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
+                // if (shipHittingLand != null)
+                //     SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
 
                 if (gameManager.healthInventory > 0 &&
                     gameManager.health < gameManager.maxHealth &&
@@ -285,7 +285,8 @@ public class PlayerController : MonoBehaviour
             }
             else
                 StartCoroutine(damageTypeController.HandleRespawn());
-            SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
+            if (shipHittingLand != null)
+                SoundEffectManager.instance.PlaySoundClip(shipHittingLand, transform, 1f);
         }
     }
 
@@ -430,7 +431,7 @@ public class PlayerController : MonoBehaviour
                 // Same SFX + pulse
                 if (healthPickupSound != null)
                 {
-                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 20f);
+                    SoundEffectManager.instance.PlaySoundClip(healthPickupSound, transform, 1f);
                 }
                 if (spriteRenderer != null)
                 {
@@ -475,7 +476,7 @@ public class PlayerController : MonoBehaviour
 
         if (goldPickupSound != null)
         {
-            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 1f);
+            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 0.7f);
         }
 
         SpriteRenderer sr = popup.GetComponent<SpriteRenderer>();
@@ -638,8 +639,9 @@ public class PlayerController : MonoBehaviour
         }
         if (monsterHitSound != null)
         {
-            monsterHitSound.time = 0.1f;
-            monsterHitSound.Play();
+            // monsterHitSound.time = 0.1f;
+            if (monsterHitSound != null && SoundEffectManager.instance != null)
+                SoundEffectManager.instance.PlaySoundClip(monsterHitSound, transform, 1f, 0.1f);
         }
         TakeDamage();
 

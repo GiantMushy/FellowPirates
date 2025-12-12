@@ -9,7 +9,7 @@ public class AttackButtonController : MonoBehaviour
     public AttackFlowController flow;
     private bool isSelected = false;
     public Button attackButton;
-    public AudioSource audioSource;
+    // public AudioSource audioSource;
     public AudioClip clickSound;
 
 
@@ -47,7 +47,9 @@ public class AttackButtonController : MonoBehaviour
     {
         flow.HideMiddleScreenMessage();
         Debug.Log("Attack button pressed");
-        audioSource.PlayOneShot(clickSound);
+        // audioSource.PlayOneShot(clickSound);
+        if (clickSound != null && SoundEffectManager.instance != null)
+            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.7f);
         flow.StartAttack();
     }
 
