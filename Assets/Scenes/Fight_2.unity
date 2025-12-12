@@ -1043,7 +1043,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8860146130749124157, guid: 1577df395b63a40af865acdc0b26a8aa, type: 3}
       propertyPath: firingRate
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8860146130749124157, guid: 1577df395b63a40af865acdc0b26a8aa, type: 3}
       propertyPath: slideSpeed
