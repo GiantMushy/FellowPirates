@@ -43,7 +43,7 @@ public class FleeButtonController : MonoBehaviour
     {
         Debug.Log("Flee button pressed");
         if (clickSound != null && SoundEffectManager.instance != null)
-            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.7f);
+            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.5f);
         EventSystem.current.SetSelectedGameObject(fleeButton.gameObject);
 
         var gameManager = GameManager.Instance;

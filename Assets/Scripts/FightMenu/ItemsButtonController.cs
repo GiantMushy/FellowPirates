@@ -100,7 +100,7 @@ public class ItemsButtonController : MonoBehaviour
         }
 
         if (clickSound != null && SoundEffectManager.instance != null)
-            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.7f);
+            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.5f);
 
         attackFlow.RefreshItemsUI();
 

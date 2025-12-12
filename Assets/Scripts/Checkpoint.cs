@@ -70,6 +70,6 @@ public class Checkpoint : MonoBehaviour
     private void PlaySound()
     {
         if (checkpointSound != null && SoundEffectManager.instance != null)
-            SoundEffectManager.instance.PlaySoundClip(checkpointSound, transform, 0.7f);
+            SoundEffectManager.instance.PlaySoundClip(checkpointSound, transform, 0.5f);
     }
 }

@@ -199,7 +199,7 @@ public class PlayerController : MonoBehaviour
             gameManager.goldCoins++;
             UpdateGoldUI();
             if (goldPickupSound != null)
-                SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 0.7f);
+                SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 0.5f);
 
             gameManager.AddCollectedItemPosition(other.transform.position);
             other.gameObject.SetActive(false);
@@ -476,7 +476,7 @@ public class PlayerController : MonoBehaviour
 
         if (goldPickupSound != null)
         {
-            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 0.7f);
+            SoundEffectManager.instance.PlaySoundClip(goldPickupSound, transform, 0.5f);
         }
 
         SpriteRenderer sr = popup.GetComponent<SpriteRenderer>();

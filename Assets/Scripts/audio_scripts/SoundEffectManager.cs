@@ -9,11 +9,16 @@ public class SoundEffectManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
+        if (instance != null && instance != this)
         {
-            instance = this;
+            Destroy(gameObject);
+            return;
         }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     }
+
 
     public void PlaySoundClip(AudioClip audioClip, Transform spawnTransform, float volume, float startTime = 0f)
     {

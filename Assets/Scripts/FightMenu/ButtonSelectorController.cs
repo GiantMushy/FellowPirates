@@ -26,7 +26,7 @@ public class ButtonSelectorController : MonoBehaviour
         if (selected != lastSelected)
         {
             if (moveSound != null && SoundEffectManager.instance != null)
-                SoundEffectManager.instance.PlaySoundClip(moveSound, transform, 0.7f);
+                SoundEffectManager.instance.PlaySoundClip(moveSound, transform, 1f);
 
             lastSelected = selected;
         }

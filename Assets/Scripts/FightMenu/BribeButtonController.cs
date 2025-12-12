@@ -60,7 +60,7 @@ public class BribeButtonController : MonoBehaviour
         flow.HideMiddleScreenMessage();
         Debug.Log("Bribe button pressed");
         if (clickSound != null && SoundEffectManager.instance != null)
-            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.7f);
+            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.5f);
 
         EventSystem.current.SetSelectedGameObject(bribeButton.gameObject);
 

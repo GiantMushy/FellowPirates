@@ -49,7 +49,7 @@ public class AttackButtonController : MonoBehaviour
         Debug.Log("Attack button pressed");
         // audioSource.PlayOneShot(clickSound);
         if (clickSound != null && SoundEffectManager.instance != null)
-            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.7f);
+            SoundEffectManager.instance.PlaySoundClip(clickSound, transform, 0.5f);
         flow.StartAttack();
     }
 
