@@ -568,6 +568,7 @@ public class PlayerController : MonoBehaviour
         if (victoryPanelController != null)
         {
             Debug.Log("Showing victory panel");
+            victoryPanelController.gameObject.SetActive(true);
             victoryPanelController.Show();
         }
         else
