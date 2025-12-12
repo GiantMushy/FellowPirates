@@ -8268,11 +8268,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7462916432924581237, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Size.x
-      value: 0.38
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7462916432924581237, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Size.y
       value: 0.0001
+      objectReference: {fileID: 0}
+    - target: {fileID: 7462916432924581237, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 7462916432924581237, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_IsTrigger
@@ -8300,7 +8304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7951605491785505805, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Size.x
-      value: 0.38
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7951605491785505805, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Size.y
@@ -8310,13 +8314,21 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7951605491785505805, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.03
+      objectReference: {fileID: 0}
     - target: {fileID: 8145347975228569789, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Size.x
-      value: 0.38
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8145347975228569789, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Size.y
       value: 0.0001
+      objectReference: {fileID: 0}
+    - target: {fileID: 8145347975228569789, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 8406320572185184743, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_Sprite
