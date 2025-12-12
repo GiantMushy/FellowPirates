@@ -523,7 +523,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 694247718807b4cc28c1622e8bcb6a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonSelectorController
-  audioSource: {fileID: 82171764}
   moveSound: {fileID: 8300000, guid: f59cf1b8061e876459d4f531387e5ce3, type: 3}
 --- !u!114 &82171763
 MonoBehaviour:
@@ -3361,7 +3360,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FleeButtonController
   fleeButton: {fileID: 1637390136}
   flow: {fileID: 1128360401}
-  audioSource: {fileID: 959333648}
   clickSound: {fileID: 8300000, guid: f7d52f60f8b009b49824aa2a1f66242b, type: 3}
 --- !u!82 &959333648
 AudioSource:
@@ -3643,7 +3641,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackButtonController
   flow: {fileID: 1128360401}
   attackButton: {fileID: 24634395}
-  audioSource: {fileID: 1059563248}
   clickSound: {fileID: 8300000, guid: f7d52f60f8b009b49824aa2a1f66242b, type: 3}
 --- !u!82 &1059563248
 AudioSource:
@@ -4219,7 +4216,6 @@ MonoBehaviour:
   bribeButton: {fileID: 1589418774}
   flow: {fileID: 1128360401}
   defaultButton: {fileID: 24634395}
-  audioSource: {fileID: 1297199041}
   clickSound: {fileID: 8300000, guid: 52ebb322ebd1c474f82b26134f2b90a8, type: 3}
 --- !u!82 &1297199041
 AudioSource:
@@ -4443,7 +4439,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemsButtonController
   itemsButton: {fileID: 672208298}
   attackButton: {fileID: 24634395}
-  audioSource: {fileID: 1350859428}
   clickSound: {fileID: 8300000, guid: fdc7e9fb2c52c442ab3908fb01547091, type: 3}
   attackFlow: {fileID: 1128360401}
 --- !u!82 &1350859428

@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 925.6848, y: 506.82626, z: 0}
-  m_LocalScale: {x: 0.35, y: 0.35, z: 0}
+  m_LocalScale: {x: 2.8734639, y: 2.8734639, z: 0}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -53,6 +53,13 @@ MonoBehaviour:
   usePhysics: 0
   destroyOutOfBounds: 1
   moveDirection: {x: 0, y: 0}
+  enableFireTrail: 0
+  fireTrailPrefab: {fileID: 0}
+  fireTrailInterval: 0.15
+  bullet: {fileID: 0}
+  spawnedBullet: {fileID: 0}
+  spawnedBulletCount: 0
+  spawnOnDeath: 0
 --- !u!212 &5119946846514650393
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -100,7 +107,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 495792724487310035, guid: dbba6b7473dd8db41b418ff40910710b, type: 3}
+  m_Sprite: {fileID: 416336361162494640, guid: 8793639565ef7e24a80a0661a70ab60b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -146,4 +153,4 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 3.77
+  m_Radius: 0.3603682

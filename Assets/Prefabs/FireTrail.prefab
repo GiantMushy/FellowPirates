@@ -163,4 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3b802a5722c32c4e8856a98f12d1500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireTrail
-  lifeTime: 2
+  lifeTime: 1.5
+  fadeOut: 1
+  fadeDuration: 0.1
