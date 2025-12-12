@@ -27,6 +27,8 @@ public class AttackFlowController : MonoBehaviour
     GameManager gameManager;
     public Image[] enemyHeartImages;
 
+    public Image[] halfHeartImages;
+
     // Items UI
     public Image[] heartImages;
     public TextMeshProUGUI healthInventoryText;
@@ -416,24 +418,43 @@ public class AttackFlowController : MonoBehaviour
         int hpUnits = gameManager.enemyHealth;
 
         for (int i = 0; i < enemyHeartImages.Length; i++)
-        {
+        {   
+
+            Image fullHeart = enemyHeartImages[i];
+            Image halfHeart = (halfHeartImages != null && i < halfHeartImages.Length)
+            ? halfHeartImages[i]
+            : null;
+
             if (enemyHeartImages[i] == null) continue;
 
             int unitsForThisHeart = Mathf.Clamp(hpUnits - i * 2, 0, 2);
 
-            Image img = enemyHeartImages[i];
-
             if (unitsForThisHeart == 2)
-            {
-                img.color = Color.red;
+            {   
+                fullHeart.enabled = true;
+                fullHeart.color = Color.red;
+
+                if (halfHeart != null)
+                    halfHeart.enabled = false;
             }
             else if (unitsForThisHeart == 1)
             {
-                img.color = new Color(0.5f, 0f, 0f); // darker red
+                // half heart on, full heart off
+                fullHeart.enabled = false;
+
+                if (halfHeart != null)
+                {
+                    halfHeart.enabled = true;
+                    //halfHeart.color = new Color(0.8f, 0f, 0f); // or Color.red / Color.white
+                }
             }
             else
-            {
-                img.color = Color.black;
+            {   
+                if (halfHeart != null)
+                    halfHeart.enabled = false;
+
+                fullHeart.enabled = true;
+                fullHeart.color = Color.black;
             }
         }
     }
