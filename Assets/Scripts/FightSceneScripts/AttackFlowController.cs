@@ -672,19 +672,19 @@ public class AttackFlowController : MonoBehaviour
     {
         if (damage == 2)
         {
-            DamageText.text = "2X DAMAGE";
+            DamageText.text = "FULL DAMAGE";
             if (twoDamageSound != null && SoundEffectManager.instance != null)
                 SoundEffectManager.instance.PlaySoundClip(twoDamageSound, transform, 0.7f);
         }
         else if (damage == 1)
         {
-            DamageText.text = "1X DAMAGE";
+            DamageText.text = "HALF DAMAGE";
             if (oneDamageSound != null && SoundEffectManager.instance != null)
                 SoundEffectManager.instance.PlaySoundClip(oneDamageSound, transform, 1f);
         }
         else if (damage == 0)
         {
-            DamageText.text = "0X DAMAGE";
+            DamageText.text = "NO DAMAGE";
             if (zeroDamageSound != null && SoundEffectManager.instance != null)
                 SoundEffectManager.instance.PlaySoundClip(zeroDamageSound, transform, 1f);
         }
