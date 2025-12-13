@@ -112,7 +112,7 @@ public class AttackFlowController : MonoBehaviour
         Debug.Log("ShowBribeCost");
         if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        buttonMiddleScreenText.text = $"BRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
+        buttonMiddleScreenText.text = $"<color=#00FFFF><b>[SPACE]</b></color>\nBRIBE COST: {gameManager.enemyBribeCost} GOLD. \nWill allow you to go from the battle unharmed.";
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
 
@@ -122,10 +122,10 @@ public class AttackFlowController : MonoBehaviour
         if (buttonMiddleScreenText == null || gameManager == null) return;
 
         buttonMiddleScreenText.text =
-               "<color=green>GREEN</color>:   2x Damage\n" +
-               "<color=yellow>YELLOW</color>  1x Damage\n" +
-               "<color=red>RED</color>        0x Damage\n" +
-               "\n<color=#00FFFF><b>[SPACE]</b></color>  to  Attack";
+               "<color=#00FFFF><b>[SPACE]</b></color>  to  Attack\n\n" +
+               "<color=green>GREEN</color>:   FULL DAMAGE\n" +
+               "<color=yellow>YELLOW</color>:  HALF DAMAGE\n" +
+               "<color=red>RED</color>:        NO DAMAGE\n";
 
         buttonMiddleScreenText.gameObject.SetActive(true);
     }
@@ -135,7 +135,7 @@ public class AttackFlowController : MonoBehaviour
         Debug.Log("ShowFleeMessage");
         if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        buttonMiddleScreenText.text = "<color=red><b>Attempt to Flee?</b></color>\n" +
+        buttonMiddleScreenText.text = "<color=#00FFFF><b>[SPACE]</b></color>\n<color=red><b>Attempt to Flee?</b></color>\n" +
                 "You have <b>3 seconds</b>\n" +
                 "<size=90%>(Only one chance)</size>";
 
@@ -165,7 +165,16 @@ public class AttackFlowController : MonoBehaviour
         Debug.Log("ShowFleeMessage");
         if (buttonMiddleScreenText == null || gameManager == null) return;
 
-        buttonMiddleScreenText.text = string.Format("[SPACE] to heal +{0} before next battle", healAmount);
+        // buttonMiddleScreenText.text = string.Format("[SPACE] to heal +{0} before next battle", healAmount);
+        if (healAmount == 2)
+        {
+            buttonMiddleScreenText.text = "<color=#00FFFF><b>[SPACE]</b></color>\nUse turn to heal 2 hearts\n(uses your oranges)";
+        }
+        else
+        {
+            buttonMiddleScreenText.text = "<color=#00FFFF><b>[SPACE]</b></color>\nUse turn to heal 1 heart\n(uses your oranges)";
+        }
+
 
 
         buttonMiddleScreenText.gameObject.SetActive(true);
@@ -418,7 +427,7 @@ public class AttackFlowController : MonoBehaviour
         int hpUnits = gameManager.enemyHealth;
 
         for (int i = 0; i < enemyHeartImages.Length; i++)
-        {   
+        {
 
             Image fullHeart = enemyHeartImages[i];
             Image halfHeart = (halfHeartImages != null && i < halfHeartImages.Length)
@@ -430,7 +439,7 @@ public class AttackFlowController : MonoBehaviour
             int unitsForThisHeart = Mathf.Clamp(hpUnits - i * 2, 0, 2);
 
             if (unitsForThisHeart == 2)
-            {   
+            {
                 fullHeart.enabled = true;
                 fullHeart.color = Color.red;
 
@@ -449,7 +458,7 @@ public class AttackFlowController : MonoBehaviour
                 }
             }
             else
-            {   
+            {
                 if (halfHeart != null)
                     halfHeart.enabled = false;
 
@@ -672,19 +681,19 @@ public class AttackFlowController : MonoBehaviour
     {
         if (damage == 2)
         {
-            DamageText.text = "2X DAMAGE";
+            DamageText.text = "FULL DAMAGE";
             if (twoDamageSound != null && SoundEffectManager.instance != null)
                 SoundEffectManager.instance.PlaySoundClip(twoDamageSound, transform, 0.7f);
         }
         else if (damage == 1)
         {
-            DamageText.text = "1X DAMAGE";
+            DamageText.text = "HALF DAMAGE";
             if (oneDamageSound != null && SoundEffectManager.instance != null)
                 SoundEffectManager.instance.PlaySoundClip(oneDamageSound, transform, 1f);
         }
         else if (damage == 0)
         {
-            DamageText.text = "0X DAMAGE";
+            DamageText.text = "NO DAMAGE";
             if (zeroDamageSound != null && SoundEffectManager.instance != null)
                 SoundEffectManager.instance.PlaySoundClip(zeroDamageSound, transform, 1f);
         }
