@@ -8839,7 +8839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7499649408014258216, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7501452546474413932, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: maxTime
