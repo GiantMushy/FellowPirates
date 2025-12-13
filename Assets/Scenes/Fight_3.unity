@@ -6359,6 +6359,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3940042891634212253}
     - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
+      propertyPath: attackButton
+      value: 
+      objectReference: {fileID: 1568406964}
+    - target: {fileID: 3707740648417924267, guid: fa4b1bdd64b24439f91ae75ed5315ea7, type: 3}
       propertyPath: buttonPanell
       value: 
       objectReference: {fileID: 1615569375}

@@ -83,6 +83,8 @@ public class AttackFlowController : MonoBehaviour
         }
     }
 
+    public Button attackButton;
+
     void Start()
     {
         gameManager = GameManager.Instance;
@@ -360,6 +362,11 @@ public class AttackFlowController : MonoBehaviour
         buttonPanell.blocksRaycasts = enabled;
         buttonPanell.alpha = enabled ? 1f : 0.5f;
         buttonPanelPointer.SetActive(enabled);
+
+        if (enabled)
+            StartCoroutine(SelectAttackButtonNextFrame());
+        else if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
 
         UpdateFleeButtonState();
     }
@@ -871,6 +878,13 @@ public class AttackFlowController : MonoBehaviour
 
         cameraTransform.position = originalPos;
     }
+    private IEnumerator SelectAttackButtonNextFrame()
+    {
+        yield return null;
+        if (attackButton == null || EventSystem.current == null) yield break;
 
+        EventSystem.current.SetSelectedGameObject(null);
+        attackButton.Select();
+    }
 
 }
