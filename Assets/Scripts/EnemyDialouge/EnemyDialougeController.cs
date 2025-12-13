@@ -103,7 +103,7 @@ public class EnemyDialougeController : MonoBehaviour
         {
             "Well hello there, handsome fellow pirate. I didn’t expect today to get this interesting.",
             "So tell me,",
-            "are you here to flirt or are you here to fight?",
+            "Are you here to flirt or are you here to fight?",
             "Either way, I like my odds."
         };
         EnemyNameText.color = Color.white;
@@ -119,9 +119,9 @@ public class EnemyDialougeController : MonoBehaviour
         DialougeBox.color = Hex("#FF7A7A");
 
         lines = new string[]
-        {
+        {   
             "Ye dare disturb me on my rum break!",
-            "Your gold is mine landlubber!"
+            "Yer gold will be mine deck scrubber!"
         };
         EnemyNameText.color = Color.white;
         StartDialouge();
