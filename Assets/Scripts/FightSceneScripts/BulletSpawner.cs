@@ -30,8 +30,8 @@ public class BulletSpawner : MonoBehaviour
     private float timer = 0f;
 
     [Header("Flame / Fire Trail Settings")]
-    public bool enableFireTrail = false;        
-    public GameObject fireTrailPrefab;          
+    public bool enableFireTrail = false;
+    public GameObject fireTrailPrefab;
     public float fireTrailInterval = 0.15f;
 
 
@@ -73,6 +73,9 @@ public class BulletSpawner : MonoBehaviour
 
     void Update()
     {
+        if (AttackFlowController.FreezeProjectiles)
+            return;
+
         if (minigameBackgroundSprite == null)
         {
             Debug.LogWarning("no minigame background set");
@@ -173,7 +176,7 @@ public class BulletSpawner : MonoBehaviour
 
             spawnedBullet = Instantiate(bullet, spawnPosition, Quaternion.identity);
             spawnedBullet.layer = LayerMask.NameToLayer("OverlayLayer");
-            
+
             Bullet bulletScript = spawnedBullet.GetComponent<Bullet>();
             bulletScript.speed = speed;
             bulletScript.bulletLife = bulletLife;
@@ -181,10 +184,10 @@ public class BulletSpawner : MonoBehaviour
             bulletScript.usePhysics = useGravity;
 
             // Fire trail
-            bulletScript.enableFireTrail   = enableFireTrail;
-            bulletScript.fireTrailPrefab   = fireTrailPrefab;
+            bulletScript.enableFireTrail = enableFireTrail;
+            bulletScript.fireTrailPrefab = fireTrailPrefab;
             bulletScript.fireTrailInterval = fireTrailInterval;
-            
+
             // If using gravity-based physics
             if (useGravity)
             {
@@ -193,14 +196,14 @@ public class BulletSpawner : MonoBehaviour
                 {
                     Vector2 toTarget = player.transform.position - transform.position;
                     float distance = toTarget.magnitude;
-                    
+
                     // Normalize direction
                     Vector2 direction = toTarget.normalized;
                     float upwardBoost = distance * Mathf.Lerp(0.2f, 1.1f, Mathf.PingPong(Time.time, 1f));
                     Vector2 launchVelocity = direction * speed + Vector2.up * upwardBoost;
-                    
+
                     rb.linearVelocity = launchVelocity;
-                    
+
                     float angle = Mathf.Atan2(launchVelocity.y, launchVelocity.x) * Mathf.Rad2Deg;
                     spawnedBullet.transform.rotation = Quaternion.Euler(0f, 0f, angle);
                 }
@@ -217,7 +220,7 @@ public class BulletSpawner : MonoBehaviour
 
                 // Lock movement direction so rotation doesn't curve path
                 bulletScript.moveDirection = spawnedBullet.transform.right;
-            }   
+            }
         }
     }
 
@@ -231,7 +234,7 @@ public class BulletSpawner : MonoBehaviour
             t = 0f;
             currSlideVector = -currSlideVector;
         }
-        
+
         if (t < slideDuration)
         {
             transform.position = new UnityEngine.Vector3(
