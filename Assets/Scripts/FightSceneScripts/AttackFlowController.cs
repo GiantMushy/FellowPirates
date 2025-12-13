@@ -67,6 +67,9 @@ public class AttackFlowController : MonoBehaviour
     public AudioClip oneDamageSound;
     public AudioClip zeroDamageSound;
 
+    public static bool FreezeProjectiles = false;
+
+
     private void Awake()
     {
         Attack = TimingBarCanvas.GetComponentInChildren<TimingBar>(true);
@@ -83,8 +86,12 @@ public class AttackFlowController : MonoBehaviour
         }
     }
 
+    public Button attackButton;
+
     void Start()
     {
+        FreezeProjectiles = false;
+
         gameManager = GameManager.Instance;
 
         enemyGoldText.text = gameManager.enemyRewardAmount.ToString();
@@ -290,6 +297,7 @@ public class AttackFlowController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
 
+        FreezeProjectiles = false;
         TimingBarCanvas.SetActive(false);
 
         GameObject pattern = defendList[defend_index];
@@ -360,6 +368,11 @@ public class AttackFlowController : MonoBehaviour
         buttonPanell.blocksRaycasts = enabled;
         buttonPanell.alpha = enabled ? 1f : 0.5f;
         buttonPanelPointer.SetActive(enabled);
+
+        if (enabled)
+            StartCoroutine(SelectAttackButtonNextFrame());
+        else if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
 
         UpdateFleeButtonState();
     }
@@ -871,6 +884,18 @@ public class AttackFlowController : MonoBehaviour
 
         cameraTransform.position = originalPos;
     }
+    private IEnumerator SelectAttackButtonNextFrame()
+    {
+        yield return null;
+        if (attackButton == null || EventSystem.current == null) yield break;
 
+        EventSystem.current.SetSelectedGameObject(null);
+        attackButton.Select();
+    }
+
+    public void SetFreezeProjectiles(bool freeze)
+    {
+        FreezeProjectiles = freeze;
+    }
 
 }

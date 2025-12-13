@@ -45,6 +45,16 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        if (AttackFlowController.FreezeProjectiles)
+        {
+            if (usePhysics)
+            {
+                var rb = GetComponent<Rigidbody2D>();
+                if (rb != null) rb.linearVelocity = Vector2.zero;
+            }
+            return;
+        }
+
 
         if (timer > bulletLife)
         {

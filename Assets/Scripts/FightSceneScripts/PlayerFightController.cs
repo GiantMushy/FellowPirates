@@ -55,6 +55,9 @@ public class PlayerFightController : MonoBehaviour
 
         if (!defendResolved && timeBar != null && timeBar.IsTimeOver)
         {
+            if (flow != null)
+                flow.SetFreezeProjectiles(true);
+
             defendResolved = true;
             gameOver = true;
             isMovingDown = false;
@@ -175,8 +178,8 @@ public class PlayerFightController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (defendResolved) return; 
-        
+        if (defendResolved) return;
+
         if (other.CompareTag("Bomb") || other.CompareTag("BulletSpawner"))
         {
             Debug.Log("collided with boooomb!!");
@@ -204,6 +207,7 @@ public class PlayerFightController : MonoBehaviour
 
         if (flow != null)
         {
+            flow.SetFreezeProjectiles(true);
             flow.TriggerPlayerHitFeedback();
         }
 
